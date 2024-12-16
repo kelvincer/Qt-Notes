@@ -20,7 +20,9 @@ qt_add_qml_module(appNotes
     URI Notes
     VERSION 1.0
     QML_FILES
-        Main.qml
+        qml/Main.qml
+        qml/ListNoteModel.qml
+        qml/NotesList.qml
     RESOURCES images.qrc
 )
 
