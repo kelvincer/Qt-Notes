@@ -31,60 +31,11 @@ Window {
                     Layout.fillWidth: true
                 }
 
-                TabBar {
+                NotesTabBar {
                     id: bar
                     Layout.alignment: Qt.AlignHCenter
                     Layout.preferredWidth: 0.5
                     Layout.fillWidth: true
-                    background: Rectangle {
-                        color: "lightgray"
-                        radius: 10
-                    }
-
-                    TabButton {
-                        id: noteTab
-                        text: qsTr("Notes")
-                        implicitHeight: 30
-
-                        contentItem: Text {
-                            text: parent.text
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            color: parent.checked ? "black" : "white"
-                            font.bold: true
-                            font.pointSize: 14
-                            font.family: "Roboto"
-                        }
-
-                        background: Rectangle {
-                            color: noteTab.checked ?  "white" : "lightgray"
-                            border.color: noteTab.checked ?  "green" : "lightgray"
-                            border.width: 2
-                            radius: 10
-                        }
-                    }
-
-                    TabButton {
-                        id: archiveTab
-                        text: qsTr("Archive")
-                        implicitHeight: 30
-                        contentItem: Text {
-                            text: parent.text
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            color: parent.checked ? "black" : "white"
-                            font.bold: true
-                            font.pointSize: 14
-                            font.family: "Roboto"
-                        }
-
-                        background: Rectangle {
-                            color: archiveTab.checked ? "white" : "lightgray"
-                            border.color: archiveTab.checked ? "green" : "lightgray"
-                            border.width: 2
-                            radius: 10
-                        }
-                    }
                 }
 
                 Item {
@@ -144,42 +95,43 @@ Window {
 
                 Item {
                     id: homeTab
-
-                        ListView {
-
-                            id: list
-
-                            Component.onCompleted: {
-                                console.log("width: " + list.width)
-                                console.log("Height: " + list.height)
-                            }
-
-                            anchors.fill: parent
-
-                            model: ListNoteModel{}
-
-                            delegate: Row {
-
-                                Text {
-                                    text: name
-                                }
-
-                                Item {
-                                    width: 50
-                                    height: 20
-                                }
-
-                                Text {
-                                    text: cost
-                                }
-                            }
-                    }
+                    NotesList {}
                 }
 
                 Item {
                     id: discoverTab
                     Text {
                         text: qsTr("Archive")
+                    }
+                }
+            }
+
+            TextField {
+                id: searchBox
+                font.pointSize: 14
+                leftPadding: 30
+                implicitHeight: 30
+                anchors {
+                    bottom: parent.bottom
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: 55
+                    rightMargin: 55
+                    bottomMargin: 20
+                }
+                background: Rectangle {
+                    radius: 3
+                    border.color: "#707070"
+                    border.width: 1
+
+                    Image {
+                        width: 16
+                        height: 16
+                        source: "qrc:/images/icons8-search-50.png"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
+                        anchors.verticalCenter: parent.verticalCenter
+
                     }
                 }
             }

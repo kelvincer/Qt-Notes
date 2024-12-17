@@ -23,6 +23,8 @@ qt_add_qml_module(appNotes
         qml/Main.qml
         qml/ListNoteModel.qml
         qml/NotesList.qml
+        qml/NoteItem.qml
+        qml/NotesTabBar.qml
     RESOURCES images.qrc
 )
 
