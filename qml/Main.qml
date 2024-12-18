@@ -65,7 +65,11 @@ Window {
                             id: plusMouseArea
                             anchors.fill: parent;
                             onClicked: {
-                                console.log("image")
+                                notesList.model.addNewItem({
+                                                               "name": "coconut",
+                                                               "cost": 23.89
+                                                           },
+                                                           notesList.model.count)
                             }
                             onPressedChanged: {
                             
@@ -87,7 +91,7 @@ Window {
                 currentIndex: bar.currentIndex
                 anchors {
                     top: rowBar.bottom
-                    bottom: parent.bottom
+                    bottom: searchBox.top
                     right: parent.right
                     left: parent.left
                     margins: appMargin
@@ -95,7 +99,9 @@ Window {
 
                 Item {
                     id: homeTab
-                    NotesList {}
+                    NotesList {
+                        id: notesList
+                    }
                 }
 
                 Item {
