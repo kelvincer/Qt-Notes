@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QFont>
+//#include "notebackend/backend.h"
 
 int main(int argc, char *argv[])
 {
@@ -8,6 +9,7 @@ int main(int argc, char *argv[])
 
     QFont font("Roboto", 14);
     QGuiApplication::setFont(font);
+
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/Notes/qml/Main.qml"));

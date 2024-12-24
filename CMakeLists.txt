@@ -9,8 +9,13 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_QT_DEFINITIONS "-DQT_QML_DEBUG")
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Gui)
+
+find_package(cmark CONFIG REQUIRED)
 
 qt_standard_project_setup()
+
+include_directories(backend)
 
 qt_add_executable(appNotes
     main.cpp
@@ -27,6 +32,7 @@ qt_add_qml_module(appNotes
         qml/model/ListNoteModel.qml
 
     RESOURCES images.qrc
+    SOURCES backend/notesbackend.h backend/notesbackend.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -42,6 +48,8 @@ set_target_properties(appNotes PROPERTIES
 
 target_link_libraries(appNotes
     PRIVATE Qt6::Quick
+    PRIVATE Qt6::Gui
+    PRIVATE cmark::cmark
 )
 
 include(GNUInstallDirs)

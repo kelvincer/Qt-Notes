@@ -1,6 +1,7 @@
-import QtQuick 2.4
+import QtQuick
 import QtQuick.Controls.Universal
 import QtQuick.Layouts
+import Notes
 
 Window {
     width: 880
@@ -9,6 +10,12 @@ Window {
     title: qsTr("Hello World")
 
     property int appMargin: 10
+    property bool inputByKeyboard: false
+    property bool inputDelete: false
+
+    NotesBackend {
+        id: notesBackend
+    }
 
     RowLayout{
         anchors.fill: parent
@@ -72,13 +79,13 @@ Window {
                                                            notesList.model.count)
                             }
                             onPressedChanged: {
-                            
+
                                 console.log("MouseArea pressed changed to", plusMouseArea.pressed)
 
                                 if(plusMouseArea.pressed) {
                                     plusIcon.source = "qrc:/images/icons8-plus-math-50.png"
                                 } else {
-                                     plusIcon.source = "qrc:/images/icons8-plus-50.png"
+                                    plusIcon.source = "qrc:/images/icons8-plus-50.png"
                                 }
                             }
                         }
@@ -143,76 +150,155 @@ Window {
             }
         }
 
-        Rectangle {
+        RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            color: "green"
+            spacing: 0
 
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 0.2
-                    Layout.fillWidth: true
-                    color: "peru"
-                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 0.2
-                    Layout.fillWidth: true
-                    color: "blue"
-                }
-                 Rectangle {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 0.2
-                    Layout.fillWidth: true
-                    color: "yellow"
-                }
-                 Rectangle {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 0.2
-                    Layout.fillWidth: true
-                    color: "lime"
-                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 0.2
-                    Layout.fillWidth: true
-                    color: "lightBlue"
-                }
-            }
+            TextArea {
+                id: markDownInput
+                text: notesBackend.html
+                //text: "<h1>Title</h1><p>paragraph</p>"
+                Layout.fillHeight: true
+                Layout.preferredWidth: 0.5
+                Layout.fillWidth: true
+                textFormat: TextEdit.RichText
+                wrapMode: TextEdit.WordWrap
+                cursorPosition: notesBackend.cursorPosition
 
-            RowLayout {
-                anchors.fill: parent
+                // Binding {
+                //     target: notesBackend
+                //     property: "html"
+                //     value: markDownInput.getText(0, markDownInput.length)
+                //     when: markDownInput.getText(0, markDownInput.length) !== notesBackend.html
+                // }
 
-                Item { Layout.fillWidth: true }
+                // Binding {
+                //     target: notesBackend
+                //     property: "cursorPosition"
+                //     value: markDownInput.cursorPosition
+                // }
 
-                Button {
-                    text: "Right button"
-                    onClicked: {
-                        console.log("Right")
+                onCursorPositionChanged: {
+
+                    // if(cursorPosition < length) {
+                    //     console.log("less")
+                    //     notesBackend.len = cursorPosition
+                    // } else {
+                    //     notesBackend.len = length
+                    // }
+                    console.log("positionChanged")
+
+                    notesBackend.cursorPosition = cursorPosition
+
+                    // console.log("Cursor pos: " + cursorPosition)
+                }
+
+                onTextChanged: {
+                    //notesBackend.sendNoteDescription(getText(0, length))
+
+                    // console.log("textChanged")
+
+                    // if(!inputByKeyboard) {
+                    //     inputByKeyboard = false
+                    //     return
+                    // }
+
+
+                    // console.log("cursor: " + cursorPos)
+
+                    //console.log("console html: " + text)
+
+                    // console.log("console: " + getText(0, length))
+
+                    notesBackend.html = getText(0, length)
+
+
+                    //notesBackend.html = text
+                }
+
+                focus: true
+                Keys.onPressed: event => {
+
+                    console.log("onPressed")
+
+                    inputByKeyboard = true
+
+                    if (event.key === Qt.Key_Backspace) {
+                        // // Custom word deletion to the left
+                        // // (You'd need to implement the actual logic here)
+                        // console.log("Custom Ctrl+Backspace");
+
+                        // //notesBackend.html = getText(0, length - 1)
+
+                        // notesBackend.html = getText(0, cursorPosition - 1) + getText(cursorPosition, length)
+
+
+                        // event.accepted = true; // Prevent default behavior
+                    } else if(event.key === Qt.Key_Return) {
+                        notesBackend.hasDescription = true
                     }
                 }
+
+                // Keys.onReturnPressed: {
+                //     console.log("enter pressed")
+
+                //     notesBackend.hasDescription = true
+
+                // }
+
+
+                // Keys.onPressed: event => {
+
+                //                     inputByKeyboard = true
+
+                //                     console.log("txt: " + event.text + " key: " + event.key)
+
+
+                //                     if (event.key === Qt.Key_Backspace) {
+                //                         // Handle tab key press
+                //                         console.log("delete")
+
+                //                         pressedBackSpaceKey = true
+                //                         //return
+                //                     }
+                //                     else if (event.key === Qt.Key_Return)  {
+
+                //                         console.log("KEY BACK")
+
+                //                         //return
+
+                //                     } else if(event.key === Qt.Key_Space) {
+
+                //                         console.log("SPACE KEY")
+
+                //                         pressedSpaceKey = true
+
+                //                         //return
+                //                     }
+
+                //                     console.log("input: " + event.text)
+                //                 }
+
+                property int titleLength: 0
+                property string title: ""
+                property bool pressedSpaceKey: false
+                property bool pressedBackSpaceKey: false
+                property string c: ""
+                property int cursorPos: 0;
+
             }
 
-            RowLayout {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+            TextEdit{
+                text: markDownInput.text
+                Layout.fillHeight: true
+                Layout.preferredWidth: 0.5
+                Layout.fillWidth: true
+                textFormat: TextEdit.AutoText
+                wrapMode: TextEdit.Wrap
 
-                Item { Layout.fillWidth: true }
-
-                Button {
-                    text: "Middle button"
-                    onClicked: {
-                        console.log("Center")
-                    }
-                }
-
-                Item { Layout.fillWidth: true }
             }
         }
+
     }
 }
