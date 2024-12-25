@@ -52,9 +52,6 @@ void NotesBackend::updateMarkdown(QString &markdownText)
     if (markdownText == m_markdown)
         return;
 
-    qDebug() << "MARKDOWN: " << markdownText;
-    qDebug() << "local before : " << m_markdown;
-
     processMarkdown(markdownText);
 
     emit markdownChanged();

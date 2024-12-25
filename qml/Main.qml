@@ -10,8 +10,6 @@ Window {
     title: qsTr("Hello World")
 
     property int appMargin: 10
-    property bool inputByKeyboard: false
-    property bool inputDelete: false
 
     NotesBackend {
         id: notesBackend
@@ -196,6 +194,5 @@ Window {
                 wrapMode: TextEdit.Wrap
             }
         }
-
     }
 }
