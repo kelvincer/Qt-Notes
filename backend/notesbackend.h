@@ -23,6 +23,8 @@ class NotesBackend : public QObject
     bool m_isInputFromBackend;
     bool m_hasDescription;
     int titleLength;
+    QString noteTitle;
+    QString titleContent;
 
     QString markdown();
     QString html();
@@ -31,14 +33,19 @@ class NotesBackend : public QObject
     bool hasDescription();
 
     void updateMarkdown(QString &markdownText);
-    void processMarkdown(QString text);
-    void transformKeyboardInput(QString text);
     void updateHtml(QString &keyboardInput);
     void updateCursorPosition(const int &cursorPosition);
     void updateInputFromBackend(const bool &isInputFromBackend);
     void updateHasDescription(const bool &hasDescription);
 
+    void processMarkdown(QString text);
+    void transformKeyboardInput(QString text);
+    bool isChangingTitle();
+    bool isChangingDescription(QString text);
+    bool isEndOfTitle();
+
 public:
+
     explicit NotesBackend(QObject *parent = nullptr);
     Q_INVOKABLE void sendNoteDescription(QString description);
 

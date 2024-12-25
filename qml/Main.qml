@@ -187,7 +187,7 @@ Window {
                     // } else {
                     //     notesBackend.len = length
                     // }
-                    console.log("positionChanged")
+                    //console.log("positionChanged")
 
                     notesBackend.cursorPosition = cursorPosition
 
@@ -220,7 +220,7 @@ Window {
                 focus: true
                 Keys.onPressed: event => {
 
-                    console.log("onPressed")
+                    //console.log("onPressed")
 
                     inputByKeyboard = true
 
