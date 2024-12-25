@@ -158,135 +158,33 @@ Window {
             TextArea {
                 id: markDownInput
                 text: notesBackend.html
-                //text: "<h1>Title</h1><p>paragraph</p>"
                 Layout.fillHeight: true
                 Layout.preferredWidth: 0.5
                 Layout.fillWidth: true
                 textFormat: TextEdit.RichText
-                wrapMode: TextEdit.WordWrap
+                wrapMode: TextEdit.Wrap
                 cursorPosition: notesBackend.cursorPosition
 
-                // Binding {
-                //     target: notesBackend
-                //     property: "html"
-                //     value: markDownInput.getText(0, markDownInput.length)
-                //     when: markDownInput.getText(0, markDownInput.length) !== notesBackend.html
-                // }
-
-                // Binding {
-                //     target: notesBackend
-                //     property: "cursorPosition"
-                //     value: markDownInput.cursorPosition
-                // }
-
                 onCursorPositionChanged: {
-
-                    // if(cursorPosition < length) {
-                    //     console.log("less")
-                    //     notesBackend.len = cursorPosition
-                    // } else {
-                    //     notesBackend.len = length
-                    // }
-                    //console.log("positionChanged")
-
                     notesBackend.cursorPosition = cursorPosition
-
-                    // console.log("Cursor pos: " + cursorPosition)
                 }
 
                 onTextChanged: {
-                    //notesBackend.sendNoteDescription(getText(0, length))
-
-                    // console.log("textChanged")
-
-                    // if(!inputByKeyboard) {
-                    //     inputByKeyboard = false
-                    //     return
-                    // }
-
-
-                    // console.log("cursor: " + cursorPos)
-
-                    //console.log("console html: " + text)
-
-                    // console.log("console: " + getText(0, length))
 
                     notesBackend.html = getText(0, length)
-
-
-                    //notesBackend.html = text
                 }
 
-                focus: true
                 Keys.onPressed: event => {
 
-                    //console.log("onPressed")
-
-                    inputByKeyboard = true
-
                     if (event.key === Qt.Key_Backspace) {
-                        // // Custom word deletion to the left
-                        // // (You'd need to implement the actual logic here)
-                        // console.log("Custom Ctrl+Backspace");
-
-                        // //notesBackend.html = getText(0, length - 1)
-
-                        // notesBackend.html = getText(0, cursorPosition - 1) + getText(cursorPosition, length)
-
-
-                        // event.accepted = true; // Prevent default behavior
+                        
                     } else if(event.key === Qt.Key_Return) {
                         notesBackend.hasDescription = true
                     }
+                    else if(event.key === Qt.Key_Space){ 
+                        notesBackend.spacePressed = true
+                    }
                 }
-
-                // Keys.onReturnPressed: {
-                //     console.log("enter pressed")
-
-                //     notesBackend.hasDescription = true
-
-                // }
-
-
-                // Keys.onPressed: event => {
-
-                //                     inputByKeyboard = true
-
-                //                     console.log("txt: " + event.text + " key: " + event.key)
-
-
-                //                     if (event.key === Qt.Key_Backspace) {
-                //                         // Handle tab key press
-                //                         console.log("delete")
-
-                //                         pressedBackSpaceKey = true
-                //                         //return
-                //                     }
-                //                     else if (event.key === Qt.Key_Return)  {
-
-                //                         console.log("KEY BACK")
-
-                //                         //return
-
-                //                     } else if(event.key === Qt.Key_Space) {
-
-                //                         console.log("SPACE KEY")
-
-                //                         pressedSpaceKey = true
-
-                //                         //return
-                //                     }
-
-                //                     console.log("input: " + event.text)
-                //                 }
-
-                property int titleLength: 0
-                property string title: ""
-                property bool pressedSpaceKey: false
-                property bool pressedBackSpaceKey: false
-                property string c: ""
-                property int cursorPos: 0;
-
             }
 
             TextEdit{
@@ -296,7 +194,6 @@ Window {
                 Layout.fillWidth: true
                 textFormat: TextEdit.AutoText
                 wrapMode: TextEdit.Wrap
-
             }
         }
 

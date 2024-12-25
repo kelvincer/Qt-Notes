@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QQmlEngine>
-#include <cmark.h>
 
 class NotesBackend : public QObject
 {
@@ -14,6 +13,10 @@ class NotesBackend : public QObject
     Q_PROPERTY(int cursorPosition READ cursorPosition WRITE updateCursorPosition NOTIFY cursorPositionChanged)
     Q_PROPERTY(int isInputFromBackend READ isInputFromBackend WRITE updateInputFromBackend NOTIFY inputFromBackendChanged)
     Q_PROPERTY(bool hasDescription READ hasDescription WRITE updateHasDescription NOTIFY hasDescriptionChanged)
+    Q_PROPERTY(bool spacePressed READ spacePressed WRITE updateSpacePressed NOTIFY spacePressedChanged)
+
+    QString noBreakSpace = "\u00a0";
+    QString paragraphSeparator = "\u2029";
 
     QString m_markdown;
     QString m_html;
@@ -22,21 +25,23 @@ class NotesBackend : public QObject
     bool isAddingText;
     bool m_isInputFromBackend;
     bool m_hasDescription;
+    bool m_spacePressed;
     int titleLength;
     QString noteTitle;
-    QString titleContent;
 
     QString markdown();
     QString html();
     int cursorPosition();
     bool isInputFromBackend();
     bool hasDescription();
+    bool spacePressed();
 
     void updateMarkdown(QString &markdownText);
     void updateHtml(QString &keyboardInput);
     void updateCursorPosition(const int &cursorPosition);
     void updateInputFromBackend(const bool &isInputFromBackend);
     void updateHasDescription(const bool &hasDescription);
+    void updateSpacePressed(const bool &spacePressed);
 
     void processMarkdown(QString text);
     void transformKeyboardInput(QString text);
@@ -56,6 +61,7 @@ signals:
     void cursorPositionChanged();
     void inputFromBackendChanged();
     void hasDescriptionChanged();
+    void spacePressedChanged();
 };
 
 #endif // NOTESBACKEND_H
