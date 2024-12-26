@@ -14,20 +14,22 @@ class NotesBackend : public QObject
     Q_PROPERTY(int isInputFromBackend READ isInputFromBackend WRITE updateInputFromBackend NOTIFY inputFromBackendChanged)
     Q_PROPERTY(bool hasDescription READ hasDescription WRITE updateHasDescription NOTIFY hasDescriptionChanged)
     Q_PROPERTY(bool spacePressed READ spacePressed WRITE updateSpacePressed NOTIFY spacePressedChanged)
+    Q_PROPERTY(int titleLength READ titleLength WRITE updateTitleLength)
+    Q_PROPERTY(QString noteTitle READ noteTitle WRITE updateNoteTitle)
 
     QString noBreakSpace = "\u00a0";
     QString paragraphSeparator = "\u2029";
 
     QString m_markdown;
     QString m_html;
-    QString plainText;
     int m_cursorPosition;
-    bool isAddingText;
     bool m_isInputFromBackend;
     bool m_hasDescription;
     bool m_spacePressed;
-    int titleLength;
-    QString noteTitle;
+    int m_titleLength;
+    QString m_noteTitle;
+    bool isAddingText;
+    QString plainText;
 
     QString markdown();
     QString html();
@@ -35,6 +37,8 @@ class NotesBackend : public QObject
     bool isInputFromBackend();
     bool hasDescription();
     bool spacePressed();
+    int titleLength();
+    QString noteTitle();
 
     void updateMarkdown(QString &markdownText);
     void updateHtml(QString &keyboardInput);
@@ -42,6 +46,8 @@ class NotesBackend : public QObject
     void updateInputFromBackend(const bool &isInputFromBackend);
     void updateHasDescription(const bool &hasDescription);
     void updateSpacePressed(const bool &spacePressed);
+    void updateTitleLength(const int & titleLength);
+    void updateNoteTitle(const QString & noteTitle);
 
     void processMarkdown(QString text);
     void transformKeyboardInput(QString text);
@@ -62,6 +68,7 @@ signals:
     void inputFromBackendChanged();
     void hasDescriptionChanged();
     void spacePressedChanged();
+    void titleLengthChanged();
 };
 
 #endif // NOTESBACKEND_H

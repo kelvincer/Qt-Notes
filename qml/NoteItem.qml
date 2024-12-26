@@ -5,11 +5,6 @@ import QtQuick.Layouts
 ColumnLayout {
 
     anchors.fill: parent
-    Component.onCompleted: {
-        editorColorUpdated(itemColor)
-    }
-
-    signal editorColorUpdated(string color)
 
     RowLayout {
 

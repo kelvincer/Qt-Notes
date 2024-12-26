@@ -47,6 +47,16 @@ bool NotesBackend::spacePressed()
     return m_spacePressed;
 }
 
+int NotesBackend::titleLength()
+{
+    return m_titleLength;
+}
+
+QString NotesBackend::noteTitle()
+{
+    return m_noteTitle;
+}
+
 void NotesBackend::updateMarkdown(QString &markdownText)
 {
     if (markdownText == m_markdown)
@@ -86,6 +96,10 @@ void NotesBackend::processMarkdown(QString text)
 void NotesBackend::transformKeyboardInput(QString keyboardInput)
 {
     plainText = keyboardInput;
+
+    for (QChar i : keyboardInput) {
+        qDebug() << i;
+    }
     
     if (spacePressed())
     {
@@ -95,7 +109,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         emit spacePressedChanged();
     }
 
-    qDebug() << "title lengh 12:" << titleLength << "auto cursorPosition:" << cursorPosition();
+    qDebug() << "title lengh 12:" << m_titleLength << "auto cursorPosition:" << cursorPosition();
 
     qDebug() << "isAddingText: " << isAddingText << " isChangingTitle: " << isChangingTitle();
 
@@ -104,15 +118,15 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     {
         if (isChangingTitle())
         {
-            if (cursorPosition() < titleLength)
+            if (cursorPosition() < m_titleLength)
             {
-                titleLength++;
-                noteTitle = plainText.mid(0, titleLength);
+                m_titleLength++;
+                m_noteTitle = plainText.mid(0, m_titleLength);
             }
             else
             {
-                titleLength = isEndOfTitle() ? titleLength : cursorPosition();
-                noteTitle = plainText.mid(0, titleLength);
+                m_titleLength = isEndOfTitle() ? m_titleLength : cursorPosition();
+                m_noteTitle = plainText.mid(0, m_titleLength);
             }
         }
         else
@@ -124,15 +138,15 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         if (isChangingTitle())
         {
             qDebug() << "isChangingTitle";
-            if (cursorPosition() < titleLength)
+            if (cursorPosition() < m_titleLength)
             {
-                titleLength = titleLength - 1;
-                noteTitle = plainText.mid(0, titleLength);
+                m_titleLength = m_titleLength - 1;
+                m_noteTitle = plainText.mid(0, m_titleLength);
             }
             else
             {
-                titleLength = cursorPosition();
-                noteTitle = plainText.mid(0, titleLength);
+                m_titleLength = cursorPosition();
+                m_noteTitle = plainText.mid(0, m_titleLength);
             }
         }
         else
@@ -140,11 +154,11 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         }
     }
 
-    qDebug() << "noteTitle: " << noteTitle << " titleLength: " << titleLength;
+    qDebug() << "noteTitle: " << m_noteTitle << " titleLength: " << m_titleLength;
 
     qDebug() << "plainText: " << plainText;
 
-    if (noteTitle == plainText)
+    if (m_noteTitle == plainText)
     {
         m_hasDescription = false;
         emit hasDescriptionChanged();
@@ -153,13 +167,20 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     // Showing input
     if (hasDescription())
     {
-        qDebug() << "Description: " << plainText.mid(titleLength - 1, plainText.length());
 
-        m_html = ("<h2>" + noteTitle.mid(0, titleLength) + "</h2>").append(("<p>" + plainText.mid(titleLength + 1, plainText.length()) + "</p>"));
+        QString desc = plainText.mid(m_titleLength + 1, plainText.length());
+
+        for (QChar c : desc) {
+            qDebug() << c;
+        }
+
+        qDebug() << "Description: " << plainText.mid(m_titleLength + 1, plainText.length());
+
+        m_html = ("<h2>" + m_noteTitle.mid(0, m_titleLength) + "</h2>").append(("<p>" + plainText.mid(m_titleLength + 1, plainText.length()) + "</p>"));
     }
     else
     {
-        m_html = "<h2>" + noteTitle + "</h2>";
+        m_html = "<h2>" + m_noteTitle + "</h2>";
     }
 
     qDebug() << "processHTML m_html: " << m_html;
@@ -168,19 +189,19 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 bool NotesBackend::isChangingTitle()
 {
     // head forward
-    if (titleLength == cursorPosition() - 1)
+    if (m_titleLength == cursorPosition() - 1)
     {
         return true;
     }
 
     // head backward
-    if (titleLength - 1 == cursorPosition())
+    if (m_titleLength - 1 == cursorPosition())
     {
         return true;
     }
 
     // middle
-    if (cursorPosition() < titleLength)
+    if (cursorPosition() < m_titleLength)
     {
         return true;
     }
@@ -190,7 +211,7 @@ bool NotesBackend::isChangingTitle()
 
 bool NotesBackend::isChangingDescription(QString text)
 {
-    return titleLength < cursorPosition();
+    return m_titleLength < cursorPosition();
 }
 
 bool NotesBackend::isEndOfTitle()
@@ -270,4 +291,20 @@ void NotesBackend::updateSpacePressed(const bool &spacePressed)
     m_spacePressed = spacePressed;
 
     emit spacePressedChanged();
+}
+
+void NotesBackend::updateTitleLength(const int &titleLength)
+{
+    if(titleLength == m_titleLength)
+        return;
+
+    m_titleLength = titleLength;
+}
+
+void NotesBackend::updateNoteTitle(const QString &noteTitle)
+{
+    if(noteTitle == m_noteTitle)
+        return;
+
+    m_noteTitle = noteTitle;
 }

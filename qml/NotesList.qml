@@ -8,9 +8,7 @@ ListView {
     anchors.fill: parent
     clip: true
 
-    signal colorUpdated(string color)
-
-    property string itemCircleColor: ""
+    signal editorUpdated()
 
     Component.onCompleted: {
         console.log("width: " + list.width)
@@ -26,10 +24,9 @@ ListView {
         NoteItem {
             id: noteItem
             anchors.fill: parent
-            onEditorColorUpdated: color => {
-                                      console.log("Editor color updated " + color)
-                                      colorUpdated(color)
-                                  }
+            Component.onCompleted: {
+                editorUpdated()
+            }
         }
 
         MouseArea {
@@ -37,6 +34,7 @@ ListView {
             onClicked: {
                 console.log("mouse area")
                 list.currentIndex = index
+                editorUpdated()
             }
         }
     }

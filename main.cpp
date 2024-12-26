@@ -1,7 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QFont>
-//#include "notebackend/backend.h"
 
 int main(int argc, char *argv[])
 {
