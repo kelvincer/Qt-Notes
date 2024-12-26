@@ -10,6 +10,7 @@ Window {
     title: qsTr("Hello World")
 
     property int appMargin: 10
+    property string editorBackgroundColor: ""
 
     NotesBackend {
         id: notesBackend
@@ -21,7 +22,6 @@ Window {
 
         Rectangle {
             Layout.preferredWidth: parent.width * 0.35;
-            //Layout.preferredHeight: parent.height
             color: "white"
             Layout.fillHeight: true
 
@@ -100,12 +100,16 @@ Window {
                     right: parent.right
                     left: parent.left
                     margins: appMargin
+                    topMargin: 15
                 }
 
                 Item {
                     id: homeTab
                     NotesList {
                         id: notesList
+                        onColorUpdated: color => {
+                            editorBackgroundColor = color
+                        }
                     }
                 }
 
@@ -162,16 +166,15 @@ Window {
                 textFormat: TextEdit.RichText
                 wrapMode: TextEdit.Wrap
                 cursorPosition: notesBackend.cursorPosition
-
+                background: Rectangle {
+                    color: editorBackgroundColor
+                }
                 onCursorPositionChanged: {
                     notesBackend.cursorPosition = cursorPosition
                 }
-
                 onTextChanged: {
-
                     notesBackend.html = getText(0, length)
                 }
-
                 Keys.onPressed: event => {
 
                     if (event.key === Qt.Key_Backspace) {

@@ -17,6 +17,6 @@ ListModel {
 
         console.log("color: " + colors[i % colors.length]);
 
-        notesModel.insert(0, {"itemColor": colors[i % colors.length], "title": item.title, "description": item.description, "time": item.time})
+        notesModel.insert(0, {"itemColor": colors[i % colors.length], "title": "Hi! I'm a sticky note. ❤️", "description": "You can do all sorts of things with me. For example...\nCreate titles with # at the beginning of each paragraph.", "time": "item.time"})
     }
 }

@@ -2,14 +2,19 @@ import QtQuick 2.4
 import QtQuick.Controls.Universal
 import QtQuick.Layouts
 
-
 ColumnLayout {
 
-    width: parent.width
+    anchors.fill: parent
+    Component.onCompleted: {
+        editorColorUpdated(itemColor)
+    }
+
+    signal editorColorUpdated(string color)
 
     RowLayout {
 
         width: parent.width
+        height: parent.height
 
         Rectangle {
             width: 20
@@ -27,6 +32,7 @@ ColumnLayout {
         ColumnLayout {
 
             Layout.fillWidth: true
+            height: parent.height
 
             Text {
                 text: title
@@ -47,7 +53,7 @@ ColumnLayout {
 
             Text {
                 text: time
-                color: "lightgray"
+                color: "silver"
                 Layout.alignment: Qt.AlignLeft
                 font.pointSize: 12
             }
@@ -58,9 +64,7 @@ ColumnLayout {
         color: "#DFDFDF"
         height: 1
         width: parent.width
-        visible: (index !== (list.count - 1))
-        Layout.topMargin: 5
-        Layout.bottomMargin: 5
+        visible: true //(index !== (list.count - 1))
     }
 }
 
