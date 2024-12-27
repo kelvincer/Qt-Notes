@@ -118,11 +118,12 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     {
         if (isChangingTitle())
         {
+            // If cursor position is less than title length
             if (cursorPosition() < m_titleLength)
             {
                 m_titleLength++;
                 m_noteTitle = plainText.mid(0, m_titleLength);
-            }
+            } // If cursor position is greater than title length
             else
             {
                 m_titleLength = isEndOfTitle() ? m_titleLength : cursorPosition();
@@ -137,15 +138,14 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     {
         if (isChangingTitle())
         {
-            qDebug() << "isChangingTitle";
             if (cursorPosition() < m_titleLength)
             {
-                m_titleLength = m_titleLength - 1;
+                m_titleLength--;
                 m_noteTitle = plainText.mid(0, m_titleLength);
             }
             else
             {
-                m_titleLength = cursorPosition();
+                m_titleLength = isEndOfTitle() ? m_titleLength : cursorPosition();
                 m_noteTitle = plainText.mid(0, m_titleLength);
             }
         }
@@ -188,6 +188,9 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 
 bool NotesBackend::isChangingTitle()
 {
+
+    qDebug() << "cursorPosition: " << cursorPosition() << " titleLength: " << m_titleLength;
+
     // head forward
     if (m_titleLength == cursorPosition() - 1)
     {
@@ -217,6 +220,11 @@ bool NotesBackend::isChangingDescription(QString text)
 bool NotesBackend::isEndOfTitle()
 {
     return plainText.endsWith(paragraphSeparator);
+}
+
+int NotesBackend::descriptionLength()
+{
+    return plainText.mid(m_titleLength + 1, plainText.length()).length();
 }
 
 void NotesBackend::updateHtml(QString &keyboardInput)

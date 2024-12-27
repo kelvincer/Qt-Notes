@@ -54,6 +54,7 @@ class NotesBackend : public QObject
     bool isChangingTitle();
     bool isChangingDescription(QString text);
     bool isEndOfTitle();
+    int descriptionLength();
 
 public:
 
