@@ -85,12 +85,11 @@ void NotesBackend::processMarkdown(QString text)
 
 void NotesBackend::transformKeyboardInput(QString keyboardInput)
 {
-    plainText = keyboardInput;
-
-    for (QChar i : keyboardInput) {
+    for (QChar i : keyboardInput)
+    {
         qDebug() << i;
     }
-    
+
     if (spacePressed())
     {
         plainText.removeAt(cursorPosition() - 1);
@@ -112,12 +111,12 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
             if (cursorPosition() < m_titleLength)
             {
                 m_titleLength++;
-                m_noteTitle = plainText.mid(0, m_titleLength);
+                m_noteTitle = keyboardInput.mid(0, m_titleLength);
             } // If cursor position is greater than title length
             else
             {
-                m_titleLength = isEndOfTitle() ? m_titleLength : cursorPosition();
-                m_noteTitle = plainText.mid(0, m_titleLength);
+                m_titleLength = isEndOfTitle(keyboardInput) ? m_titleLength : cursorPosition();
+                m_noteTitle = keyboardInput.mid(0, m_titleLength);
             }
         }
         else
@@ -131,12 +130,21 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
             if (cursorPosition() < m_titleLength)
             {
                 m_titleLength--;
-                m_noteTitle = plainText.mid(0, m_titleLength);
+                m_noteTitle = keyboardInput.mid(0, m_titleLength);
             }
             else
             {
-                m_titleLength = isEndOfTitle() ? m_titleLength : cursorPosition();
-                m_noteTitle = plainText.mid(0, m_titleLength);
+                // We joined title and description
+                if (hasDescription() && !keyboardInput.contains(paragraphSeparator))
+                {
+                    m_noteTitle = keyboardInput;
+                    m_titleLength = keyboardInput.length();
+                }
+                else
+                {
+                    m_titleLength = isEndOfTitle(keyboardInput) ? m_titleLength : cursorPosition();
+                    m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                }
             }
         }
         else
@@ -148,7 +156,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 
     qDebug() << "plainText: " << plainText;
 
-    if (m_noteTitle == plainText)
+    if (m_noteTitle == keyboardInput)
     {
         m_hasDescription = false;
         emit hasDescriptionChanged();
@@ -157,16 +165,16 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     // Showing input
     if (hasDescription())
     {
-
         QString desc = plainText.mid(m_titleLength + 1, plainText.length());
 
-        for (QChar c : desc) {
+        for (QChar c : desc)
+        {
             qDebug() << c;
         }
 
         qDebug() << "Description: " << plainText.mid(m_titleLength + 1, plainText.length());
 
-        m_html = ("<h2>" + m_noteTitle.mid(0, m_titleLength) + "</h2>").append(("<p>" + plainText.mid(m_titleLength + 1, plainText.length()) + "</p>"));
+        m_html = ("<h2>" + m_noteTitle + "</h2>").append(("<p>" + keyboardInput.mid(m_titleLength + 1, keyboardInput.length()) + "</p>"));
     }
     else
     {
@@ -174,12 +182,20 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     }
 
     qDebug() << "processHTML m_html: " << m_html;
+
+    plainText = keyboardInput;
 }
 
 bool NotesBackend::isChangingTitle()
 {
 
     qDebug() << "cursorPosition: " << cursorPosition() << " titleLength: " << m_titleLength;
+
+
+    // if(std::count(plainText.begin(), plainText.end(), paragraphSeparator) >= 2)
+    // {
+    //     return false;
+    // }
 
     // head forward
     if (m_titleLength == cursorPosition() - 1)
@@ -199,6 +215,12 @@ bool NotesBackend::isChangingTitle()
         return true;
     }
 
+    // When joining title and description
+    if (m_cursorPosition == m_titleLength && hasDescription())
+    {
+        return true;
+    }
+
     return false;
 }
 
@@ -207,9 +229,9 @@ bool NotesBackend::isChangingDescription(QString text)
     return m_titleLength < cursorPosition();
 }
 
-bool NotesBackend::isEndOfTitle()
+bool NotesBackend::isEndOfTitle(QString text)
 {
-    return plainText.endsWith(paragraphSeparator) && m_titleLength != 0;
+    return text.endsWith(paragraphSeparator) && m_titleLength != 0;
 }
 
 int NotesBackend::descriptionLength()
@@ -219,7 +241,8 @@ int NotesBackend::descriptionLength()
 
 bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString text)
 {
-    for(QChar c : text) {
+    for (QChar c : text)
+    {
         if (c != paragraphSeparator)
         {
             return false;

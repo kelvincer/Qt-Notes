@@ -47,12 +47,11 @@ class NotesBackend : public QObject
     void transformKeyboardInput(QString text);
     bool isChangingTitle();
     bool isChangingDescription(QString text);
-    bool isEndOfTitle();
+    bool isEndOfTitle(QString text);
     int descriptionLength();
     bool containOnlyParagraphSeparatorCharacter(QString text);
 
 public:
-
     explicit NotesBackend(QObject *parent = nullptr);
     Q_INVOKABLE void sendNoteDescription(QString description);
 
