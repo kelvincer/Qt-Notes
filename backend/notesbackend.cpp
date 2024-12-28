@@ -97,13 +97,13 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 {
     plainText = keyboardInput;
 
-    for (QChar i : keyboardInput)
-    {
+    for (QChar i : keyboardInput) {
         qDebug() << i;
     }
-
+    
     if (spacePressed())
     {
+        plainText.removeAt(cursorPosition() - 1);
         plainText.insert(cursorPosition() - 1, noBreakSpace);
         m_spacePressed = false;
         emit spacePressedChanged();
@@ -170,8 +170,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 
         QString desc = plainText.mid(m_titleLength + 1, plainText.length());
 
-        for (QChar c : desc)
-        {
+        for (QChar c : desc) {
             qDebug() << c;
         }
 
@@ -304,7 +303,7 @@ void NotesBackend::updateSpacePressed(const bool &spacePressed)
 
 void NotesBackend::updateTitleLength(const int &titleLength)
 {
-    if (titleLength == m_titleLength)
+    if(titleLength == m_titleLength)
         return;
 
     m_titleLength = titleLength;
@@ -312,7 +311,7 @@ void NotesBackend::updateTitleLength(const int &titleLength)
 
 void NotesBackend::updateNoteTitle(const QString &noteTitle)
 {
-    if (noteTitle == m_noteTitle)
+    if(noteTitle == m_noteTitle)
         return;
 
     m_noteTitle = noteTitle;
