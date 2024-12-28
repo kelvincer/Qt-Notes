@@ -291,7 +291,7 @@ void NotesBackend::updateCursorPosition(const int &newCursorPosition)
 
     qDebug() << "updateCursorPosition Len: " << m_cursorPosition;
 
-    emit cursorPositionChanged();
+    emit editorCursorPositionChanged();
 }
 
 void NotesBackend::updateInputFromBackend(const bool &isInputFromBackend)
