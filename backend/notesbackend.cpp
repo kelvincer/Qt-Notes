@@ -219,12 +219,23 @@ bool NotesBackend::isChangingDescription(QString text)
 
 bool NotesBackend::isEndOfTitle()
 {
-    return plainText.endsWith(paragraphSeparator);
+    return plainText.endsWith(paragraphSeparator) && titleLength() != 0;
 }
 
 int NotesBackend::descriptionLength()
 {
     return plainText.mid(m_titleLength + 1, plainText.length()).length();
+}
+
+bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString text)
+{
+    for(QChar c : text) {
+        if (c != paragraphSeparator)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 void NotesBackend::updateHtml(QString &keyboardInput)
@@ -238,6 +249,18 @@ void NotesBackend::updateHtml(QString &keyboardInput)
     {
         return;
     }
+
+    if (containOnlyParagraphSeparatorCharacter(keyboardInput))
+    {
+        updateCursorPosition(0);
+        updateHasDescription(false);
+        updateNoteTitle("");
+        updateTitleLength(0);
+        plainText = "";
+        return;
+    }
+    
+
 
     isAddingText = keyboardInput.length() > plainText.length();
 

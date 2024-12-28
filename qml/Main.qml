@@ -111,11 +111,11 @@ Window {
                             let element = notesList.model.get(currentIndex);
                             editorBackgroundColor = element.itemColor
 
-                            notesBackend.noteTitle = element.title
-                            notesBackend.titleLength = element.title.length
-                            notesBackend.hasDescription = true
-                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
-                            notesBackend.html =  element.title + "\u2029" + element.description
+                            // notesBackend.noteTitle = element.title
+                            // notesBackend.titleLength = element.title.length
+                            // notesBackend.hasDescription = true
+                            // notesBackend.cursorPosition = element.title.length + element.description.length + 1
+                            // notesBackend.html =  element.title + "\u2029" + element.description
                         }
                     }
                 }
