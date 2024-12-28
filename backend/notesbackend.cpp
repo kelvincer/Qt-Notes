@@ -47,16 +47,6 @@ bool NotesBackend::spacePressed()
     return m_spacePressed;
 }
 
-int NotesBackend::titleLength()
-{
-    return m_titleLength;
-}
-
-QString NotesBackend::noteTitle()
-{
-    return m_noteTitle;
-}
-
 void NotesBackend::updateMarkdown(QString &markdownText)
 {
     if (markdownText == m_markdown)
@@ -219,7 +209,7 @@ bool NotesBackend::isChangingDescription(QString text)
 
 bool NotesBackend::isEndOfTitle()
 {
-    return plainText.endsWith(paragraphSeparator) && titleLength() != 0;
+    return plainText.endsWith(paragraphSeparator) && m_titleLength != 0;
 }
 
 int NotesBackend::descriptionLength()
@@ -254,13 +244,11 @@ void NotesBackend::updateHtml(QString &keyboardInput)
     {
         updateCursorPosition(0);
         updateHasDescription(false);
-        updateNoteTitle("");
-        updateTitleLength(0);
+        m_noteTitle = "";
+        m_titleLength = 0;
         plainText = "";
         return;
     }
-    
-
 
     isAddingText = keyboardInput.length() > plainText.length();
 
@@ -289,7 +277,7 @@ void NotesBackend::updateCursorPosition(const int &newCursorPosition)
 
     m_cursorPosition = newCursorPosition;
 
-    qDebug() << "updateCursorPosition Len: " << m_cursorPosition;
+    qDebug() << "updateCursorPosition func: " << m_cursorPosition;
 
     emit editorCursorPositionChanged();
 }
@@ -322,20 +310,4 @@ void NotesBackend::updateSpacePressed(const bool &spacePressed)
     m_spacePressed = spacePressed;
 
     emit spacePressedChanged();
-}
-
-void NotesBackend::updateTitleLength(const int &titleLength)
-{
-    if(titleLength == m_titleLength)
-        return;
-
-    m_titleLength = titleLength;
-}
-
-void NotesBackend::updateNoteTitle(const QString &noteTitle)
-{
-    if(noteTitle == m_noteTitle)
-        return;
-
-    m_noteTitle = noteTitle;
 }
