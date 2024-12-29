@@ -45,12 +45,15 @@ class NotesBackend : public QObject
 
     void processMarkdown(QString text);
     void transformKeyboardInput(QString text);
-    bool isChangingTitle();
+    bool isChangingTitle(const QString &text);
     bool isChangingDescription(QString text);
     bool isEndOfTitle(QString text);
     int descriptionLength();
     bool containOnlyParagraphSeparatorCharacter(QString &text);
     bool textContainsTitle(QString &text);
+    bool hasKeyboarInputJoinedTitleAndDescription(const QString &text);
+    bool inputContainsDescription(const QString &text);
+    bool isEnterPressedOnMidleTitle(const QString &text);
 
 public:
     explicit NotesBackend(QObject *parent = nullptr);

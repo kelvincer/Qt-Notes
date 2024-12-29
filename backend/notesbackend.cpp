@@ -102,18 +102,19 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 
     qDebug() << "titlelength before:" << m_titleLength << "title:" << m_noteTitle;
 
-    qDebug() << "isAddingText:" << isAddingText << " isChangingTitle:" << isChangingTitle();
+    qDebug() << "isAddingText:" << isAddingText << " isChangingTitle:" << isChangingTitle(keyboardInput);
 
     // Starting processing text
     if (isAddingText)
     {
-        if (isChangingTitle())
+        if (isChangingTitle(keyboardInput))
         {
             // When press enter in the middle of title
-            if (std::count(keyboardInput.begin(), keyboardInput.end(), paragraphSeparator) >= 1 && keyboardInput[0] != paragraphSeparator)
+            if(isEnterPressedOnMidleTitle(keyboardInput))
             {
                 m_noteTitle = keyboardInput.mid(0, keyboardInput.indexOf(paragraphSeparator));
                 m_titleLength = m_noteTitle.length();
+                qDebug() << "123";
             }
             else
             {
@@ -122,24 +123,15 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
                 {
                     m_titleLength++;
                     m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                    qDebug() << "124";
                 } // If cursor position is greater than title length
                 else
                 {
                     m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
                     m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                    qDebug() << "125";
                 }
             }
-            // If cursor position is less than title length
-            // if (cursorPosition() < m_titleLength)
-            // {
-            //     m_titleLength++;
-            //     m_noteTitle = keyboardInput.mid(0, m_titleLength);
-            // } // If cursor position is greater than title length
-            // else
-            // {
-            //     m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
-            //     m_noteTitle = keyboardInput.mid(0, m_titleLength);
-            // }
         }
         else
         {
@@ -147,20 +139,22 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     }
     else
     {
-        if (isChangingTitle())
+        if (isChangingTitle(keyboardInput))
         {
             if (cursorPosition() < m_titleLength)
             {
                 m_titleLength--;
                 m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                qDebug() << "126";
             }
             else
             {
                 // We joined title and description
-                if (hasDescription() && !keyboardInput.contains(paragraphSeparator))
+                if (hasKeyboarInputJoinedTitleAndDescription(keyboardInput))
                 {
                     m_noteTitle = keyboardInput;
                     m_titleLength = keyboardInput.length();
+                    qDebug() << "127";
                 }
                 else
                 {
@@ -168,6 +162,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 
                     m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
                     m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                    qDebug() << "128";
                 }
             }
         }
@@ -210,34 +205,41 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     qDebug() << "plainText: " << plainText;
 }
 
-bool NotesBackend::isChangingTitle()
+bool NotesBackend::isChangingTitle(const QString &keyboardInput)
 {
-    // if (std::count(plainText.begin(), plainText.end(), paragraphSeparator) >= 2)
-    // {
-    //     return false;
-    // }
-
     // head forward
     if (m_titleLength == cursorPosition() - 1)
     {
-        return true;
+        qDebug() << "isChangingTitle 2";
+
+        if (keyboardInput.length() > m_titleLength && keyboardInput[m_titleLength] == paragraphSeparator)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     // head backward
     if (m_titleLength - 1 == cursorPosition())
     {
+        qDebug() << "isChangingTitle 3";
         return true;
     }
 
     // middle
     if (cursorPosition() < m_titleLength)
     {
+        qDebug() << "isChangingTitle 4";
         return true;
     }
 
     // When joining title and description
     if (m_cursorPosition == m_titleLength && hasDescription())
     {
+        qDebug() << "isChangingTitle 5";
         return true;
     }
 
@@ -262,6 +264,64 @@ int NotesBackend::descriptionLength()
 bool NotesBackend::textContainsTitle(QString &text)
 {
     return text.contains(paragraphSeparator) && m_titleLength != 0;
+}
+
+bool NotesBackend::hasKeyboarInputJoinedTitleAndDescription(const QString &text)
+{
+    //return hasDescription() && !text.contains(paragraphSeparator);
+
+    return !inputContainsDescription(text);
+}
+
+bool NotesBackend::inputContainsDescription(const QString &text)
+{
+    std::u16string textString = text.toStdU16String();
+
+    std::u16string u16ParagraphSeparator = u"\u00a0";
+
+    size_t firstParagraphSeparatorIt = textString.find(u16ParagraphSeparator);
+
+    // Pure title without new paragraph separator
+    if(firstParagraphSeparatorIt == std::string::npos)
+    {
+        return false;
+    }
+    else
+    {
+        size_t titleFirstCharPos = textString.find_first_not_of(u16ParagraphSeparator);
+
+        size_t firstParagraphSeparatorBetweenTitleAndDescriptionPos = textString.find_first_of(u16ParagraphSeparator, titleFirstCharPos);
+
+        // std::u16string::const_iterator  titleFirstCharIt = find_if(textString.begin(), textString.end(), [this](char c) { return c != paragraphSeparator; });
+
+        // std::u16string::const_iterator firstParagraphSeparatorBetweenTitleAndDescription = find(titleFirstCharIt, textString.end(), u16ParagraphSeparator);
+
+        // Pure title with initials paragraph separators
+        if(firstParagraphSeparatorBetweenTitleAndDescriptionPos == std::string::npos)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}
+
+bool NotesBackend::isEnterPressedOnMidleTitle(const QString &text)
+{
+    std::u16string textString = text.toStdU16String();
+
+    qDebug() << "textString" << textString;
+
+    size_t firstNotParagraphSeparatorPosition = textString.find_first_not_of(u"\u2029");
+
+    // if(firstNotParagraphSeparatorPosition == std::string::npos)
+    //     return true;
+
+    qDebug() << "first not paragraph" << firstNotParagraphSeparatorPosition << cursorPosition();
+
+    return cursorPosition() - firstNotParagraphSeparatorPosition > 0;
 }
 
 bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString &text)
