@@ -98,7 +98,9 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         emit spacePressedChanged();
     }
 
-    qDebug() << "titlelength before:" << m_titleLength << "auto cursorPosition:" << cursorPosition();
+    qDebug() << "cursor:" << cursorPosition();
+
+    qDebug() << "titlelength before:" << m_titleLength << "title:" << m_noteTitle;
 
     qDebug() << "isAddingText:" << isAddingText << " isChangingTitle:" << isChangingTitle();
 
@@ -107,17 +109,37 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     {
         if (isChangingTitle())
         {
-            // If cursor position is less than title length
-            if (cursorPosition() < m_titleLength)
+            // When press enter in the middle of title
+            if (std::count(keyboardInput.begin(), keyboardInput.end(), paragraphSeparator) >= 1 && keyboardInput[0] != paragraphSeparator)
             {
-                m_titleLength++;
-                m_noteTitle = keyboardInput.mid(0, m_titleLength);
-            } // If cursor position is greater than title length
+                m_noteTitle = keyboardInput.mid(0, keyboardInput.indexOf(paragraphSeparator));
+                m_titleLength = m_noteTitle.length();
+            }
             else
             {
-                m_titleLength = isEndOfTitle(keyboardInput) ? m_titleLength : cursorPosition();
-                m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                // If cursor position is less than title length
+                if (cursorPosition() < m_titleLength)
+                {
+                    m_titleLength++;
+                    m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                } // If cursor position is greater than title length
+                else
+                {
+                    m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
+                    m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                }
             }
+            // If cursor position is less than title length
+            // if (cursorPosition() < m_titleLength)
+            // {
+            //     m_titleLength++;
+            //     m_noteTitle = keyboardInput.mid(0, m_titleLength);
+            // } // If cursor position is greater than title length
+            // else
+            // {
+            //     m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
+            //     m_noteTitle = keyboardInput.mid(0, m_titleLength);
+            // }
         }
         else
         {
@@ -142,7 +164,9 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
                 }
                 else
                 {
-                    m_titleLength = isEndOfTitle(keyboardInput) ? m_titleLength : cursorPosition();
+                    qDebug() << "end para:" << isEndOfTitle(keyboardInput) << keyboardInput.indexOf(paragraphSeparator);
+
+                    m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
                     m_noteTitle = keyboardInput.mid(0, m_titleLength);
                 }
             }
@@ -152,7 +176,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         }
     }
 
-    qDebug() << "noteTitle after update:" << m_noteTitle << " titleLength after update:" << m_titleLength;
+    qDebug() << "titleLength after update:" << m_titleLength << "noteTitle after update:" << m_noteTitle;
 
     if (m_noteTitle == keyboardInput)
     {
@@ -176,7 +200,8 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 
     qDebug() << "processHTML m_html: " << m_html;
 
-    for(QChar t: m_noteTitle) {
+    for (QChar t : m_noteTitle)
+    {
         qDebug() << "t:" << t;
     }
 
@@ -187,14 +212,10 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 
 bool NotesBackend::isChangingTitle()
 {
-
-    qDebug() << "cursorPosition: " << cursorPosition() << " titleLength: " << m_titleLength;
-
-
-    if(std::count(plainText.begin(), plainText.end(), paragraphSeparator) >= 2)
-    {
-        return false;
-    }
+    // if (std::count(plainText.begin(), plainText.end(), paragraphSeparator) >= 2)
+    // {
+    //     return false;
+    // }
 
     // head forward
     if (m_titleLength == cursorPosition() - 1)
@@ -238,7 +259,12 @@ int NotesBackend::descriptionLength()
     return plainText.mid(m_titleLength + 1, plainText.length()).length();
 }
 
-bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString text)
+bool NotesBackend::textContainsTitle(QString &text)
+{
+    return text.contains(paragraphSeparator) && m_titleLength != 0;
+}
+
+bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString &text)
 {
     for (QChar c : text)
     {

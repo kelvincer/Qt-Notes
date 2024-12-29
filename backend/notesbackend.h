@@ -49,7 +49,8 @@ class NotesBackend : public QObject
     bool isChangingDescription(QString text);
     bool isEndOfTitle(QString text);
     int descriptionLength();
-    bool containOnlyParagraphSeparatorCharacter(QString text);
+    bool containOnlyParagraphSeparatorCharacter(QString &text);
+    bool textContainsTitle(QString &text);
 
 public:
     explicit NotesBackend(QObject *parent = nullptr);
