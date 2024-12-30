@@ -53,7 +53,6 @@ class NotesBackend : public QObject
 
 public:
     explicit NotesBackend(QObject *parent = nullptr);
-    Q_INVOKABLE void sendNoteDescription(QString description);
 
 signals:
 

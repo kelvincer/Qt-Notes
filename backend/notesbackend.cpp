@@ -7,16 +7,6 @@ NotesBackend::NotesBackend(QObject *parent)
     qDebug() << "len init: " << m_cursorPosition;
 }
 
-void NotesBackend::sendNoteDescription(QString description)
-{
-    if (description == m_markdown)
-        return;
-
-    qDebug() << "MARKDOWN 2: " << description;
-
-    processMarkdown(description);
-}
-
 QString NotesBackend::markdown()
 {
     return m_markdown;
