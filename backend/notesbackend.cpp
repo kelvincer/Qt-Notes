@@ -110,9 +110,10 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         if (isChangingTitle(keyboardInput))
         {
             // When press enter in the middle of title
-            if(isEnterPressedOnMidleTitle(keyboardInput))
+            if(isEnterPressedOnTitle(keyboardInput))
             {
-                m_noteTitle = keyboardInput.mid(0, keyboardInput.lastIndexOf(paragraphSeparator));
+                m_noteTitle = getNewTitleFromKeyboardInput(keyboardInput);
+                //m_noteTitle = keyboardInput.mid(0, keyboardInput.lastIndexOf(paragraphSeparator));
                 m_titleLength = m_noteTitle.length();
                 qDebug() << "123";
             }
@@ -124,13 +125,17 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
                     m_titleLength++;
                     m_noteTitle = keyboardInput.mid(0, m_titleLength);
                     qDebug() << "124";
-                } // If cursor position is greater than title length
-                else
-                {
-                    m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
-                    m_noteTitle = keyboardInput.mid(0, m_titleLength);
-                    qDebug() << "125";
                 }
+
+                // I can'd reproduce the below case
+
+                // If cursor position is greater than title length
+                // else
+                // {
+                //     m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
+                //     m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                //     qDebug() << "125";
+                // }
             }
         }
         else
@@ -158,10 +163,13 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
                 }
                 else
                 {
-                    qDebug() << "end para:" << isEndOfTitle(keyboardInput) << keyboardInput.indexOf(paragraphSeparator);
+                    //qDebug() << "end para:" << isEndOfTitle(keyboardInput) << keyboardInput.indexOf(paragraphSeparator);
 
-                    m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
-                    m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                    //m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
+                    //m_noteTitle = keyboardInput.mid(0, m_titleLength);
+
+                    m_noteTitle = getNewTitleFromKeyboardInput(keyboardInput);
+                    m_titleLength = m_noteTitle.length();
                     qDebug() << "128";
                 }
             }
@@ -178,6 +186,8 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         m_hasDescription = false;
         emit hasDescriptionChanged();
     }
+
+    qDebug() << "HAS DESCRIPTION: " << hasDescription() << hasKeyboarInputJoinedTitleAndDescription(keyboardInput);
 
     // Showing input
     if (hasDescription())
@@ -251,11 +261,6 @@ bool NotesBackend::isChangingDescription(QString text)
     return m_titleLength < cursorPosition();
 }
 
-bool NotesBackend::isEndOfTitle(QString text)
-{
-    return text.endsWith(paragraphSeparator) && m_titleLength != 0;
-}
-
 int NotesBackend::descriptionLength()
 {
     return plainText.mid(m_titleLength + 1, plainText.length()).length();
@@ -308,13 +313,13 @@ bool NotesBackend::keyboardInputContainsDescription(const QString &text)
     }
 }
 
-bool NotesBackend::isEnterPressedOnMidleTitle(const QString &text)
+bool NotesBackend::isEnterPressedOnTitle(const QString &text)
 {
     std::u16string textString = text.toStdU16String();
 
     qDebug() << "textString" << textString;
 
-    size_t firstNotParagraphSeparatorPosition = textString.find_first_not_of(u"\u2029");
+    size_t firstNotParagraphSeparatorPosition = textString.find_first_not_of(u16ParagraphSeparator);
 
     // if(firstNotParagraphSeparatorPosition == std::string::npos)
     //     return true;
@@ -322,6 +327,19 @@ bool NotesBackend::isEnterPressedOnMidleTitle(const QString &text)
     qDebug() << "first not paragraph" << firstNotParagraphSeparatorPosition << cursorPosition();
 
     return cursorPosition() - firstNotParagraphSeparatorPosition > 0;
+}
+
+QString NotesBackend::getNewTitleFromKeyboardInput(const QString &text)
+{
+    std::u16string textString = text.toStdU16String();
+
+    size_t firstNotParagraphSeparatorPos = textString.find_first_not_of(u16ParagraphSeparator);
+
+    size_t firstParagraphSeparatorBetweenTitleAndDescriptionPos = textString.find_first_of(u16ParagraphSeparator, firstNotParagraphSeparatorPos);
+
+    std::u16string newTitle = textString.substr(0, firstParagraphSeparatorBetweenTitleAndDescriptionPos);
+
+    return QString::fromStdU16String(newTitle);
 }
 
 bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString &text)
