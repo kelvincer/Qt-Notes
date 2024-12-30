@@ -186,8 +186,6 @@ Window {
 
                     if (event.key === Qt.Key_Backspace) {
                         
-                    } else if(event.key === Qt.Key_Return) {
-                        notesBackend.hasDescription = true
                     }
                     else if(event.key === Qt.Key_Space){ 
                         notesBackend.spacePressed = true

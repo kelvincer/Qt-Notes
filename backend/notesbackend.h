@@ -12,7 +12,6 @@ class NotesBackend : public QObject
     Q_PROPERTY(QString html READ html WRITE updateHtml NOTIFY htmlChanged)
     Q_PROPERTY(int cursorPosition READ cursorPosition WRITE updateCursorPosition NOTIFY editorCursorPositionChanged)
     Q_PROPERTY(int isInputFromBackend READ isInputFromBackend WRITE updateInputFromBackend NOTIFY inputFromBackendChanged)
-    Q_PROPERTY(bool hasDescription READ hasDescription WRITE updateHasDescription NOTIFY hasDescriptionChanged)
     Q_PROPERTY(bool spacePressed READ spacePressed WRITE updateSpacePressed NOTIFY spacePressedChanged)
 
     QString noBreakSpace = "\u00a0";
@@ -23,7 +22,6 @@ class NotesBackend : public QObject
     QString m_html;
     int m_cursorPosition;
     bool m_isInputFromBackend;
-    bool m_hasDescription;
     bool m_spacePressed;
     int m_titleLength;
     QString m_noteTitle;
@@ -34,7 +32,6 @@ class NotesBackend : public QObject
     QString html();
     int cursorPosition();
     bool isInputFromBackend();
-    bool hasDescription();
     bool spacePressed();
 
     void updateMarkdown(QString &markdownText);
@@ -50,8 +47,6 @@ class NotesBackend : public QObject
     bool isChangingDescription(QString text);
     int descriptionLength();
     bool containOnlyParagraphSeparatorCharacter(QString &text);
-    bool textContainsTitle(QString &text);
-    bool hasKeyboarInputJoinedTitleAndDescription(const QString &text);
     bool keyboardInputContainsDescription(const QString &text);
     bool isEnterPressedOnTitle(const QString &text);
     QString getNewTitleFromKeyboardInput(const QString & text);
@@ -66,7 +61,6 @@ signals:
     void htmlChanged();
     void editorCursorPositionChanged();
     void inputFromBackendChanged();
-    void hasDescriptionChanged();
     void spacePressedChanged();
     void titleLengthChanged();
 };

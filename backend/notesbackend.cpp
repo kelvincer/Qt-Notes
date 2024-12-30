@@ -37,11 +37,6 @@ bool NotesBackend::isInputFromBackend()
     return m_isInputFromBackend;
 }
 
-bool NotesBackend::hasDescription()
-{
-    return m_hasDescription;
-}
-
 bool NotesBackend::spacePressed()
 {
     return m_spacePressed;
@@ -155,7 +150,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
             else
             {
                 // We joined title and description
-                if (hasKeyboarInputJoinedTitleAndDescription(keyboardInput))
+                if (!keyboardInputContainsDescription(keyboardInput))
                 {
                     m_noteTitle = keyboardInput;
                     m_titleLength = keyboardInput.length();
@@ -181,19 +176,9 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
 
     qDebug() << "titleLength after update:" << m_titleLength << "noteTitle after update:" << m_noteTitle;
 
-    if (m_noteTitle == keyboardInput)
-    {
-        m_hasDescription = false;
-        emit hasDescriptionChanged();
-    }
-
-    qDebug() << "HAS DESCRIPTION: " << hasDescription() << hasKeyboarInputJoinedTitleAndDescription(keyboardInput);
-
     // Showing input
-    if (hasDescription())
+    if (keyboardInputContainsDescription(keyboardInput))
     {
-        QString desc = plainText.mid(m_titleLength + 1, plainText.length());
-
         qDebug() << "Description: " << plainText.mid(m_titleLength + 1, plainText.length());
 
         m_html = ("<h2>" + m_noteTitle + "</h2>").append(("<p>" + keyboardInput.mid(m_titleLength + 1, keyboardInput.length()) + "</p>"));
@@ -204,11 +189,6 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     }
 
     qDebug() << "processHTML m_html: " << m_html;
-
-    for (QChar t : m_noteTitle)
-    {
-        qDebug() << "t:" << t;
-    }
 
     plainText = keyboardInput;
 
@@ -247,9 +227,13 @@ bool NotesBackend::isChangingTitle(const QString &keyboardInput)
     }
 
     // When joining title and description
-    if (m_cursorPosition == m_titleLength && hasDescription())
+    if (!keyboardInputContainsDescription(keyboardInput))
     {
         qDebug() << "isChangingTitle 5";
+        return true;
+    }
+
+    if(isEnterPressedOnTitle(keyboardInput)) {
         return true;
     }
 
@@ -264,16 +248,6 @@ bool NotesBackend::isChangingDescription(QString text)
 int NotesBackend::descriptionLength()
 {
     return plainText.mid(m_titleLength + 1, plainText.length()).length();
-}
-
-bool NotesBackend::textContainsTitle(QString &text)
-{
-    return text.contains(paragraphSeparator) && m_titleLength != 0;
-}
-
-bool NotesBackend::hasKeyboarInputJoinedTitleAndDescription(const QString &text)
-{
-    return !keyboardInputContainsDescription(text);
 }
 
 bool NotesBackend::keyboardInputContainsDescription(const QString &text)
@@ -293,11 +267,6 @@ bool NotesBackend::keyboardInputContainsDescription(const QString &text)
         size_t titleFirstCharPos = textString.find_first_not_of(u16ParagraphSeparator);
 
         size_t firstParagraphSeparatorBetweenTitleAndDescriptionPos = textString.find_first_of(u16ParagraphSeparator, titleFirstCharPos);
-
-
-        for (char c : textString) {
-            qDebug() << c;
-        }
 
         // Pure title with initials paragraph separators
         if(firstParagraphSeparatorBetweenTitleAndDescriptionPos == std::string::npos)
@@ -369,7 +338,6 @@ void NotesBackend::updateHtml(QString &keyboardInput)
     if (containOnlyParagraphSeparatorCharacter(keyboardInput))
     {
         updateCursorPosition(0);
-        updateHasDescription(false);
         m_noteTitle = "";
         m_titleLength = 0;
         plainText = "";
@@ -416,16 +384,6 @@ void NotesBackend::updateInputFromBackend(const bool &isInputFromBackend)
     m_isInputFromBackend = isInputFromBackend;
 
     emit inputFromBackendChanged();
-}
-
-void NotesBackend::updateHasDescription(const bool &hasDescription)
-{
-    if (hasDescription == m_hasDescription)
-        return;
-
-    m_hasDescription = hasDescription;
-
-    emit hasDescriptionChanged();
 }
 
 void NotesBackend::updateSpacePressed(const bool &spacePressed)
