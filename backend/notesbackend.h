@@ -17,6 +17,7 @@ class NotesBackend : public QObject
 
     QString noBreakSpace = "\u00a0";
     QString paragraphSeparator = "\u2029";
+    std::u16string u16ParagraphSeparator = u"\u2029";
 
     QString m_markdown;
     QString m_html;
@@ -52,7 +53,7 @@ class NotesBackend : public QObject
     bool containOnlyParagraphSeparatorCharacter(QString &text);
     bool textContainsTitle(QString &text);
     bool hasKeyboarInputJoinedTitleAndDescription(const QString &text);
-    bool inputContainsDescription(const QString &text);
+    bool keyboardInputContainsDescription(const QString &text);
     bool isEnterPressedOnMidleTitle(const QString &text);
 
 public:

@@ -112,7 +112,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
             // When press enter in the middle of title
             if(isEnterPressedOnMidleTitle(keyboardInput))
             {
-                m_noteTitle = keyboardInput.mid(0, keyboardInput.indexOf(paragraphSeparator));
+                m_noteTitle = keyboardInput.mid(0, keyboardInput.lastIndexOf(paragraphSeparator));
                 m_titleLength = m_noteTitle.length();
                 qDebug() << "123";
             }
@@ -268,22 +268,19 @@ bool NotesBackend::textContainsTitle(QString &text)
 
 bool NotesBackend::hasKeyboarInputJoinedTitleAndDescription(const QString &text)
 {
-    //return hasDescription() && !text.contains(paragraphSeparator);
-
-    return !inputContainsDescription(text);
+    return !keyboardInputContainsDescription(text);
 }
 
-bool NotesBackend::inputContainsDescription(const QString &text)
+bool NotesBackend::keyboardInputContainsDescription(const QString &text)
 {
     std::u16string textString = text.toStdU16String();
-
-    std::u16string u16ParagraphSeparator = u"\u00a0";
 
     size_t firstParagraphSeparatorIt = textString.find(u16ParagraphSeparator);
 
     // Pure title without new paragraph separator
     if(firstParagraphSeparatorIt == std::string::npos)
     {
+        qDebug() << "inputContainsDescription 1";
         return false;
     }
     else
@@ -292,17 +289,20 @@ bool NotesBackend::inputContainsDescription(const QString &text)
 
         size_t firstParagraphSeparatorBetweenTitleAndDescriptionPos = textString.find_first_of(u16ParagraphSeparator, titleFirstCharPos);
 
-        // std::u16string::const_iterator  titleFirstCharIt = find_if(textString.begin(), textString.end(), [this](char c) { return c != paragraphSeparator; });
 
-        // std::u16string::const_iterator firstParagraphSeparatorBetweenTitleAndDescription = find(titleFirstCharIt, textString.end(), u16ParagraphSeparator);
+        for (char c : textString) {
+            qDebug() << c;
+        }
 
         // Pure title with initials paragraph separators
         if(firstParagraphSeparatorBetweenTitleAndDescriptionPos == std::string::npos)
         {
+            qDebug() << "inputContainsDescription 2";
             return false;
         }
         else
         {
+            qDebug() << "inputContainsDescription 3";
             return true;
         }
     }
