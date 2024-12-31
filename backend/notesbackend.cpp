@@ -3,13 +3,7 @@
 NotesBackend::NotesBackend(QObject *parent)
     : QObject{parent}
 {
-    qDebug() << "initial: " << m_markdown;
-    qDebug() << "len init: " << m_cursorPosition;
-}
 
-QString NotesBackend::markdown()
-{
-    return m_markdown;
 }
 
 QString NotesBackend::html()
@@ -30,42 +24,6 @@ bool NotesBackend::isInputFromBackend()
 bool NotesBackend::spacePressed()
 {
     return m_spacePressed;
-}
-
-void NotesBackend::updateMarkdown(QString &markdownText)
-{
-    if (markdownText == m_markdown)
-        return;
-
-    processMarkdown(markdownText);
-
-    emit markdownChanged();
-}
-
-void NotesBackend::processMarkdown(QString text)
-{
-    if (text.isEmpty())
-    {
-        m_markdown = " ";
-        return;
-    }
-
-    QStringList textList = text.split("\n\n");
-
-    if (textList.size() == 2)
-    {
-        if (!textList[0].contains("#"))
-            textList[0] = "# " + textList[0];
-    }
-
-    for (int i = 1; i < textList.size(); ++i)
-    {
-        // textList[i].replace("# ", "");
-    }
-
-    m_markdown = textList.join("\n\n");
-
-    qDebug() << "m: " << m_markdown;
 }
 
 void NotesBackend::transformKeyboardInput(QString keyboardInput)
