@@ -11,9 +11,16 @@ Window {
 
     property int appMargin: 10
     property string editorBackgroundColor: ""
+    property string noteTitle: ""
+    property string noteDescription: ""
 
     NotesBackend {
         id: notesBackend
+        onTitleOrDescriptionChanged: {
+            noteTitle = title;
+            noteDescription = description;
+            console.log("A")
+        }
     }
 
     RowLayout{
@@ -70,11 +77,19 @@ Window {
                             id: plusMouseArea
                             anchors.fill: parent;
                             onClicked: {
+                                notesBackend.setNoteTitle("")
+                                notesBackend.setTitleLength(0)
+                                notesBackend.cursorPosition = 0
+                                notesBackend.html = ""
+                                markDownInput.clear()
                                 notesList.model.addNewItem({
-                                                               "name": "coconut",
-                                                               "cost": 23.89
+                                                               "title": "",
+                                                               "description": "",
+                                                               "timem": "14:45"
                                                            },
                                                            notesList.model.count)
+
+
                             }
                             onPressedChanged: {
 
@@ -111,11 +126,14 @@ Window {
                             let element = notesList.model.get(currentIndex);
                             editorBackgroundColor = element.itemColor
 
-                            // notesBackend.noteTitle = element.title
-                            // notesBackend.titleLength = element.title.length
-                            // notesBackend.hasDescription = true
-                            // notesBackend.cursorPosition = element.title.length + element.description.length + 1
-                            // notesBackend.html =  element.title + "\u2029" + element.description
+                            // if(element.title === "")
+                            //     return;
+
+                            notesBackend.setNoteTitle(element.title)
+                            notesBackend.setTitleLength(element.title.length)
+                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
+                            notesBackend.html =  element.title + "\u2029" + element.description
+                            console.log("B")
                         }
                     }
                 }
@@ -181,6 +199,8 @@ Window {
                 }
                 onTextChanged: {
                     notesBackend.html = getText(0, length)
+                    updateListItem()
+                    console.log("C")
                 }
                 Keys.onPressed: event => {
 
@@ -190,6 +210,17 @@ Window {
                     else if(event.key === Qt.Key_Space){ 
                         notesBackend.spacePressed = true
                     }
+                }
+
+                function updateListItem() {
+
+                    if(noteTitle === "")
+                        return;
+
+                    console.log("console: " + noteTitle)
+
+                    notesList.model.get(notesList.currentIndex).title = noteTitle
+                    notesList.model.get(notesList.currentIndex).description = noteDescription
                 }
             }
 

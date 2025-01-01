@@ -6,6 +6,16 @@ NotesBackend::NotesBackend(QObject *parent)
 
 }
 
+void NotesBackend::setNoteTitle(QString title)
+{
+    m_noteTitle = title;
+}
+
+void NotesBackend::setTitleLength(int length)
+{
+    m_titleLength = length;
+}
+
 QString NotesBackend::html()
 {
     return m_html;
@@ -28,10 +38,10 @@ bool NotesBackend::spacePressed()
 
 void NotesBackend::transformKeyboardInput(QString keyboardInput)
 {
-    for (QChar i : keyboardInput)
-    {
-        qDebug() << i;
-    }
+    // for (QChar i : keyboardInput)
+    // {
+    //     qDebug() << i;
+    // }
 
     if (spacePressed())
     {
@@ -70,7 +80,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
                     qDebug() << "124";
                 }
 
-                // I can'd reproduce the below case
+                // I can't reproduce the below case
 
                 // If cursor position is greater than title length
                 // else
@@ -310,6 +320,8 @@ void NotesBackend::updateHtml(QString &keyboardInput)
     qDebug() << "m_cursorPosition post: " << m_cursorPosition;
 
     updateCursorPosition(automaticCursorPosition);
+
+    titleOrDescriptionChanged(m_noteTitle, plainText.mid(m_titleLength + 1, plainText.length()));
 }
 
 void NotesBackend::updateCursorPosition(const int &newCursorPosition)
@@ -318,8 +330,6 @@ void NotesBackend::updateCursorPosition(const int &newCursorPosition)
         return;
 
     m_cursorPosition = newCursorPosition;
-
-    qDebug() << "updateCursorPosition func: " << m_cursorPosition;
 
     emit editorCursorPositionChanged();
 }

@@ -48,6 +48,8 @@ class NotesBackend : public QObject
 
 public:
     explicit NotesBackend(QObject *parent = nullptr);
+    Q_INVOKABLE void setNoteTitle(QString title);
+    Q_INVOKABLE void setTitleLength(int length);
 
 signals:
 
@@ -56,6 +58,8 @@ signals:
     void inputFromBackendChanged();
     void spacePressedChanged();
     void titleLengthChanged();
+
+    void titleOrDescriptionChanged(QString title, QString description);
 };
 
 #endif // NOTESBACKEND_H
