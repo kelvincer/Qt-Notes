@@ -8,12 +8,17 @@ NotesBackend::NotesBackend(QObject *parent)
 
 void NotesBackend::setNoteTitle(QString title)
 {
-    m_noteTitle = title;
+    notes[currentIndex].title = title;
 }
 
 void NotesBackend::setTitleLength(int length)
 {
     m_titleLength = length;
+}
+
+void NotesBackend::setCurrentIndex(int index)
+{
+    currentIndex = index;
 }
 
 QString NotesBackend::html()
@@ -65,9 +70,9 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
             // When press enter in the middle of title
             if(isEnterPressedOnTitle(keyboardInput))
             {
-                m_noteTitle = getNewTitleFromKeyboardInput(keyboardInput);
+                notes[currentIndex].title = getNewTitleFromKeyboardInput(keyboardInput);
                 //m_noteTitle = keyboardInput.mid(0, keyboardInput.lastIndexOf(paragraphSeparator));
-                m_titleLength = m_noteTitle.length();
+                m_titleLength = notes[currentIndex].title.length();
                 qDebug() << "123";
             }
             else
@@ -76,7 +81,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
                 if (cursorPosition() < m_titleLength)
                 {
                     m_titleLength++;
-                    m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                    notes[currentIndex].title = keyboardInput.mid(0, m_titleLength);
                     qDebug() << "124";
                 }
 
@@ -102,7 +107,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
             if (cursorPosition() < m_titleLength)
             {
                 m_titleLength--;
-                m_noteTitle = keyboardInput.mid(0, m_titleLength);
+                notes[currentIndex].title = keyboardInput.mid(0, m_titleLength);
                 qDebug() << "126";
             }
             else
@@ -110,19 +115,14 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
                 // We joined title and description
                 if (!keyboardInputContainsDescription(keyboardInput))
                 {
-                    m_noteTitle = keyboardInput;
-                    m_titleLength = keyboardInput.length();
+                    notes[currentIndex].title = keyboardInput;
+                    m_titleLength = notes[currentIndex].title.length();
                     qDebug() << "127";
                 }
                 else
                 {
-                    //qDebug() << "end para:" << isEndOfTitle(keyboardInput) << keyboardInput.indexOf(paragraphSeparator);
-
-                    //m_titleLength = textContainsTitle(keyboardInput) ? keyboardInput.indexOf(paragraphSeparator) : cursorPosition();
-                    //m_noteTitle = keyboardInput.mid(0, m_titleLength);
-
-                    m_noteTitle = getNewTitleFromKeyboardInput(keyboardInput);
-                    m_titleLength = m_noteTitle.length();
+                    notes[currentIndex].title = getNewTitleFromKeyboardInput(keyboardInput);
+                    m_titleLength = notes[currentIndex].title.length();
                     qDebug() << "128";
                 }
             }
@@ -139,11 +139,11 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     {
         // qDebug() << "Description: " << plainText.mid(m_titleLength + 1, plainText.length());
 
-        m_html = ("<h2>" + m_noteTitle + "</h2>").append(("<p>" + keyboardInput.mid(m_titleLength + 1, keyboardInput.length()) + "</p>"));
+        m_html = ("<h2>" + notes[currentIndex].title + "</h2>").append(("<p>" + keyboardInput.mid(m_titleLength + 1, keyboardInput.length()) + "</p>"));
     }
     else
     {
-        m_html = "<h2>" + m_noteTitle + "</h2>";
+        m_html = "<h2>" + notes[currentIndex].title + "</h2>";
     }
 
     // qDebug() << "processHTML m_html: " << m_html;
@@ -296,7 +296,7 @@ void NotesBackend::updateHtml(QString &keyboardInput)
     if (containOnlyParagraphSeparatorCharacter(keyboardInput))
     {
         updateCursorPosition(0);
-        m_noteTitle = "";
+        notes[currentIndex].title = "";
         m_titleLength = 0;
         plainText = "";
         return;
@@ -321,7 +321,11 @@ void NotesBackend::updateHtml(QString &keyboardInput)
 
     updateCursorPosition(automaticCursorPosition);
 
-    titleOrDescriptionChanged(m_noteTitle, plainText.mid(m_titleLength + 1, plainText.length()));
+    QString description = plainText.mid(m_titleLength + 1, plainText.length());
+
+    notes[currentIndex] = Note(notes[currentIndex].title, description, "09:85");
+
+    titleOrDescriptionChanged(notes[currentIndex].title, notes[currentIndex].description);
 }
 
 void NotesBackend::updateCursorPosition(const int &newCursorPosition)

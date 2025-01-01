@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QQmlEngine>
+#include <Note.h>
 
 class NotesBackend : public QObject
 {
@@ -22,9 +23,10 @@ class NotesBackend : public QObject
     bool m_isInputFromBackend;
     bool m_spacePressed;
     int m_titleLength;
-    QString m_noteTitle;
     bool isAddingText;
     QString plainText;
+    QList<Note> notes = QList<Note>(10);
+    int currentIndex;
 
     QString html();
     int cursorPosition();
@@ -50,6 +52,7 @@ public:
     explicit NotesBackend(QObject *parent = nullptr);
     Q_INVOKABLE void setNoteTitle(QString title);
     Q_INVOKABLE void setTitleLength(int length);
+    Q_INVOKABLE void setCurrentIndex(int index);
 
 signals:
 

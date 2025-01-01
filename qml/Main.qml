@@ -11,15 +11,12 @@ Window {
 
     property int appMargin: 10
     property string editorBackgroundColor: ""
-    property string noteTitle: ""
-    property string noteDescription: ""
 
     NotesBackend {
         id: notesBackend
         onTitleOrDescriptionChanged: (title, description) => {
-                                         noteTitle = title;
-                                         noteDescription = description;
-                                         console.log("A")
+                                         notesList.model.get(notesList.currentIndex).title = title
+                                         notesList.model.get(notesList.currentIndex).description = description
                                      }
     }
 
@@ -78,8 +75,7 @@ Window {
                             anchors.fill: parent;
                             onClicked: {
                                 markDownInput.clear()
-                                noteTitle = ""
-                                noteDescription = ""
+                                notesBackend.setCurrentIndex(0)
                                 notesBackend.setNoteTitle("")
                                 notesBackend.setTitleLength(0)
                                 notesBackend.cursorPosition = 0
@@ -91,8 +87,6 @@ Window {
                                                                "time": "14:45"
                                                            },
                                                            notesList.count)
-
-                                console.log("count:: " + notesList.count)
 
                                 notesList.currentIndex = 0
 
@@ -133,12 +127,16 @@ Window {
                         id: notesList
                         onListItemSelected: {
 
+                            console.log("cu i E: " +  currentIndex)
+
                             markDownInput.clear()
 
                             let element = notesList.model.get(currentIndex);
                             editorBackgroundColor = element.itemColor
 
                             console.log("title E: " +  element.title)
+
+                            notesBackend.setCurrentIndex(currentIndex)
 
                             notesBackend.setNoteTitle(element.title)
                             notesBackend.setTitleLength(element.title.length)
@@ -147,18 +145,20 @@ Window {
 
                             console.log("E")
                         }
-                    }
-                    Component.onCompleted: {
-                        let element = notesList.model.get(0);
-                        editorBackgroundColor = element.itemColor
+                        Component.onCompleted: {
+                            let element = notesList.model.get(0);
+                            editorBackgroundColor = element.itemColor
 
-                        console.log("title D: " +  element.title)
+                            console.log("title D: " +  element.title)
 
-                        notesBackend.setNoteTitle(element.title)
-                        notesBackend.setTitleLength(element.title.length)
-                        notesBackend.cursorPosition = element.title.length + element.description.length + 1
-                        notesBackend.html =  element.title + "\u2029" + element.description
-                        console.log("D")
+                            notesBackend.setCurrentIndex(0)
+
+                            notesBackend.setNoteTitle(element.title)
+                            notesBackend.setTitleLength(element.title.length)
+                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
+                            notesBackend.html =  element.title + "\u2029" + element.description
+                            console.log("D")
+                        }
                     }
                 }
 
@@ -223,8 +223,6 @@ Window {
                 }
                 onTextChanged: {
                     notesBackend.html = getText(0, length)
-                    updateListItem()
-                    console.log("C")
                 }
                 Keys.onPressed: event => {
 
@@ -235,17 +233,6 @@ Window {
                                         notesBackend.spacePressed = true
                                     }
                                 }
-
-                function updateListItem() {
-
-                    if(noteTitle === "")
-                        return;
-
-                    console.log("currIn: " + notesList.currentIndex)
-
-                    notesList.model.get(notesList.currentIndex).title = noteTitle
-                    notesList.model.get(notesList.currentIndex).description = noteDescription
-                }
             }
 
             TextEdit{
