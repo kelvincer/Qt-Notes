@@ -16,14 +16,14 @@ Window {
 
     NotesBackend {
         id: notesBackend
-        onTitleOrDescriptionChanged: {
-            noteTitle = title;
-            noteDescription = description;
-            console.log("A")
-        }
+        onTitleOrDescriptionChanged: (title, description) => {
+                                         noteTitle = title;
+                                         noteDescription = description;
+                                         console.log("A")
+                                     }
     }
 
-    RowLayout{
+    RowLayout {
         anchors.fill: parent
         spacing: 0
 
@@ -77,23 +77,32 @@ Window {
                             id: plusMouseArea
                             anchors.fill: parent;
                             onClicked: {
+                                markDownInput.clear()
+                                noteTitle = ""
+                                noteDescription = ""
                                 notesBackend.setNoteTitle("")
                                 notesBackend.setTitleLength(0)
                                 notesBackend.cursorPosition = 0
                                 notesBackend.html = ""
-                                markDownInput.clear()
+
                                 notesList.model.addNewItem({
                                                                "title": "",
                                                                "description": "",
-                                                               "timem": "14:45"
+                                                               "time": "14:45"
                                                            },
-                                                           notesList.model.count)
+                                                           notesList.count)
 
+                                console.log("count:: " + notesList.count)
+
+                                notesList.currentIndex = 0
+
+                                let element = notesList.model.get(0);
+                                editorBackgroundColor = element.itemColor
 
                             }
                             onPressedChanged: {
 
-                                console.log("MouseArea pressed changed to", plusMouseArea.pressed)
+                                // console.log("MouseArea pressed changed to", plusMouseArea.pressed)
 
                                 if(plusMouseArea.pressed) {
                                     plusIcon.source = "qrc:/images/icons8-plus-math-50.png"
@@ -122,19 +131,34 @@ Window {
                     id: homeTab
                     NotesList {
                         id: notesList
-                        onEditorUpdated: e => {
+                        onListItemSelected: {
+
+                            markDownInput.clear()
+
                             let element = notesList.model.get(currentIndex);
                             editorBackgroundColor = element.itemColor
 
-                            // if(element.title === "")
-                            //     return;
+                            console.log("title E: " +  element.title)
 
                             notesBackend.setNoteTitle(element.title)
                             notesBackend.setTitleLength(element.title.length)
                             notesBackend.cursorPosition = element.title.length + element.description.length + 1
                             notesBackend.html =  element.title + "\u2029" + element.description
-                            console.log("B")
+
+                            console.log("E")
                         }
+                    }
+                    Component.onCompleted: {
+                        let element = notesList.model.get(0);
+                        editorBackgroundColor = element.itemColor
+
+                        console.log("title D: " +  element.title)
+
+                        notesBackend.setNoteTitle(element.title)
+                        notesBackend.setTitleLength(element.title.length)
+                        notesBackend.cursorPosition = element.title.length + element.description.length + 1
+                        notesBackend.html =  element.title + "\u2029" + element.description
+                        console.log("D")
                     }
                 }
 
@@ -204,20 +228,20 @@ Window {
                 }
                 Keys.onPressed: event => {
 
-                    if (event.key === Qt.Key_Backspace) {
-                        
-                    }
-                    else if(event.key === Qt.Key_Space){ 
-                        notesBackend.spacePressed = true
-                    }
-                }
+                                    if (event.key === Qt.Key_Backspace) {
+
+                                    }
+                                    else if(event.key === Qt.Key_Space){
+                                        notesBackend.spacePressed = true
+                                    }
+                                }
 
                 function updateListItem() {
 
                     if(noteTitle === "")
                         return;
 
-                    console.log("console: " + noteTitle)
+                    console.log("currIn: " + notesList.currentIndex)
 
                     notesList.model.get(notesList.currentIndex).title = noteTitle
                     notesList.model.get(notesList.currentIndex).description = noteDescription

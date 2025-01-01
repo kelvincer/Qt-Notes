@@ -32,7 +32,9 @@ qt_add_qml_module(appNotes
         qml/model/ListNoteModel.qml
 
     RESOURCES images.qrc
-    SOURCES backend/notesbackend.h backend/notesbackend.cpp
+    SOURCES
+        backend/notesbackend.h backend/notesbackend.cpp
+        backend/Note.h
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -7,13 +7,9 @@ ListView {
     spacing: 10
     anchors.fill: parent
     clip: true
+    currentIndex: 0
 
-    signal editorUpdated()
-
-    Component.onCompleted: {
-        console.log("width: " + list.width)
-        console.log("Height: " + list.height)
-    }
+    signal listItemSelected()
 
     model: ListNoteModel{}
 
@@ -24,17 +20,13 @@ ListView {
         NoteItem {
             id: noteItem
             anchors.fill: parent
-            Component.onCompleted: {
-                editorUpdated()
-            }
         }
 
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                console.log("mouse area")
                 list.currentIndex = index
-                editorUpdated()
+                listItemSelected()
             }
         }
     }

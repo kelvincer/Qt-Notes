@@ -51,11 +51,11 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         emit spacePressedChanged();
     }
 
-    qDebug() << "cursor:" << cursorPosition();
+    // qDebug() << "cursor:" << cursorPosition();
 
-    qDebug() << "titlelength before:" << m_titleLength << "title:" << m_noteTitle;
+    // qDebug() << "titlelength before:" << m_titleLength << "title:" << m_noteTitle;
 
-    qDebug() << "isAddingText:" << isAddingText << " isChangingTitle:" << isChangingTitle(keyboardInput);
+    // qDebug() << "isAddingText:" << isAddingText << " isChangingTitle:" << isChangingTitle(keyboardInput);
 
     // Starting processing text
     if (isAddingText)
@@ -132,12 +132,12 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         }
     }
 
-    qDebug() << "titleLength after update:" << m_titleLength << "noteTitle after update:" << m_noteTitle;
+    // qDebug() << "titleLength after update:" << m_titleLength << "noteTitle after update:" << m_noteTitle;
 
     // Showing input
     if (keyboardInputContainsDescription(keyboardInput))
     {
-        qDebug() << "Description: " << plainText.mid(m_titleLength + 1, plainText.length());
+        // qDebug() << "Description: " << plainText.mid(m_titleLength + 1, plainText.length());
 
         m_html = ("<h2>" + m_noteTitle + "</h2>").append(("<p>" + keyboardInput.mid(m_titleLength + 1, keyboardInput.length()) + "</p>"));
     }
@@ -146,11 +146,11 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
         m_html = "<h2>" + m_noteTitle + "</h2>";
     }
 
-    qDebug() << "processHTML m_html: " << m_html;
+    // qDebug() << "processHTML m_html: " << m_html;
 
     plainText = keyboardInput;
 
-    qDebug() << "plainText: " << plainText;
+    // qDebug() << "plainText: " << plainText;
 }
 
 bool NotesBackend::isChangingTitle(const QString &keyboardInput)
@@ -158,7 +158,7 @@ bool NotesBackend::isChangingTitle(const QString &keyboardInput)
     // head forward
     if (m_titleLength == cursorPosition() - 1)
     {
-        qDebug() << "isChangingTitle 2";
+        // qDebug() << "isChangingTitle 2";
 
         if (keyboardInput.length() > m_titleLength && keyboardInput[m_titleLength] == paragraphSeparator)
         {
@@ -173,21 +173,21 @@ bool NotesBackend::isChangingTitle(const QString &keyboardInput)
     // head backward
     if (m_titleLength - 1 == cursorPosition())
     {
-        qDebug() << "isChangingTitle 3";
+        // qDebug() << "isChangingTitle 3";
         return true;
     }
 
     // middle
     if (cursorPosition() < m_titleLength)
     {
-        qDebug() << "isChangingTitle 4";
+        // qDebug() << "isChangingTitle 4";
         return true;
     }
 
     // When joining title and description
     if (!keyboardInputContainsDescription(keyboardInput))
     {
-        qDebug() << "isChangingTitle 5";
+        // qDebug() << "isChangingTitle 5";
         return true;
     }
 
@@ -217,7 +217,7 @@ bool NotesBackend::keyboardInputContainsDescription(const QString &text)
     // Pure title without new paragraph separator
     if(firstParagraphSeparatorIt == std::string::npos)
     {
-        qDebug() << "inputContainsDescription 1";
+        // qDebug() << "inputContainsDescription 1";
         return false;
     }
     else
@@ -229,12 +229,12 @@ bool NotesBackend::keyboardInputContainsDescription(const QString &text)
         // Pure title with initials paragraph separators
         if(firstParagraphSeparatorBetweenTitleAndDescriptionPos == std::string::npos)
         {
-            qDebug() << "inputContainsDescription 2";
+            // qDebug() << "inputContainsDescription 2";
             return false;
         }
         else
         {
-            qDebug() << "inputContainsDescription 3";
+            // qDebug() << "inputContainsDescription 3";
             return true;
         }
     }
@@ -244,14 +244,14 @@ bool NotesBackend::isEnterPressedOnTitle(const QString &text)
 {
     std::u16string textString = text.toStdU16String();
 
-    qDebug() << "textString" << textString;
+    // qDebug() << "textString" << textString;
 
     size_t firstNotParagraphSeparatorPosition = textString.find_first_not_of(u16ParagraphSeparator);
 
     // if(firstNotParagraphSeparatorPosition == std::string::npos)
     //     return true;
 
-    qDebug() << "first not paragraph" << firstNotParagraphSeparatorPosition << cursorPosition();
+    // qDebug() << "first not paragraph" << firstNotParagraphSeparatorPosition << cursorPosition();
 
     return cursorPosition() - firstNotParagraphSeparatorPosition > 0;
 }
@@ -285,8 +285,8 @@ void NotesBackend::updateHtml(QString &keyboardInput)
 {
     qDebug() << "==================================";
 
-    qDebug() << "plainText: " << plainText;
-    qDebug() << "keyboardInput: " << keyboardInput;
+    // qDebug() << "plainText: " << plainText;
+    // qDebug() << "keyboardInput: " << keyboardInput;
 
     if (plainText == keyboardInput)
     {
@@ -313,11 +313,11 @@ void NotesBackend::updateHtml(QString &keyboardInput)
 
     int automaticCursorPosition = m_cursorPosition;
 
-    qDebug() << "m_cursorPosition pre: " << m_cursorPosition;
+    //qDebug() << "m_cursorPosition pre: " << m_cursorPosition;
 
     emit htmlChanged();
 
-    qDebug() << "m_cursorPosition post: " << m_cursorPosition;
+    // qDebug() << "m_cursorPosition post: " << m_cursorPosition;
 
     updateCursorPosition(automaticCursorPosition);
 
