@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <Note.h>
+#include <notetable.h>
 
 class NotesBackend : public QObject
 {

@@ -10,6 +10,7 @@ set(CMAKE_QT_DEFINITIONS "-DQT_QML_DEBUG")
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
 find_package(Qt6 6.4 REQUIRED COMPONENTS Sql)
+# find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
 
 find_package(cmark CONFIG REQUIRED)
 
@@ -35,6 +36,7 @@ qt_add_qml_module(appNotes
     SOURCES
         backend/notesbackend.h backend/notesbackend.cpp
         backend/Note.h
+        backend/notetable.h backend/notetable.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -51,6 +53,7 @@ set_target_properties(appNotes PROPERTIES
 target_link_libraries(appNotes
     PRIVATE Qt6::Quick
     PRIVATE Qt6::Sql
+    # PRIVATE Qt6::Widgets
 )
 
 include(GNUInstallDirs)

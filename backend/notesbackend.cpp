@@ -3,7 +3,7 @@
 NotesBackend::NotesBackend(QObject *parent)
     : QObject{parent}
 {
-
+    NoteTable notetable("tableName");
 }
 
 void NotesBackend::setNoteTitle(QString title)

@@ -9,7 +9,6 @@ int main(int argc, char *argv[])
     QFont font("Roboto", 14);
     QGuiApplication::setFont(font);
 
-
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/Notes/qml/Main.qml"));
     QObject::connect(
