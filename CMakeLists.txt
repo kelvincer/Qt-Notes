@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_QT_DEFINITIONS "-DQT_QML_DEBUG")
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
-find_package(Qt6 6.4 REQUIRED COMPONENTS Gui)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Sql)
 
 find_package(cmark CONFIG REQUIRED)
 
@@ -50,8 +50,7 @@ set_target_properties(appNotes PROPERTIES
 
 target_link_libraries(appNotes
     PRIVATE Qt6::Quick
-    PRIVATE Qt6::Gui
-    PRIVATE cmark::cmark
+    PRIVATE Qt6::Sql
 )
 
 include(GNUInstallDirs)
