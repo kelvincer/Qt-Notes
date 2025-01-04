@@ -15,9 +15,13 @@ Window {
     NotesBackend {
         id: notesBackend
         onTitleOrDescriptionChanged: (title, description) => {
+
                                          notesList.model.get(notesList.currentIndex).title = title
                                          notesList.model.get(notesList.currentIndex).description = description
                                      }
+        onEditorCursorPositionChanged: {
+
+        }
     }
 
     RowLayout {
@@ -96,8 +100,6 @@ Window {
                             }
                             onPressedChanged: {
 
-                                // console.log("MouseArea pressed changed to", plusMouseArea.pressed)
-
                                 if(plusMouseArea.pressed) {
                                     plusIcon.source = "qrc:/images/icons8-plus-math-50.png"
                                 } else {
@@ -145,6 +147,7 @@ Window {
 
                             console.log("E")
                         }
+
                         Component.onCompleted: {
                             let element = notesList.model.get(0);
                             editorBackgroundColor = element.itemColor
@@ -155,8 +158,9 @@ Window {
 
                             notesBackend.setNoteTitle(element.title)
                             notesBackend.setTitleLength(element.title.length)
-                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
+                            notesBackend.cursorPosition = element.title.length + element.description.length
                             notesBackend.html =  element.title + "\u2029" + element.description
+                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
                             console.log("D")
                         }
                     }
@@ -195,7 +199,6 @@ Window {
                         anchors.left: parent.left
                         anchors.leftMargin: 8
                         anchors.verticalCenter: parent.verticalCenter
-
                     }
                 }
             }
@@ -208,23 +211,30 @@ Window {
 
             TextArea {
                 id: markDownInput
+                // anchors.fill: parent
                 text: notesBackend.html
                 Layout.fillHeight: true
-                Layout.preferredWidth: 0.5
+                // Layout.preferredWidth: 1
                 Layout.fillWidth: true
                 textFormat: TextEdit.RichText
                 wrapMode: TextEdit.Wrap
                 cursorPosition: notesBackend.cursorPosition
+
                 background: Rectangle {
                     color: editorBackgroundColor
                 }
                 onCursorPositionChanged: {
+                    console.log("change cp: " + cursorPosition)
                     notesBackend.cursorPosition = cursorPosition
                 }
                 onTextChanged: {
+                    console.log("onTextChanged: " + getText(0, length))
+
                     notesBackend.html = getText(0, length)
                 }
                 Keys.onPressed: event => {
+
+                                    event.accepted = false
 
                                     if (event.key === Qt.Key_Backspace) {
 
@@ -233,16 +243,58 @@ Window {
                                         notesBackend.spacePressed = true
                                     }
                                 }
+                selectByMouse: true
+                //focus: true
+
+                MouseArea {
+                    // Layout.fillHeight: true
+                    // Layout.fillWidth: true
+                     anchors.fill: parent
+                    // acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    // propagateComposedEvents: false
+                    onReleased: markDownInput.forceActiveFocus()
+                    onClicked: mouse => {
+                                   console.log("")
+                                   notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
+                               }
+                    onDoubleClicked: mouse => {
+                                         const position = markDownInput.cursorPosition
+                                         selectWordAtPos(position)
+                                     }
+
+                    function selectWordAtPos(position) {
+
+                        const textContent = markDownInput.getText(0, markDownInput.length); // Full text in the TextArea
+                        let start = position;
+                        let end = position;
+
+                        // Find the start of the word
+                        while (start > 0 && !isDelimiter(textContent[start - 1])) {
+                            start--;
+                        }
+
+                        // Find the end of the word
+                        while (end < textContent.length && !isDelimiter(textContent[end])) {
+                            end++;
+                        }
+
+                        notesBackend.cursorPosition = end
+
+                        markDownInput.select(start, end)
+
+                        console.log("Word selected from", start, "to", end, ":", textContent.substring(start, end));
+                    }
+
+                    function isDelimiter(character) {
+                        return character === ' ' || character === '\n' || character === '\t'
+                                || character === '.' || character === ',' || character === ';'
+                                || character === '\u2029' || character === '\u00a0'
+                    }
+                }
             }
 
-            TextEdit{
-                text: markDownInput.text
-                Layout.fillHeight: true
-                Layout.preferredWidth: 0.5
-                Layout.fillWidth: true
-                textFormat: TextEdit.AutoText
-                wrapMode: TextEdit.Wrap
-            }
+
         }
     }
 }
+

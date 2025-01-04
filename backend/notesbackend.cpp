@@ -288,6 +288,8 @@ void NotesBackend::updateHtml(QString &keyboardInput)
     // qDebug() << "plainText: " << plainText;
     // qDebug() << "keyboardInput: " << keyboardInput;
 
+    qDebug() << "Changing HTML";
+
     if (plainText == keyboardInput)
     {
         return;
@@ -309,23 +311,23 @@ void NotesBackend::updateHtml(QString &keyboardInput)
 
     // free(html);
 
-    transformKeyboardInput(keyboardInput);
-
     int automaticCursorPosition = m_cursorPosition;
 
-    //qDebug() << "m_cursorPosition pre: " << m_cursorPosition;
+    transformKeyboardInput(keyboardInput);
+
+    qDebug() << "m_cursorPosition pre: " << m_cursorPosition;
 
     emit htmlChanged();
 
-    // qDebug() << "m_cursorPosition post: " << m_cursorPosition;
-
-    updateCursorPosition(automaticCursorPosition);
+    qDebug() << "m_cursorPosition post: " << m_cursorPosition;
 
     QString description = plainText.mid(m_titleLength + 1, plainText.length());
 
     notes[currentIndex] = Note(notes[currentIndex].title, description, "09:85");
 
     titleOrDescriptionChanged(notes[currentIndex].title, notes[currentIndex].description);
+
+    updateCursorPosition(automaticCursorPosition);
 }
 
 void NotesBackend::updateCursorPosition(const int &newCursorPosition)
