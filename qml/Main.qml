@@ -214,7 +214,7 @@ Window {
                 // anchors.fill: parent
                 text: notesBackend.html
                 Layout.fillHeight: true
-                // Layout.preferredWidth: 1
+                Layout.preferredWidth: 0.9
                 Layout.fillWidth: true
                 textFormat: TextEdit.RichText
                 wrapMode: TextEdit.Wrap
@@ -224,12 +224,10 @@ Window {
                     color: editorBackgroundColor
                 }
                 onCursorPositionChanged: {
-                    console.log("change cp: " + cursorPosition)
+                    // console.log("change cp: " + cursorPosition)
                     notesBackend.cursorPosition = cursorPosition
                 }
                 onTextChanged: {
-                    console.log("onTextChanged: " + getText(0, length))
-
                     notesBackend.html = getText(0, length)
                 }
                 Keys.onPressed: event => {
@@ -244,17 +242,21 @@ Window {
                                     }
                                 }
                 selectByMouse: true
-                //focus: true
+                // focus: true
 
                 MouseArea {
                     // Layout.fillHeight: true
                     // Layout.fillWidth: true
-                     anchors.fill: parent
-                    // acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     // propagateComposedEvents: false
-                    onReleased: markDownInput.forceActiveFocus()
+
+                    property bool selecting: false // Track whether selection is active
+                    property int startPos: -1     // Store the start position of the selection
+
+
                     onClicked: mouse => {
-                                   console.log("")
+
                                    notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
                                }
                     onDoubleClicked: mouse => {
@@ -278,7 +280,10 @@ Window {
                             end++;
                         }
 
-                        notesBackend.cursorPosition = end
+                        // Below line also works
+                        // notesBackend.cursorPosition = end
+
+                        markDownInput.moveCursorSelection(end)
 
                         markDownInput.select(start, end)
 
@@ -290,11 +295,57 @@ Window {
                                 || character === '.' || character === ',' || character === ';'
                                 || character === '\u2029' || character === '\u00a0'
                     }
+
+                    onPressed: mouse => {
+                        // Start selection
+                        selecting = true;
+                        startPos = markDownInput.positionAt(mouse.x, mouse.y);
+                        notesBackend.cursorPosition = startPos; // Move cursor to start position
+                    }
+
+                    onPositionChanged: mouse => {
+                        if (selecting) {
+                            const endPos = markDownInput.positionAt(mouse.x, mouse.y);
+                            console.log("endPos:", endPos)
+
+                            if (startPos !== -1) {
+
+                                markDownInput.moveCursorSelection(endPos)
+                                markDownInput.select(startPos, endPos); // Select text between start and end
+                            }
+                        }
+                    }
+
+                    onReleased: {
+                        // End selection
+                        selecting = false;
+                        console.log("Selected text:", markDownInput.selectedText);
+                        markDownInput.forceActiveFocus()
+                    }
                 }
             }
+        }
 
+        Column {
+
+            Layout.fillHeight: true
+            Layout.preferredWidth: 0.1
+            Layout.fillWidth: true
+
+            Text {
+                text: "H1"
+            }
+
+            Text {
+                text: "H2"
+            }
+
+            Text {
+                text: "H3"
+            }
 
         }
     }
 }
+
 
