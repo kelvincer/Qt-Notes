@@ -21,6 +21,17 @@ void NotesBackend::setCurrentIndex(int index)
     currentIndex = index;
 }
 
+void NotesBackend::setBoldFormat(QString text, int selectionStart, int selectionEnd)
+{
+    if(selectionStart > m_titleLength) 
+    {
+        QString description = text.mid(m_titleLength + 1, plainText.length() - m_titleLength - 1);
+        format()->setDescriptionBold(description, selectionStart - m_titleLength - 1, selectionEnd - m_titleLength - 1);
+        m_html = ("<h2>" + notes[currentIndex].title + "</h2>").append(description);
+        emit htmlChanged();
+    }
+}
+
 QString NotesBackend::html()
 {
     return m_html;
@@ -39,6 +50,11 @@ bool NotesBackend::isInputFromBackend()
 bool NotesBackend::spacePressed()
 {
     return m_spacePressed;
+}
+
+Format *NotesBackend::format()
+{
+    return m_format;
 }
 
 void NotesBackend::transformKeyboardInput(QString keyboardInput)
@@ -137,9 +153,7 @@ void NotesBackend::transformKeyboardInput(QString keyboardInput)
     // Showing input
     if (keyboardInputContainsDescription(keyboardInput))
     {
-        // qDebug() << "Description: " << plainText.mid(m_titleLength + 1, plainText.length());
-
-        m_html = ("<h2>" + notes[currentIndex].title + "</h2>").append(("<p>" + keyboardInput.mid(m_titleLength + 1, keyboardInput.length()) + "</p>"));
+        m_html = ("<h2>" + notes[currentIndex].title + "</h2>").append("<p>" + keyboardInput.mid(m_titleLength + 1, keyboardInput.length()) + "</p>");
     }
     else
     {
@@ -269,6 +283,8 @@ QString NotesBackend::getNewTitleFromKeyboardInput(const QString &text)
     return QString::fromStdU16String(newTitle);
 }
 
+
+
 bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString &text)
 {
     for (QChar c : text)
@@ -358,4 +374,14 @@ void NotesBackend::updateSpacePressed(const bool &spacePressed)
     m_spacePressed = spacePressed;
 
     emit spacePressedChanged();
+}
+
+void NotesBackend::updateFormat(Format *format)
+{
+    if(m_format != format)
+    {
+        m_format = format;
+
+        emit formatChanged();
+    }
 }

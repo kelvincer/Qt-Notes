@@ -5,6 +5,7 @@
 #include <QQmlEngine>
 #include <Note.h>
 #include <notetable.h>
+#include <format.h>
 
 class NotesBackend : public QObject
 {
@@ -14,6 +15,7 @@ class NotesBackend : public QObject
     Q_PROPERTY(int cursorPosition READ cursorPosition WRITE updateCursorPosition NOTIFY editorCursorPositionChanged)
     Q_PROPERTY(int isInputFromBackend READ isInputFromBackend WRITE updateInputFromBackend NOTIFY inputFromBackendChanged)
     Q_PROPERTY(bool spacePressed READ spacePressed WRITE updateSpacePressed NOTIFY spacePressedChanged)
+    Q_PROPERTY(Format* format READ format WRITE updateFormat NOTIFY formatChanged)
 
     QString noBreakSpace = "\u00a0";
     QString paragraphSeparator = "\u2029";
@@ -24,6 +26,7 @@ class NotesBackend : public QObject
     bool m_isInputFromBackend;
     bool m_spacePressed;
     int m_titleLength;
+    Format * m_format;
     bool isAddingText;
     QString plainText;
     QList<Note> notes = QList<Note>(10);
@@ -33,12 +36,14 @@ class NotesBackend : public QObject
     int cursorPosition();
     bool isInputFromBackend();
     bool spacePressed();
+    Format * format();
 
     void updateHtml(QString &keyboardInput);
     void updateCursorPosition(const int &cursorPosition);
     void updateInputFromBackend(const bool &isInputFromBackend);
     void updateHasDescription(const bool &hasDescription);
     void updateSpacePressed(const bool &spacePressed);
+    void updateFormat(Format * format);
 
     void transformKeyboardInput(QString text);
     bool isChangingTitle(const QString &text);
@@ -54,6 +59,7 @@ public:
     Q_INVOKABLE void setNoteTitle(QString title);
     Q_INVOKABLE void setTitleLength(int length);
     Q_INVOKABLE void setCurrentIndex(int index);
+    Q_INVOKABLE void setBoldFormat(QString text, int selectionStart, int selectionEnd);
 
 signals:
 
@@ -62,6 +68,7 @@ signals:
     void inputFromBackendChanged();
     void spacePressedChanged();
     void titleLengthChanged();
+    void formatChanged();
 
     void titleOrDescriptionChanged(QString title, QString description);
 };

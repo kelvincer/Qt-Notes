@@ -22,6 +22,9 @@ Window {
         onEditorCursorPositionChanged: {
 
         }
+        format: Format {
+            id: formatter
+        }
     }
 
     RowLayout {
@@ -219,7 +222,6 @@ Window {
                 textFormat: TextEdit.RichText
                 wrapMode: TextEdit.Wrap
                 cursorPosition: notesBackend.cursorPosition
-
                 background: Rectangle {
                     color: editorBackgroundColor
                 }
@@ -244,9 +246,9 @@ Window {
                 selectByMouse: true
                 // focus: true
 
+                property string userSelected: ""
+
                 MouseArea {
-                    // Layout.fillHeight: true
-                    // Layout.fillWidth: true
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     // propagateComposedEvents: false
@@ -256,7 +258,6 @@ Window {
 
 
                     onClicked: mouse => {
-
                                    notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
                                }
                     onDoubleClicked: mouse => {
@@ -320,6 +321,8 @@ Window {
                         // End selection
                         selecting = false;
                         console.log("Selected text:", markDownInput.selectedText);
+                        markDownInput.userSelected = markDownInput.selectedText;
+
                         markDownInput.forceActiveFocus()
                     }
                 }
@@ -344,6 +347,20 @@ Window {
                 text: "H3"
             }
 
+            Button {
+                text: "B"
+                onClicked: {
+                    console.log("B")
+                    if(markDownInput.userSelected !== "") {
+
+                        notesBackend.setBoldFormat(markDownInput.getText(0, markDownInput.length),
+                                          markDownInput.selectionStart,
+                                          markDownInput.selectionEnd)
+
+
+                    }
+                }
+            }
         }
     }
 }
