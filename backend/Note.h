@@ -1,8 +1,6 @@
 #ifndef NOTE_H
 #define NOTE_H
 
-#endif // NOTE_H
-
 #include <QString>
 
 struct Note {
@@ -18,3 +16,6 @@ struct Note {
 
     };
 };
+
+#endif // NOTE_H
+
