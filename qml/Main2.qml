@@ -18,6 +18,8 @@ Window {
         id: notesBackend
         onTitleOrDescriptionChanged: (title, description) => {
 
+                                         console.log("new log", title, description)
+
                                          notesList.model.get(notesList.currentIndex).title = title
                                          notesList.model.get(notesList.currentIndex).description = description
                                      }

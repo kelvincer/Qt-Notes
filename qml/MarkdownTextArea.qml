@@ -31,7 +31,10 @@ TextArea {
         console.log("onCursorPositionChanged", cursorPosition)
     }
     onTextChanged: {
+        backend.html = text
+        console.log("HTML", text)
         backend.html = getText(0, length)
+
     }
     Keys.onPressed: event => {
 

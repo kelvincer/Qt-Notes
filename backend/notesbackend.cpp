@@ -283,8 +283,6 @@ QString NotesBackend::getNewTitleFromKeyboardInput(const QString &text)
     return QString::fromStdU16String(newTitle);
 }
 
-
-
 bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString &text)
 {
     for (QChar c : text)
@@ -297,54 +295,60 @@ bool NotesBackend::containOnlyParagraphSeparatorCharacter(QString &text)
     return true;
 }
 
-void NotesBackend::updateHtml(QString &keyboardInput)
-{
-    qDebug() << "==================================";
+void NotesBackend::updateHtml(QString &keyboardInput) {
 
-    // qDebug() << "plainText: " << plainText;
-    // qDebug() << "keyboardInput: " << keyboardInput;
-
-    qDebug() << "Changing HTML";
-
-    if (plainText == keyboardInput)
-    {
-        return;
-    }
-
-    if (containOnlyParagraphSeparatorCharacter(keyboardInput))
-    {
-        updateCursorPosition(0);
-        notes[currentIndex].title = "";
-        m_titleLength = 0;
-        plainText = "";
-        return;
-    }
-
-    isAddingText = keyboardInput.length() > plainText.length();
-
-    // const char* markdown = "# Hello, World!\n\nThis is a **Markdown** text.";
-    // char* html = cmark_markdown_to_html(markdown, strlen(markdown), CMARK_OPT_DEFAULT);
-
-    // free(html);
-
-    int automaticCursorPosition = m_cursorPosition;
-
-    transformKeyboardInput(keyboardInput);
-
-    qDebug() << "m_cursorPosition pre: " << m_cursorPosition;
-
-    emit htmlChanged();
-
-    qDebug() << "m_cursorPosition post: " << m_cursorPosition;
-
-    QString description = plainText.mid(m_titleLength + 1, plainText.length());
-
-    notes[currentIndex] = Note(notes[currentIndex].title, description, "09:85");
-
-    titleOrDescriptionChanged(notes[currentIndex].title, notes[currentIndex].description);
-
-    updateCursorPosition(automaticCursorPosition);
 }
+
+// void NotesBackend::updateHtml(QString &keyboardInput)
+// {
+//     qDebug() << "==================================";
+
+//     // qDebug() << "plainText: " << plainText;
+//     // qDebug() << "keyboardInput: " << keyboardInput;
+
+//     qDebug() << "Changing HTML";
+
+//     if (plainText == keyboardInput)
+//     {
+//         return;
+//     }
+
+//     if (containOnlyParagraphSeparatorCharacter(keyboardInput))
+//     {
+//         updateCursorPosition(0);
+//         notes[currentIndex].title = "";
+//         m_titleLength = 0;
+//         plainText = "";
+//         return;
+//     }
+
+//     isAddingText = keyboardInput.length() > plainText.length();
+
+//     // const char* markdown = "# Hello, World!\n\nThis is a **Markdown** text.";
+//     // char* html = cmark_markdown_to_html(markdown, strlen(markdown), CMARK_OPT_DEFAULT);
+
+//     // free(html);
+
+//     int automaticCursorPosition = m_cursorPosition;
+
+//     transformKeyboardInput(keyboardInput);
+
+//     qDebug() << "m_cursorPosition pre: " << m_cursorPosition;
+
+//     emit htmlChanged();
+
+//     qDebug() << "m_cursorPosition post: " << m_cursorPosition;
+
+//     QString description = plainText.mid(m_titleLength + 1, plainText.length());
+
+//     notes[currentIndex] = Note(notes[currentIndex].title, description, "09:85");
+
+//     qDebug() << "DEBUG" << notes[currentIndex].title << notes[currentIndex].description;
+
+//     titleOrDescriptionChanged(notes[currentIndex].title, notes[currentIndex].description);
+
+//     updateCursorPosition(automaticCursorPosition);
+// }
 
 void NotesBackend::updateCursorPosition(const int &newCursorPosition)
 {
@@ -501,32 +505,32 @@ void NotesBackend::setBlocks(QStringList blocks)
 
         m_md.clear();
 
-        for (auto block : blocks) {
+        for (int i = 0; i < blocks.size(); ++i) {
 
-            if(isStartingH1Title(block)) {
+            if(isStartingH1Title(blocks[i])) {
 
-                block.replace(0, 1, "&#35;");
+                blocks[i].replace(0, 1, "&#35;");
 
-                m_md += QString(block);
+                m_md += QString(blocks[i]);
 
                 qDebug() << "title converted" << m_md;
 
             }
-            else if(isStartingH1TitleWithNewLine(block)) {
+            else if(isStartingH1TitleWithNewLine(blocks[i])) {
 
-                block.replace(0, 1, "&#10;");
+                blocks[i].replace(0, 1, "&#10;");
 
-                block.replace(5, 1, "&#35;");
+                blocks[i].replace(5, 1, "&#35;");
 
                 //block.replace(10, 1, "&nbsp;");
 
-                m_md += QString(block);
+                m_md += QString(blocks[i]);
 
                 qDebug() << "title newline converted" << m_md;
             }
             else {
 
-                std::string blockString = remove_non_breaking_spaces(block.toStdString());
+                std::string blockString = remove_non_breaking_spaces(blocks[i].toStdString());
 
                 const char * mdtq = blockString.c_str();
 
@@ -539,6 +543,8 @@ void NotesBackend::setBlocks(QStringList blocks)
                 m_md += QString(htmlOutput).removeLast();
             }
         }
+
+        //titleOrDescriptionChanged(itemTitle, itemDescription);
 
         qDebug() << "final converted" << m_md;
 

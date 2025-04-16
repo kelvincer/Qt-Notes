@@ -7,6 +7,7 @@
 #include <notetable.h>
 #include <format.h>
 #include <string>
+#include <cmutil.h>
 #include <regex>
 #include <algorithm>
 #include <cmark.h>
@@ -42,6 +43,8 @@ class NotesBackend : public QObject
     QString plainText;
     QList<Note> notes = QList<Note>(10);
     int currentIndex;
+    QString itemTitle;
+    QString itemDescription = "";
 
     QStringList blocks();
     QString md();
