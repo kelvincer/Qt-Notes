@@ -7,13 +7,6 @@ import "../js/Constants.js" as Constants
 
 TextArea {
 
-    // Notes.NotesBackend {
-    //     id: notesBackend
-    //     onCursorPositionChanged: {
-
-    //     }
-    // }
-
     property var backend
     readonly property string newline : '\n'
     readonly property string breakLine : "<br/>"
@@ -25,20 +18,20 @@ TextArea {
 
     id: ta
     text: backend.md
-    //anchors.fill: parent
     textFormat: TextArea.MarkdownText
     cursorPosition: backend.cursorPosition
     wrapMode: TextEdit.Wrap
+    Connections {
+            target: mainWindow
+            function onSendEditorColor(editorColor) {
+                ta.background.color = editorColor
+            }
+    }
     onCursorPositionChanged: {
         console.log("onCursorPositionChanged", cursorPosition)
     }
     onTextChanged: {
-
-        //console.log("text", text.split(""))
-
-    }
-    Component.onCompleted: {
-
+        backend.html = getText(0, length)
     }
     Keys.onPressed: event => {
 

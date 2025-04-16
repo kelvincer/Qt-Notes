@@ -27,7 +27,7 @@ qt_add_qml_module(appNotes
     URI Notes
     VERSION 1.0
     QML_FILES
-
+        qml/Main.qml
         qml/Main2.qml
         qml/NotesList.qml
         qml/NoteItem.qml
@@ -35,18 +35,18 @@ qt_add_qml_module(appNotes
         qml/MarkdownTextArea.qml
         qml/model/ListNoteModel.qml
 
-
-
+    QML_FILES
+        js/Constants.js
+        js/MdArray.js
+        js/TextBlock.js
 
     RESOURCES images.qrc
+
     SOURCES
         backend/notesbackend.h backend/notesbackend.cpp
         backend/Note.h
         backend/notetable.h backend/notetable.cpp
         backend/format.h backend/format.cpp
-        QML_FILES js/Constants.js
-        QML_FILES js/MdArray.js
-        QML_FILES js/TextBlock.js
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

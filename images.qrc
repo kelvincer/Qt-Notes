@@ -4,8 +4,4 @@
         <file>icons8-plus-math-50.png</file>
         <file>icons8-search-50.png</file>
     </qresource>
-    <qresource prefix="/">
-        <file>qml/Main2.qml</file>
-        <file>qml/MarkdownTextArea.qml</file>
-    </qresource>
 </RCC>
