@@ -8,13 +8,14 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_QT_DEFINITIONS "-DQT_QML_DEBUG")
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
-find_package(Qt6 6.4 REQUIRED COMPONENTS Sql)
+find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Sql)
 # find_package(Qt6 6.4 REQUIRED COMPONENTS Widgets)
-
 find_package(cmark CONFIG REQUIRED)
 
-qt_standard_project_setup()
+qt_standard_project_setup(REQUIRES 6.5)
+
+# qt_standard_project_setup()
 
 include_directories(backend)
 
@@ -27,9 +28,11 @@ qt_add_qml_module(appNotes
     VERSION 1.0
     QML_FILES
         qml/Main.qml
+        qml/Main2.qml
         qml/NotesList.qml
         qml/NoteItem.qml
         qml/NotesTabBar.qml
+        qml/MarkdownTextArea.qml
         qml/model/ListNoteModel.qml
 
     RESOURCES images.qrc
@@ -63,3 +66,14 @@ install(TARGETS appNotes
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+include(FetchContent)
+
+FetchContent_Declare(
+    cmark
+    GIT_REPOSITORY https://github.com/commonmark/cmark.git
+    # GIT_TAG v1.0.0  # or master, main, or specific commit hash
+)
+FetchContent_MakeAvailable(cmark)
+
+target_link_libraries(appNotes PRIVATE cmark)

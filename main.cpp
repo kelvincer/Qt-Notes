@@ -10,14 +10,16 @@ int main(int argc, char *argv[])
     QGuiApplication::setFont(font);
 
     QQmlApplicationEngine engine;
-    const QUrl url(QStringLiteral("qrc:/Notes/qml/Main.qml"));
+    // const QUrl url(QStringLiteral("qrc:/Notes/qml/Main.qml"));
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.load(url);
+    // engine.load(url);
+    engine.loadFromModule("Notes", "Main2");
+
 
     return app.exec();
 }
