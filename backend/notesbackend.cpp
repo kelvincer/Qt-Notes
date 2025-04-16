@@ -385,3 +385,165 @@ void NotesBackend::updateFormat(Format *format)
         emit formatChanged();
     }
 }
+
+std::string NotesBackend::remove_non_breaking_spaces(const std::string &in) const {
+
+    std::regex non_breaking_space("\\xC2\\xA0");
+    std::string result = std::regex_replace(in, non_breaking_space, " ");
+
+    int j = 0;
+
+    result.erase(std::remove(result.begin(), result.end(), '\x0A'), result.end());
+    qDebug() << "h1 title" << isH1Title(result);
+
+    if(isH1Title(result)) {
+        j = 2;
+    } else if(isH1TitleWithNewline(result)) {
+        j = 3;
+    }
+    else {
+        j = 0;
+    }
+
+    for(int i = j; i < result.size();) {
+
+        if (result[i] == ' ') {
+            result.replace(i, 1, "&nbsp;");
+            i += 6;
+        }
+        else if(result[i] == '\n') {
+            // result.replace(i, 1, "<br>");
+            i++;
+        }
+        else if (result[i] == '#') {
+            result.replace(i, 1, "&#35;");
+            i += 5;
+        }
+        else {
+            result.replace(i, 1, 1, result[i]);
+            i++;
+        }
+    }
+
+    qDebug() << "result:" << result;
+
+    return result;
+}
+
+bool NotesBackend::isH1Title(QString title) const
+{
+    return title.length() >= 2 && title[0] == '#' && title[1] == '\xa0';
+}
+
+bool NotesBackend::isH1Title(std::string & title) const
+{
+    return title.length() >= 2 && title[0] == '#' && title[1] == ' ';
+}
+
+bool NotesBackend::isStartingH1Title(QString title) const
+{
+    return !title.isEmpty() && title.length() == 1 && title[0] == '#'
+           || !title.isEmpty() && title.length() == 2  && title[0] == '#' && title[1] == '\xa0';
+
+}
+
+bool NotesBackend::isH1TitleWithNewline(std::string &title) const
+{
+    return title.length() >= 3 && title[0] == '\x0a' && title[1] == '#' && title[2] == ' ';
+}
+
+bool NotesBackend::isStartingH1TitleWithNewLine(QString title) const
+{
+    return !title.isEmpty() && title.length() == 2 && title[0] == '\x0a' && title[1] == '#'
+           || !title.isEmpty() && title.length() == 3 && title[0] == '\x0a' && title[1] == '#' && title[2] == '\xa0';
+}
+
+void NotesBackend::setMd(QString userInput) {
+
+    if(userInput != m_md) {
+
+        m_md = userInput;
+
+        emit mdChanged();
+
+    }
+}
+
+QString NotesBackend::md()
+{
+    return m_md;
+}
+
+void NotesBackend::setCursorPosition(int position)
+{
+    if(m_cursorPosition != position) {
+
+        qDebug() << "m_cursorPosition";
+
+        m_cursorPosition = position;
+
+        emit cursorPositionChanged();
+    }
+}
+
+QStringList NotesBackend::blocks()
+{
+    return m_blocks;
+}
+
+void NotesBackend::setBlocks(QStringList blocks)
+{
+    if(m_blocks != blocks) {
+
+        qDebug() << "Blocks" << blocks;
+
+        m_blocks = blocks;
+
+        m_md.clear();
+
+        for (auto block : blocks) {
+
+            if(isStartingH1Title(block)) {
+
+                block.replace(0, 1, "&#35;");
+
+                m_md += QString(block);
+
+                qDebug() << "title converted" << m_md;
+
+            }
+            else if(isStartingH1TitleWithNewLine(block)) {
+
+                block.replace(0, 1, "&#10;");
+
+                block.replace(5, 1, "&#35;");
+
+                //block.replace(10, 1, "&nbsp;");
+
+                m_md += QString(block);
+
+                qDebug() << "title newline converted" << m_md;
+            }
+            else {
+
+                std::string blockString = remove_non_breaking_spaces(block.toStdString());
+
+                const char * mdtq = blockString.c_str();
+
+                qDebug() << "mdtq" << mdtq;
+
+                char *htmlOutput = cmark_markdown_to_html(mdtq, strlen(mdtq), CMARK_OPT_UNSAFE);
+
+                qDebug() << "HTML" << htmlOutput;
+
+                m_md += QString(htmlOutput).removeLast();
+            }
+        }
+
+        qDebug() << "final converted" << m_md;
+
+        emit mdChanged();
+
+        emit blocksChanged();
+    }
+}

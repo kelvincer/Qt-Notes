@@ -207,132 +207,141 @@ Window {
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
+        MarkdownTextArea {
             Layout.fillHeight: true
-            spacing: 0
-
-            TextArea {
-                id: markDownInput
-                // anchors.fill: parent
-                text: notesBackend.html
-                Layout.fillHeight: true
-                Layout.preferredWidth: 0.9
-                Layout.fillWidth: true
-                textFormat: TextEdit.RichText
-                wrapMode: TextEdit.Wrap
-                cursorPosition: notesBackend.cursorPosition
-                background: Rectangle {
-                    color: editorBackgroundColor
-                }
-                onCursorPositionChanged: {
-                    // console.log("change cp: " + cursorPosition)
-                    notesBackend.cursorPosition = cursorPosition
-                }
-                onTextChanged: {
-                    notesBackend.html = getText(0, length)
-                }
-                Keys.onPressed: event => {
-
-                                    event.accepted = false
-
-                                    if (event.key === Qt.Key_Backspace) {
-
-                                    }
-                                    else if(event.key === Qt.Key_Space){
-                                        notesBackend.spacePressed = true
-                                    }
-                                }
-                selectByMouse: true
-                // focus: true
-
-                property string userSelected: ""
-
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    // propagateComposedEvents: false
-
-                    property bool selecting: false // Track whether selection is active
-                    property int startPos: -1     // Store the start position of the selection
-
-
-                    onClicked: mouse => {
-                                   notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
-                               }
-                    onDoubleClicked: mouse => {
-                                         const position = markDownInput.cursorPosition
-                                         selectWordAtPos(position)
-                                     }
-
-                    function selectWordAtPos(position) {
-
-                        const textContent = markDownInput.getText(0, markDownInput.length); // Full text in the TextArea
-                        let start = position;
-                        let end = position;
-
-                        // Find the start of the word
-                        while (start > 0 && !isDelimiter(textContent[start - 1])) {
-                            start--;
-                        }
-
-                        // Find the end of the word
-                        while (end < textContent.length && !isDelimiter(textContent[end])) {
-                            end++;
-                        }
-
-                        // Below line also works
-                        // notesBackend.cursorPosition = end
-
-                        markDownInput.moveCursorSelection(end)
-
-                        markDownInput.select(start, end)
-
-                        console.log("Word selected from", start, "to", end, ":", textContent.substring(start, end));
-                    }
-
-                    function isDelimiter(character) {
-                        return character === ' ' || character === '\n' || character === '\t'
-                                || character === '.' || character === ',' || character === ';'
-                                || character === '\u2029' || character === '\u00a0'
-                    }
-
-                    onPressed: mouse => {
-                        // Start selection
-                        selecting = true;
-                        startPos = markDownInput.positionAt(mouse.x, mouse.y);
-                        notesBackend.cursorPosition = startPos; // Move cursor to start position
-                    }
-
-                    onPositionChanged: mouse => {
-                        if (selecting) {
-                            const endPos = markDownInput.positionAt(mouse.x, mouse.y);
-                            console.log("endPos:", endPos)
-
-                            if (startPos !== -1) {
-
-                                markDownInput.moveCursorSelection(endPos)
-                                markDownInput.select(startPos, endPos); // Select text between start and end
-                            }
-                        }
-                    }
-
-                    onReleased: {
-                        // End selection
-                        selecting = false;
-                        console.log("Selected text:", markDownInput.selectedText);
-                        markDownInput.userSelected = markDownInput.selectedText;
-
-                        markDownInput.forceActiveFocus()
-                    }
-                }
-            }
+            Layout.preferredWidth:  parent.width * 0.55
+            Layout.fillWidth: true
+            backend: notesBackend
         }
+
+        // RowLayout {
+        //     Layout.fillWidth: true
+        //     Layout.fillHeight: true
+        //     spacing: 0
+
+
+
+            // TextArea {
+            //     id: markDownInput
+            //     // anchors.fill: parent
+            //     text: notesBackend.html
+            //     Layout.fillHeight: true
+            //     Layout.preferredWidth: 0.9
+            //     Layout.fillWidth: true
+            //     textFormat: TextEdit.RichText
+            //     wrapMode: TextEdit.Wrap
+            //     cursorPosition: notesBackend.cursorPosition
+            //     background: Rectangle {
+            //         color: editorBackgroundColor
+            //     }
+            //     onCursorPositionChanged: {
+            //         // console.log("change cp: " + cursorPosition)
+            //         notesBackend.cursorPosition = cursorPosition
+            //     }
+            //     onTextChanged: {
+            //         notesBackend.html = getText(0, length)
+            //     }
+            //     Keys.onPressed: event => {
+
+            //                         event.accepted = false
+
+            //                         if (event.key === Qt.Key_Backspace) {
+
+            //                         }
+            //                         else if(event.key === Qt.Key_Space){
+            //                             notesBackend.spacePressed = true
+            //                         }
+            //                     }
+            //     selectByMouse: true
+            //     // focus: true
+
+            //     property string userSelected: ""
+
+            //     MouseArea {
+            //         anchors.fill: parent
+            //         acceptedButtons: Qt.LeftButton | Qt.RightButton
+            //         // propagateComposedEvents: false
+
+            //         property bool selecting: false // Track whether selection is active
+            //         property int startPos: -1     // Store the start position of the selection
+
+
+            //         onClicked: mouse => {
+            //                        notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
+            //                    }
+            //         onDoubleClicked: mouse => {
+            //                              const position = markDownInput.cursorPosition
+            //                              selectWordAtPos(position)
+            //                          }
+
+            //         function selectWordAtPos(position) {
+
+            //             const textContent = markDownInput.getText(0, markDownInput.length); // Full text in the TextArea
+            //             let start = position;
+            //             let end = position;
+
+            //             // Find the start of the word
+            //             while (start > 0 && !isDelimiter(textContent[start - 1])) {
+            //                 start--;
+            //             }
+
+            //             // Find the end of the word
+            //             while (end < textContent.length && !isDelimiter(textContent[end])) {
+            //                 end++;
+            //             }
+
+            //             // Below line also works
+            //             // notesBackend.cursorPosition = end
+
+            //             markDownInput.moveCursorSelection(end)
+
+            //             markDownInput.select(start, end)
+
+            //             console.log("Word selected from", start, "to", end, ":", textContent.substring(start, end));
+            //         }
+
+            //         function isDelimiter(character) {
+            //             return character === ' ' || character === '\n' || character === '\t'
+            //                     || character === '.' || character === ',' || character === ';'
+            //                     || character === '\u2029' || character === '\u00a0'
+            //         }
+
+            //         onPressed: mouse => {
+            //             // Start selection
+            //             selecting = true;
+            //             startPos = markDownInput.positionAt(mouse.x, mouse.y);
+            //             notesBackend.cursorPosition = startPos; // Move cursor to start position
+            //         }
+
+            //         onPositionChanged: mouse => {
+            //             if (selecting) {
+            //                 const endPos = markDownInput.positionAt(mouse.x, mouse.y);
+            //                 console.log("endPos:", endPos)
+
+            //                 if (startPos !== -1) {
+
+            //                     markDownInput.moveCursorSelection(endPos)
+            //                     markDownInput.select(startPos, endPos); // Select text between start and end
+            //                 }
+            //             }
+            //         }
+
+            //         onReleased: {
+            //             // End selection
+            //             selecting = false;
+            //             console.log("Selected text:", markDownInput.selectedText);
+            //             markDownInput.userSelected = markDownInput.selectedText;
+
+            //             markDownInput.forceActiveFocus()
+            //         }
+            //     }
+            // }
+        //}
 
         Column {
 
             Layout.fillHeight: true
-            Layout.preferredWidth: 0.1
+            Layout.preferredWidth: parent.width * 0.1
             Layout.fillWidth: true
 
             Text {
