@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import Notes as Notes
+//import Notes as Notes
 import "../js/TextBlock.js" as Block
 import "../js/MdArray.js" as MdArray
 import "../js/Constants.js" as Constants
@@ -78,7 +78,7 @@ TextArea {
                             event.accepted = true
 
                             console.log("start cp", ta.cursorPosition)
-                            console.log("num", 1)
+                            console.log("NEW CHARACTER")
 
                             if(textArray[indexOnTextArray].isTitle) {
 
@@ -167,7 +167,7 @@ TextArea {
                             event.accepted = true
 
                             console.log("start cp", ta.cursorPosition)
-                            console.log("num", 2)
+                            console.log("NEW SPACE")
 
                             if(textArray[indexOnTextArray].isTitle) {
 
@@ -248,7 +248,7 @@ TextArea {
 
                             event.accepted = true
 
-                            console.log("num", 3)
+                            console.log("NEW BACKSPACE")
 
                             if(cursorPos === 0) {
                                 return
@@ -347,8 +347,6 @@ TextArea {
                         if(event.key === Qt.Key_Return) {
 
                             event.accepted = true
-
-                            console.log("num", 4)
 
                             console.log("KEY RETURN")
 

@@ -429,7 +429,7 @@ std::string NotesBackend::remove_non_breaking_spaces(const std::string &in) cons
         }
     }
 
-    qDebug() << "result:" << result;
+    //qDebug() << "result:" << result;
 
     return result;
 }
@@ -504,10 +504,13 @@ void NotesBackend::setBlocks(QStringList blocks)
         m_blocks = blocks;
 
         m_md.clear();
+        itemDescription.clear();
 
         for (int i = 0; i < blocks.size(); ++i) {
 
             if(isStartingH1Title(blocks[i])) {
+
+                itemTitle = blocks[i];
 
                 blocks[i].replace(0, 1, "&#35;");
 
@@ -517,6 +520,8 @@ void NotesBackend::setBlocks(QStringList blocks)
 
             }
             else if(isStartingH1TitleWithNewLine(blocks[i])) {
+
+                itemDescription = blocks[i];
 
                 blocks[i].replace(0, 1, "&#10;");
 
@@ -541,10 +546,20 @@ void NotesBackend::setBlocks(QStringList blocks)
                 qDebug() << "HTML" << htmlOutput;
 
                 m_md += QString(htmlOutput).removeLast();
+
+                if (i == 0)
+                {
+                    std::string plainText = CMUtil::html_to_plaintext_simple(m_md);
+                    itemTitle = QString::fromStdString(plainText);
+                } 
+                else {
+                    std::string plainText = CMUtil::html_to_plaintext_simple(QString(htmlOutput).removeLast());
+                    itemDescription += plainText  + " ";   
+                }
             }
         }
 
-        //titleOrDescriptionChanged(itemTitle, itemDescription);
+        titleOrDescriptionChanged(itemTitle, itemDescription);
 
         qDebug() << "final converted" << m_md;
 
