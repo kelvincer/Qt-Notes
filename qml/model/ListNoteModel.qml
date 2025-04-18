@@ -8,8 +8,8 @@ ListModel {
 
     ListElement {
         itemColor: "papayawhip"
-        title: "Hi! I'm a sticky note. ❤️"
-        description: "You can do all sorts of things with me. For example. Create titles with # at the beginning of each paragraph."
+        title: "#\u00A0Hi"
+        description: "\nFor"
         time: "12:56"
     }
 

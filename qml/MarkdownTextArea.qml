@@ -19,6 +19,7 @@ TextArea {
     id: ta
     text: backend.md
     textFormat: TextArea.MarkdownText
+    cursorVisible: true
     cursorPosition: backend.cursorPosition
     wrapMode: TextEdit.Wrap
     Connections {
@@ -26,15 +27,20 @@ TextArea {
             function onSendEditorColor(editorColor) {
                 ta.background.color = editorColor
             }
+            function onSendLoadedText(array) {
+                textArray = array
+                console.log("send loaded text", array[0].markdown)
+            }
+            function  onSendCursorPosition(position) {
+                cursorPos = position
+                forceActiveFocus()
+            }
     }
     onCursorPositionChanged: {
         console.log("onCursorPositionChanged", cursorPosition)
     }
     onTextChanged: {
-        backend.html = text
-        console.log("HTML", text)
-        backend.html = getText(0, length)
-
+        
     }
     Keys.onPressed: event => {
 
@@ -227,20 +233,6 @@ TextArea {
 
                                 cursorPos = ta.cursorPosition + 1
 
-                                // if(Block.isH1TitleWithNewline(textArray[indexOnTextArray]?.markdown ?? "")) {
-                                //     console.log("IS TITLE")
-                                //     cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) + MdArray.getCursorDisplacementInsideBlock(textArray, ta.cursorPosition) + 1
-                                //     //cursorPos = 4
-
-                                //     console.log("cursor:", cursorPos)
-                                // } else if(Block.isH1Title(textArray[indexOnTextArray]?.markdown ?? "")) {
-                                //     cursorPos = Block.getTitleLength(textArray[indexOnTextArray]?.markdown)
-                                // }
-                                // else {
-                                //     console.log("IS NOT TITLE NEW LINE")
-                                //     cursorPos = ta.cursorPosition + 1
-                                // }
-
                             }
                         }
 
@@ -326,15 +318,19 @@ TextArea {
 
                                 } else {
 
-                                    const totalLengthBeforeCursorBlock = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition)
+                                    //const totalLengthBeforeCursorBlock = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition)
 
-                                    console.log("cursorPos:", cursorPos, "inside paragraph:", totalLengthBeforeCursorBlock)
+                                    textArray.forEach((x, i) => console.log(x.markdown));
 
-                                    console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, cursorPos - totalLengthBeforeCursorBlock).split("") ?? "")
-                                    console.log("3", textArray[indexOnTextArray]?.markdown?.substring(cursorPos + 1 - totalLengthBeforeCursorBlock, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+                                    const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
+                                    console.log("displacement", displacement)
+                                    //console.log("cursorPos:", cursorPos, "inside paragraph:", totalLengthBeforeCursorBlock)
 
-                                    textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, cursorPos - totalLengthBeforeCursorBlock) ?? "").concat(
-                                        textArray[indexOnTextArray]?.markdown?.substring(cursorPos + 1 - totalLengthBeforeCursorBlock, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                    console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1).split("") ?? "")
+                                    console.log("3", textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+
+                                    textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1) ?? "").concat(
+                                        textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
 
                                     // if(textArray[indexOnTextArray]?.markdown === '\n') {
 

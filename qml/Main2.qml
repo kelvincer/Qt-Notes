@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls.Universal
 import QtQuick.Layouts
 import Notes
+import "../js/Constants.js" as Constants
 
 Window {
     id: mainWindow
@@ -11,8 +12,11 @@ Window {
     title: qsTr("Hello World")
 
     property int appMargin: 10
+    property var currentEditorText : []
 
     signal sendEditorColor(var editorColor)
+    signal sendLoadedText(var array)
+    signal sendCursorPosition(int cursorPosition)
 
     NotesBackend {
         id: notesBackend
@@ -137,7 +141,7 @@ Window {
                         id: notesList
                         onListItemSelected: {
 
-                            console.log("cu i E: " +  currentIndex)
+                            console.log("index" , currentIndex)
 
                             markDownInput.clear()
 
@@ -146,32 +150,34 @@ Window {
 
                             sendEditorColor(element.itemColor)
 
-                            console.log("title E: " +  element.title)
-
                             notesBackend.setCurrentIndex(currentIndex)
 
                             notesBackend.setNoteTitle(element.title)
                             notesBackend.setTitleLength(element.title.length)
                             notesBackend.cursorPosition = element.title.length + element.description.length + 1
                             notesBackend.html =  element.title + "\u2029" + element.description
-
-                            console.log("E")
                         }
 
                         Component.onCompleted: {
                             let element = notesList.model.get(0);
                             //editorBackgroundColor = element.itemColor
                             sendEditorColor(element.itemColor)
-                            console.log("title D: " +  element.title)
-
                             notesBackend.setCurrentIndex(0)
 
-                            notesBackend.setNoteTitle(element.title)
-                            notesBackend.setTitleLength(element.title.length)
-                            notesBackend.cursorPosition = element.title.length + element.description.length
-                            notesBackend.html =  element.title + "\u2029" + element.description
-                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
-                            console.log("D")
+                            console.log("title", element.title, element.description)
+
+                            currentEditorText.push({markdown: element.title, isTitle: true, isTitleFirstChar: false})
+                            currentEditorText.push({markdown: element.description, isTitle: false, isTitleFirstChar: false})
+
+                            sendLoadedText(currentEditorText)
+
+                            const result = currentEditorText.map((e) => e.markdown);
+                            const maxCursorPosValue = MdArray.getTotalLength(currentEditorText)
+                            console.log("max length", maxCursorPosValue)
+
+                            notesBackend.blocks = result
+                            notesBackend.cursorPosition = maxCursorPosValue
+                            sendCursorPosition(notesBackend.cursorPosition)                           
                         }
                     }
                 }

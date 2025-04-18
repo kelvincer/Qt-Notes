@@ -504,7 +504,6 @@ void NotesBackend::setBlocks(QStringList blocks)
         m_blocks = blocks;
 
         m_md.clear();
-        itemDescription.clear();
 
         for (int i = 0; i < blocks.size(); ++i) {
 
@@ -562,6 +561,9 @@ void NotesBackend::setBlocks(QStringList blocks)
         titleOrDescriptionChanged(itemTitle, itemDescription);
 
         qDebug() << "final converted" << m_md;
+
+        itemDescription.clear();
+        itemTitle.clear();
 
         emit mdChanged();
 
