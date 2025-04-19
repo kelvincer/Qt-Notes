@@ -15,7 +15,7 @@ ListView {
 
     delegate: Item {
         width: parent.width
-        height: 130
+        height: 150
 
         NoteItem {
             id: noteItem

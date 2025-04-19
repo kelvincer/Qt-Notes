@@ -8,49 +8,50 @@ ColumnLayout {
 
     RowLayout {
 
-        width: parent.width
-        height: parent.height
+        Layout.preferredWidth: parent.width
+        Layout.preferredHeight: parent.height
 
         Rectangle {
-            width: 20
-            height: 20
+            Layout.preferredWidth: 20
+            Layout.preferredHeight: 20
             color: itemColor
             radius: 10
             Layout.alignment: Qt.AlignTop
         }
 
         Item {
-            width: 8
-            height: 1
+            Layout.preferredWidth: 8
         }
 
         ColumnLayout {
-
-            Layout.fillWidth: true
-            height: parent.height
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height
 
             Text {
                 text: "### " + title
-                elide: Text.ElideRight
+                elide: Text.ElideMiddle
                 maximumLineCount: 1
-                //font.bold: true
-                wrapMode: Text.Wrap
+                wrapMode: Text.WordWrap
                 Layout.fillWidth: true
                 textFormat: Text.MarkdownText
+                Layout.alignment: Qt.AlignTop
             }
 
             Text {
                 text: description
                 elide: Text.ElideRight
-                maximumLineCount: 6
+                //maximumLineCount: 7
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
+                Layout.fillHeight: true
+                Component.onCompleted: {
+                    console.log("description", description)
+                }
             }
 
             Text {
                 text: time
                 color: "silver"
-                Layout.alignment: Qt.AlignLeft
                 font.pointSize: 12
             }
         }
@@ -58,8 +59,8 @@ ColumnLayout {
 
     Rectangle {
         color: "#DFDFDF"
-        height: 1
-        width: parent.width
+        Layout.preferredHeight: 1
+        Layout.preferredWidth: parent.width
         visible: true //(index !== (list.count - 1))
     }
 }

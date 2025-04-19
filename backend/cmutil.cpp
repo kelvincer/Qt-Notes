@@ -1,7 +1,5 @@
 #include "cmutil.h"
 
-CMUtil::CMUtil() {}
-
 std::string CMUtil::html_to_plaintext_simple(const std::string &html)
 {
     std::string result;
