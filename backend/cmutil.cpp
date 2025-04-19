@@ -52,3 +52,20 @@ std::string CMUtil::html_to_plaintext_simple(const QString &html)
 
     return result;
 }
+
+// void CMUtil::replaceOrAppendStringList(QList<QStringList>& list, int index, const QStringList& value) {
+//     if (index >= 0 && index < list.size()) {
+//         list[index] = value; // Replace
+//     } else {
+//         list.append(value);  // Append
+//     }
+// }
+
+// template <typename T>
+//     void replaceOrAppend(QList<T>& list, int index, const T& value) {
+//         if (index >= 0 && index < list.size()) {
+//             list[index] = value;
+//         } else {
+//             list.append(value);
+//         }
+//     }

@@ -3,6 +3,7 @@ import QtQuick.Controls.Universal
 import QtQuick.Layouts
 import Notes
 import "../js/Constants.js" as Constants
+import "../js/TextBlock.js" as Block
 
 Window {
     id: mainWindow
@@ -17,14 +18,38 @@ Window {
     signal sendEditorColor(var editorColor)
     signal sendLoadedText(var array)
     signal sendCursorPosition(int cursorPosition)
+    signal sendNoteIndex(int index)
 
     NotesBackend {
         id: notesBackend
-        onTitleOrDescriptionChanged: (title, description) => {
-            console.log("new log", title, description);
-
-            notesList.model.get(notesList.currentIndex).title = title;
-            notesList.model.get(notesList.currentIndex).description = description;
+        onAddNewNoteChanged: (title, description) => {
+            console.log("ADD NEW NOTE")
+            console.log("new log title", title)
+            console.log("new log description", description)
+            notesList.model.addNewItem({
+                                    "title": title,
+                                    "description": description,
+                                    "time": "14:45"
+                                }, notesList.count);
+        }
+        onUpdateNoteChanged: (title, description) => {
+            console.log("UPDATE NOTE")
+            console.log("new log title", title)
+            console.log("new log description", description)
+            
+            notesList.model.get(notesList.currentIndex).title = title
+            notesList.model.get(notesList.currentIndex).description = description
+        }
+        onUpdateTextArrayOnEditor: (arrayData) => {
+            let array = []
+            for (const element of arrayData) {
+                array.push({
+                    markdown: element,
+                    isTitle: Block.isTitle(element),
+                    isTitleFirstChar: Block.isFirstCharOfTitle(element)
+                });
+            }
+            sendLoadedText(array)
         }
         onEditorCursorPositionChanged: {}
         format: Format {
@@ -87,23 +112,13 @@ Window {
                             id: plusMouseArea
                             anchors.fill: parent
                             onClicked: {
-
-                                notesBackend.blocks = [];
-                                notesBackend.cursorPosition = 0;
-                                sendCursorPosition(notesBackend.cursorPosition);
-
-                                notesList.model.addNewItem({
-                                    "title": "",
-                                    "description": "",
-                                    "time": "14:45"
-                                }, notesList.count);
-
-                                notesList.currentIndex = 0;
-
-                                let element = notesList.model.get(0)
-                                sendEditorColor(element.itemColor)
-                                sendLoadedText([{markdown: "", isTitle: false}])
-                                markDownInput.clear()
+                                console.log("ON CLICKED")
+                                notesBackend.sendNoteInfo([], 0, false, 0);
+                                let element = notesList.model.get(0);
+                                sendEditorColor(element.itemColor);
+                                sendCursorPosition(0)
+                                sendNoteIndex(0)
+                                notesList.currentIndex = 0
                             }
                             onPressedChanged: {
                                 if (plusMouseArea.pressed) {
@@ -134,73 +149,41 @@ Window {
                     NotesList {
                         id: notesList
                         onListItemSelected: {
+                            console.log("ON ITEM SELECTED")
                             console.log("index", currentIndex);
-
+                            notesBackend.sendListIndex(currentIndex, true);
                             let element = notesList.model.get(currentIndex);
                             sendEditorColor(element.itemColor);
-                            notesBackend.setCurrentIndex(currentIndex);
-
-                            console.log("title", element.title, element.description);
-
-                            currentEditorText = [];
-
-                            currentEditorText.push({
-                                markdown: Constants.titleStarted + element.title,
-                                isTitle: true,
-                                isTitleFirstChar: false
-                            });
-                            currentEditorText.push({
-                                markdown: "\n" + element.description,
-                                isTitle: false,
-                                isTitleFirstChar: false
-                            });
-
-                            sendLoadedText(currentEditorText);
-
-                            const result = currentEditorText.filter(e => e.markdown.length > 0).map(e => e.markdown);
-                            const maxCursorPosValue = MdArray.getTotalLength(currentEditorText);
-                            console.log("max length", maxCursorPosValue);
-
-                            if (result.length > 0) {
-                                markDownInput.clear()
-                                //console.log("not empty")
-                                notesBackend.blocks = result
-                                notesBackend.cursorPosition = maxCursorPosValue
-                                sendCursorPosition(notesBackend.cursorPosition)
-                            } else {
-                                notesBackend.blocks = []
-                                notesBackend.cursorPosition = 0
-                                sendCursorPosition(0)
-                                //markDownInput.clear()
-                            }
+                            sendNoteIndex(currentIndex)
+                            sendCursorPosition(notesBackend.cursorPosition)
                         }
 
                         Component.onCompleted: {
-                            let element = notesList.model.get(0);
-                            sendEditorColor(element.itemColor);
+                            console.log("ON COMPLETED")
+                            sendEditorColor(Constants.welcomeEditorColor)
                             notesBackend.setCurrentIndex(0);
 
-                            console.log("title", element.title, element.description);
-
                             currentEditorText.push({
-                                markdown: element.title,
+                                markdown: Constants.welcomeTitle,
                                 isTitle: true,
                                 isTitleFirstChar: false
                             });
-                            currentEditorText.push({
-                                markdown: element.description,
-                                isTitle: false,
-                                isTitleFirstChar: false
-                            });
+
+                            const blocks = Block.getBlocksFromText(Constants.welcomeDescription);
+                            for (const element of blocks) {
+                                console.log(element);
+                                currentEditorText.push({
+                                    markdown: "\n" + element,
+                                    isTitle: Block.isTitle(element),
+                                    isTitleFirstChar: false
+                                });
+                            }
 
                             sendLoadedText(currentEditorText);
 
                             const result = currentEditorText.map(e => e.markdown);
                             const maxCursorPosValue = MdArray.getTotalLength(currentEditorText);
-                            //console.log("max length", maxCursorPosValue);
-
-                            notesBackend.blocks = result;
-                            notesBackend.cursorPosition = maxCursorPosValue;
+                            notesBackend.sendNoteInfo(result, maxCursorPosValue, false, 0);
                             sendCursorPosition(notesBackend.cursorPosition);
                         }
                     }

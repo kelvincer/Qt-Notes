@@ -15,6 +15,7 @@ TextArea {
     property int cursorPos : 0
     property var textArray : [{markdown: "", isTitle: false}]
     property int maxCursorPosValue: 0
+    property int noteIndex
 
     id: ta
     text: backend.md
@@ -28,12 +29,24 @@ TextArea {
                 ta.background.color = editorColor
             }
             function onSendLoadedText(array) {
-                textArray = array
-                //console.log("send loaded text", array[0].markdown)
+                console.log("TEXT ARRAY")
+                if(array.length === 0) {
+                    ta.textArray = [{markdown: "", isTitle: false}]
+                    ta.clear()
+                } else {
+                    ta.textArray = array
+                }
+
+                for (const element of ta.textArray) {
+                    console.log(element.markdown);
+                }
             }
             function  onSendCursorPosition(position) {
-                cursorPos = position
-                forceActiveFocus()
+                ta.cursorPos = position
+                ta.forceActiveFocus()
+            }
+            function  onSendNoteIndex(index) {
+                ta.noteIndex = index
             }
     }
     onCursorPositionChanged: {
@@ -413,17 +426,16 @@ TextArea {
 
                         //textArray = textArray.filter(e => e?.markdown?.length !== 0)
                         if(textArray.filter(e => e?.markdown?.length !== 0).length === 0) {
-                            backend.blocks = []
-                            backend.cursorPosition = cursorPos
+                            //backend.blocks = []
+                            //backend.cursorPosition = cursorPos
                             //textArray.push({markdown: ""})
+                            backend.sendNoteInfo([], cursorPos, true, noteIndex)
                             return
                         }
 
-                        textArray[indexOnTextArray].isTitleFirstChar = Block.isFirstCharOfTitle(textArray[indexOnTextArray]?.markdown) ?? false
+                        textArray[indexOnTextArray].isTitleFirstChar = Block.isFirstCharOfTitle(textArray[indexOnTextArray].markdown)
 
-                        const isH1Title = Block.isTitle(textArray[indexOnTextArray]?.markdown ?? "")
-
-                        textArray[indexOnTextArray].isTitle = isH1Title
+                        textArray[indexOnTextArray].isTitle = Block.isTitle(textArray[indexOnTextArray]?.markdown ?? "")
 
                         if(textArray[indexOnTextArray]?.markdown.length === 0) {
                             textArray.splice(indexOnTextArray, 1)
@@ -432,10 +444,14 @@ TextArea {
                         const result = textArray.map((e) => e.markdown);
 
                         maxCursorPosValue = MdArray.getTotalLength(textArray)
-                        console.log("max length", maxCursorPosValue)
+                        console.log("max length 123", maxCursorPosValue)
 
-                        backend.blocks = result
-                        backend.cursorPosition = cursorPos
+                        //backend.blocks = result
+                        //backend.cursorPosition = cursorPos
+
+                        console.log("note index", noteIndex)
+
+                        backend.sendNoteInfo(result, cursorPos, true, noteIndex)
 
                         MdArray.printBlocks(textArray)
                         console.log("current index", MdArray.getCursorBlockIndex(textArray, cursorPos))
