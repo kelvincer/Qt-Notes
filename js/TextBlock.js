@@ -135,3 +135,7 @@ function isFirstCharOfTitle(markdown) {
 
     return (markdown.startsWith(Constants.titleStarted) && markdown.length === 2) || (markdown.startsWith(Constants.titleStartedWithNewline) && markdown.length === 3)
 }
+
+function getBlocksFromText(text) {
+    return text.split(Constants.newline)
+}
