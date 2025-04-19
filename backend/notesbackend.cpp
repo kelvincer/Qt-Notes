@@ -482,8 +482,6 @@ void NotesBackend::setCursorPosition(int position)
 {
     if(m_cursorPosition != position) {
 
-        qDebug() << "m_cursorPosition";
-
         m_cursorPosition = position;
 
         emit cursorPositionChanged();
@@ -558,7 +556,9 @@ void NotesBackend::setBlocks(QStringList blocks)
             }
         }
 
-        titleOrDescriptionChanged(itemTitle, itemDescription);
+        if(!itemTitle.isEmpty()) {
+            titleOrDescriptionChanged(itemTitle, itemDescription.removeLast());
+        }
 
         qDebug() << "final converted" << m_md;
 

@@ -196,5 +196,5 @@ function getLengthBeforeCursorBlockIndex(array, cursorBlockIndex) {
 }
 
 function isStartingATitleInsideParagraph(markdown) {
-    return markdown.substring(markdown.length - 7) === Constants._break + Constants.titleStarted
+    return markdown !== undefined && markdown.substring(markdown.length - 7) === Constants._break + Constants.titleStarted
 }

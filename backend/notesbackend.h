@@ -29,6 +29,8 @@ class NotesBackend : public QObject
     QString noBreakSpace = "\u00a0";
     QString paragraphSeparator = "\u2029";
     std::u16string u16ParagraphSeparator = u"\u2029";
+    QString titleStarted = "#\u00A0";
+    QString newline = "\n";
 
     QStringList m_blocks;
     int m_cursorPosition = 0;

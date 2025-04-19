@@ -12,7 +12,7 @@ Window {
     title: qsTr("Hello World")
 
     property int appMargin: 10
-    property var currentEditorText : []
+    property var currentEditorText: []
 
     signal sendEditorColor(var editorColor)
     signal sendLoadedText(var array)
@@ -21,15 +21,12 @@ Window {
     NotesBackend {
         id: notesBackend
         onTitleOrDescriptionChanged: (title, description) => {
+            console.log("new log", title, description);
 
-                                         console.log("new log", title, description)
-
-                                         notesList.model.get(notesList.currentIndex).title = title
-                                         notesList.model.get(notesList.currentIndex).description = description
-                                     }
-        onEditorCursorPositionChanged: {
-
+            notesList.model.get(notesList.currentIndex).title = title;
+            notesList.model.get(notesList.currentIndex).description = description;
         }
+        onEditorCursorPositionChanged: {}
         format: Format {
             id: formatter
         }
@@ -41,7 +38,7 @@ Window {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredWidth: 0.35;
+            Layout.preferredWidth: 0.35
             color: "white"
             Layout.fillHeight: true
 
@@ -88,34 +85,31 @@ Window {
 
                         MouseArea {
                             id: plusMouseArea
-                            anchors.fill: parent;
+                            anchors.fill: parent
                             onClicked: {
-                                markDownInput.clear()
-                                notesBackend.setCurrentIndex(0)
-                                notesBackend.setNoteTitle("")
-                                notesBackend.setTitleLength(0)
-                                notesBackend.cursorPosition = 0
-                                notesBackend.html = ""
+
+                                notesBackend.blocks = [];
+                                notesBackend.cursorPosition = 0;
+                                sendCursorPosition(notesBackend.cursorPosition);
 
                                 notesList.model.addNewItem({
-                                                               "title": "",
-                                                               "description": "",
-                                                               "time": "14:45"
-                                                           },
-                                                           notesList.count)
+                                    "title": "",
+                                    "description": "",
+                                    "time": "14:45"
+                                }, notesList.count);
 
-                                notesList.currentIndex = 0
+                                notesList.currentIndex = 0;
 
-                                let element = notesList.model.get(0);
-                                //editorBackgroundColor = element.itemColor
+                                let element = notesList.model.get(0)
                                 sendEditorColor(element.itemColor)
+                                sendLoadedText([{markdown: "", isTitle: false}])
+                                markDownInput.clear()
                             }
                             onPressedChanged: {
-
-                                if(plusMouseArea.pressed) {
-                                    plusIcon.source = "qrc:/images/icons8-plus-math-50.png"
+                                if (plusMouseArea.pressed) {
+                                    plusIcon.source = "qrc:/images/icons8-plus-math-50.png";
                                 } else {
-                                    plusIcon.source = "qrc:/images/icons8-plus-50.png"
+                                    plusIcon.source = "qrc:/images/icons8-plus-50.png";
                                 }
                             }
                         }
@@ -140,44 +134,74 @@ Window {
                     NotesList {
                         id: notesList
                         onListItemSelected: {
-
-                            console.log("index" , currentIndex)
-
-                            markDownInput.clear()
+                            console.log("index", currentIndex);
 
                             let element = notesList.model.get(currentIndex);
-                            //editorBackgroundColor = element.itemColor
+                            sendEditorColor(element.itemColor);
+                            notesBackend.setCurrentIndex(currentIndex);
 
-                            sendEditorColor(element.itemColor)
+                            console.log("title", element.title, element.description);
 
-                            notesBackend.setCurrentIndex(currentIndex)
+                            currentEditorText = [];
 
-                            notesBackend.setNoteTitle(element.title)
-                            notesBackend.setTitleLength(element.title.length)
-                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
-                            notesBackend.html =  element.title + "\u2029" + element.description
+                            currentEditorText.push({
+                                markdown: Constants.titleStarted + element.title,
+                                isTitle: true,
+                                isTitleFirstChar: false
+                            });
+                            currentEditorText.push({
+                                markdown: "\n" + element.description,
+                                isTitle: false,
+                                isTitleFirstChar: false
+                            });
+
+                            sendLoadedText(currentEditorText);
+
+                            const result = currentEditorText.filter(e => e.markdown.length > 0).map(e => e.markdown);
+                            const maxCursorPosValue = MdArray.getTotalLength(currentEditorText);
+                            console.log("max length", maxCursorPosValue);
+
+                            if (result.length > 0) {
+                                markDownInput.clear()
+                                //console.log("not empty")
+                                notesBackend.blocks = result
+                                notesBackend.cursorPosition = maxCursorPosValue
+                                sendCursorPosition(notesBackend.cursorPosition)
+                            } else {
+                                notesBackend.blocks = []
+                                notesBackend.cursorPosition = 0
+                                sendCursorPosition(0)
+                                //markDownInput.clear()
+                            }
                         }
 
                         Component.onCompleted: {
                             let element = notesList.model.get(0);
-                            //editorBackgroundColor = element.itemColor
-                            sendEditorColor(element.itemColor)
-                            notesBackend.setCurrentIndex(0)
+                            sendEditorColor(element.itemColor);
+                            notesBackend.setCurrentIndex(0);
 
-                            console.log("title", element.title, element.description)
+                            console.log("title", element.title, element.description);
 
-                            currentEditorText.push({markdown: element.title, isTitle: true, isTitleFirstChar: false})
-                            currentEditorText.push({markdown: element.description, isTitle: false, isTitleFirstChar: false})
+                            currentEditorText.push({
+                                markdown: element.title,
+                                isTitle: true,
+                                isTitleFirstChar: false
+                            });
+                            currentEditorText.push({
+                                markdown: element.description,
+                                isTitle: false,
+                                isTitleFirstChar: false
+                            });
 
-                            sendLoadedText(currentEditorText)
+                            sendLoadedText(currentEditorText);
 
-                            const result = currentEditorText.map((e) => e.markdown);
-                            const maxCursorPosValue = MdArray.getTotalLength(currentEditorText)
-                            console.log("max length", maxCursorPosValue)
+                            const result = currentEditorText.map(e => e.markdown);
+                            const maxCursorPosValue = MdArray.getTotalLength(currentEditorText);
+                            //console.log("max length", maxCursorPosValue);
 
-                            notesBackend.blocks = result
-                            notesBackend.cursorPosition = maxCursorPosValue
-                            sendCursorPosition(notesBackend.cursorPosition)                           
+                            notesBackend.blocks = result;
+                            notesBackend.cursorPosition = maxCursorPosValue;
+                            sendCursorPosition(notesBackend.cursorPosition);
                         }
                     }
                 }
@@ -248,19 +272,12 @@ Window {
             Button {
                 text: "B"
                 onClicked: {
-                    console.log("B")
-                    if(markDownInput.userSelected !== "") {
-
-                        notesBackend.setBoldFormat(markDownInput.getText(0, markDownInput.length),
-                                          markDownInput.selectionStart,
-                                          markDownInput.selectionEnd)
-
-
+                    console.log("B");
+                    if (markDownInput.userSelected !== "") {
+                        notesBackend.setBoldFormat(markDownInput.getText(0, markDownInput.length), markDownInput.selectionStart, markDownInput.selectionEnd);
                     }
                 }
             }
         }
     }
 }
-
-

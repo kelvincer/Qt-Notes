@@ -4,4 +4,5 @@
         <file>icons8-plus-math-50.png</file>
         <file>icons8-search-50.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

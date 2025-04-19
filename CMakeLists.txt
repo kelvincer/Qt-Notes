@@ -49,6 +49,20 @@ qt_add_qml_module(appNotes
         backend/format.h backend/format.cpp
         SOURCES
         SOURCES backend/cmutil.h backend/cmutil.cpp
+        QML_FILES
+        QML_FILES tests/tst_breaks.qml
+        QML_FILES tests/tst_brick_index_on_which_cursor_is_located.qml
+        QML_FILES tests/tst_cursor_block_index.qml
+        QML_FILES tests/tst_cursor_displacement_inside_block.qml
+        QML_FILES tests/tst_cursor_displacement_inside_markdown_block.qml
+        QML_FILES tests/tst_cursor_just_after_paragraph_breakline.qml
+        QML_FILES tests/tst_length_before_cursor_block.qml
+        QML_FILES
+        QML_FILES tests/tst_length_until_cursor.qml
+        QML_FILES tests/tst_paragraph_length.qml
+        QML_FILES tests/tst_title_length.qml
+        QML_FILES tests/tst_title_with_newline_length.qml
+        QML_FILES tests/tst_total_length.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -30,12 +30,13 @@ ColumnLayout {
             height: parent.height
 
             Text {
-                text: title
+                text: "### " + title
                 elide: Text.ElideRight
                 maximumLineCount: 1
-                font.bold: true
+                //font.bold: true
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
+                textFormat: Text.MarkdownText
             }
 
             Text {
@@ -62,6 +63,3 @@ ColumnLayout {
         visible: true //(index !== (list.count - 1))
     }
 }
-
-
-

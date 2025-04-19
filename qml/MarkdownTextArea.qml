@@ -29,7 +29,7 @@ TextArea {
             }
             function onSendLoadedText(array) {
                 textArray = array
-                console.log("send loaded text", array[0].markdown)
+                //console.log("send loaded text", array[0].markdown)
             }
             function  onSendCursorPosition(position) {
                 cursorPos = position
@@ -86,7 +86,7 @@ TextArea {
                             console.log("start cp", ta.cursorPosition)
                             console.log("NEW CHARACTER")
 
-                            if(textArray[indexOnTextArray].isTitle) {
+                            if(textArray[indexOnTextArray]?.isTitle ?? false) {
 
                                 // if(textArray[indexOnTextArray].isTitleFirstChar) {
                                 //     cursorPos = MdArray.getLengthBeforeCursorBlock(MdArray, ta.cursorPosition) + 1
@@ -153,17 +153,15 @@ TextArea {
 
                                     } else {
 
-                                        console.log("11")
-
                                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
 
+                                        console.log("displacement", markdownDisplacement)
                                         console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
                                         console.log("2", event.text)
                                         console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
 
                                         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
                                             event.text).concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
-
                                     }
                                 }
                             }
