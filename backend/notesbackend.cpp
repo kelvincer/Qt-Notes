@@ -243,10 +243,10 @@ QString NotesBackend::md()
 
 void NotesBackend::setCursorPosition(int position)
 {
-    if(m_cursorPosition != position) {
+    //if(m_cursorPosition != position) {
 
         m_cursorPosition = position;
 
         emit cursorPositionChanged();
-    }
+    //}
 }

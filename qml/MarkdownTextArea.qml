@@ -279,9 +279,9 @@ TextArea {
 
                                     if(textArray[indexOnTextArray].markdown.length === 4) {
                                         
-                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(3, textArray[indexOnTextArray].markdown.length)
-                                        textArray.splice(indexOnTextArray, 1)
-                                        cursorPos = ta.cursorPosition - 1
+                                         //textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(4, textArray[indexOnTextArray].markdown.length)
+                                        textArray[indexOnTextArray].markdown = ""
+                                        cursorPos = ta.cursorPosition - 2
 
                                     } else {
 
@@ -413,16 +413,24 @@ TextArea {
                         }
 
                         if (event.key === Qt.Key_Hash || event.text === "#") {
+
                             event.accepted = true
-                            console.log("num", 5)
-                            cursorPos = ta.cursorPosition + 1
+                            console.log("KEY HASH")
+                            
+                            const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
+                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).concat("#").concat(textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length))
 
-                            textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown ?? "").concat("#")
-
+                            if(Block.isH1Title(textArray[indexOnTextArray].markdown)) {
+                                cursorPos = 0
+                            }
+                            else if(Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
+                                cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) + 1
+                            } else {
+                                cursorPos = ta.cursorPosition + 1 
+                            }
                         }
 
                         console.log("cursorPos", cursorPos)
-
 
                         if(textArray[indexOnTextArray]?.markdown?.endsWith('\n') ?? false) {
                             textArray[indexOnTextArray].markdown += zeroWidthSpace
