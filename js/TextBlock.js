@@ -139,3 +139,8 @@ function isFirstCharOfTitle(markdown) {
 function getBlocksFromText(text) {
     return text.split(Constants.newline)
 }
+
+function getFirstParagraphBreaklineIndex(paragraph) {
+
+    return paragraph.indexOf(Constants._break)
+}

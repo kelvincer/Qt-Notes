@@ -113,9 +113,9 @@ void NotesBackend::sendNoteInfo(QStringList blocks, int cursorPosition, bool isS
         qDebug() << "note index" << noteIndex;
 
         updateTextArrayOnEditor(std::get<0>(myNotes[noteIndex]));
-
-        setCursorPosition(cursorPosition);
     }
+
+    setCursorPosition(cursorPosition);
 
     qDebug() << "NOTES" << blocks;
     for(auto n: myNotes) {

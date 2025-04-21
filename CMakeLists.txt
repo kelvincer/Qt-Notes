@@ -64,7 +64,8 @@ qt_add_qml_module(appNotes
         tests/tst_title_with_newline_length.qml
         tests/tst_total_length.qml
         tests/tst_blocks_from_text.qml
-        QML_FILES tests/tst_first_char_of_title.qml
+        tests/tst_first_char_of_title.qml
+        tests/tst_first_paragraph_breakline_index.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

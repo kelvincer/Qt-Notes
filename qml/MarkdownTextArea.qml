@@ -291,8 +291,15 @@ TextArea {
 
                                         console.log("displacement", markdownDisplacement)
 
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
+                                        if(markdownDisplacement === 3) {
+                                            
+                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
+                                            textArray[indexOnTextArray].markdown = ""
+
+                                        } else {
+                                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
                                         + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
+                                        }
                                     }
                                 }
 
@@ -315,38 +322,35 @@ TextArea {
 
                                     } else {
 
-                                        console.log("32")
-
                                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
+                                        const firstNewParagraphBreaklineIndex = Block.getFirstParagraphBreaklineIndex(textArray[indexOnTextArray].markdown)
 
-                                        console.log("1", textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1))
-                                        console.log("2", textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length))
+                                        console.log("1", textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(1, firstNewParagraphBreaklineIndex))
+                                        console.log("2", Constants.newline + textArray[indexOnTextArray].markdown.substring(firstNewParagraphBreaklineIndex + Constants._break.length, textArray[indexOnTextArray].markdown.length))
 
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
-                                        + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
-
+                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(1, firstNewParagraphBreaklineIndex)
+                                        textArray[indexOnTextArray].markdown = Constants.newline + textArray[indexOnTextArray].markdown.substring(firstNewParagraphBreaklineIndex + Constants._break.length, textArray[indexOnTextArray].markdown.length)
                                     }
 
                                 } else {
 
-                                    //const totalLengthBeforeCursorBlock = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition)
-
-                                    textArray.forEach((x, i) => console.log(x.markdown));
-
                                     const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
                                     console.log("displacement", displacement)
-                                    //console.log("cursorPos:", cursorPos, "inside paragraph:", totalLengthBeforeCursorBlock)
 
-                                    console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1).split("") ?? "")
-                                    console.log("3", textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
-
-                                    textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1) ?? "").concat(
+                                    if (displacement === 1) {
+                                            
+                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
                                         textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                        textArray[indexOnTextArray].markdown = ""
 
-                                    // if(textArray[indexOnTextArray]?.markdown === '\n') {
+                                    } else {
 
-                                    //     textArray[indexOnTextArray].markdown = '\n' + zeroWidthSpace
-                                    // }
+                                        console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1).split("") ?? "")
+                                        console.log("3", textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+
+                                        textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1) ?? "").concat(
+                                        textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                    }
                                 }
                             }
                         }
@@ -372,27 +376,27 @@ TextArea {
                                     } else {
 
                                         const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-
-                                        //console.log(textArray[indexOnTextArray].markdown.substring(0, displacement).split(""))
-                                        //console.log(textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length).split(""))
-
                                         textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length), isTitle: false})
 
                                         textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
                                     }
                                 } else {
-                                    if (textArray[indexOnTextArray + 1] === undefined) {
-                                        textArray[indexOnTextArray + 1] = { markdown: "" , isTitle: false};
-                                    }
+                                    //if (textArray[indexOnTextArray + 1] === undefined) {
+                                            //textArray[indexOnTextArray + 1] = { markdown: "" , isTitle: false};
 
-                                    if(ta.cursorPosition + 2 === textArray[indexOnTextArray].markdown.length) {
+                                            textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false});
+                                       // }
 
-                                        textArray[indexOnTextArray + 1].markdown = "\n" + zeroWidthSpace
-                                    } else {
+                                        const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
+                                        console.log("displacement", displacement)
 
-                                        textArray[indexOnTextArray + 1].markdown = "\n" + textArray[indexOnTextArray].markdown.substring(ta.cursorPosition + 2, textArray[indexOnTextArray].markdown.length + 2)
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, ta.cursorPosition + 2)
-                                    }
+                                        if(displacement === textArray[indexOnTextArray].markdown.length) {
+                                            textArray[indexOnTextArray + 1].markdown = "\n" + zeroWidthSpace
+                                        } else {
+                                                               
+                                            textArray[indexOnTextArray + 1].markdown = "\n" + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length)
+                                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
+                                        }
                                 }
 
                             } else {
@@ -444,12 +448,7 @@ TextArea {
                         const result = textArray.map((e) => e.markdown);
 
                         maxCursorPosValue = MdArray.getTotalLength(textArray)
-                        console.log("max length 123", maxCursorPosValue)
-
-                        //backend.blocks = result
-                        //backend.cursorPosition = cursorPos
-
-                        console.log("note index", noteIndex)
+                        console.log("max length", maxCursorPosValue)
 
                         backend.sendNoteInfo(result, cursorPos, true, noteIndex)
 
