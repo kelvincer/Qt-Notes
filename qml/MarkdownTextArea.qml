@@ -278,10 +278,10 @@ TextArea {
                                 } else {
 
                                     if(textArray[indexOnTextArray].markdown.length === 4) {
-
-                                        textArray[indexOnTextArray].markdown = "\n"
-
-                                        cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray) + 1
+                                        
+                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(3, textArray[indexOnTextArray].markdown.length)
+                                        textArray.splice(indexOnTextArray, 1)
+                                        cursorPos = ta.cursorPosition - 1
 
                                     } else {
 
