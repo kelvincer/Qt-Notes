@@ -30,8 +30,16 @@ TestCase {
         compare(MdArray.isCursorJustAfterParagraphBreakline(array, 2, cursorPos), true);
     }
 
+    // Cursor index: 1
     function test_case1() {
         const array = [{markdown: "#\u00A0r"}, {markdown: "\nt<br/>t"}]
         compare(MdArray.isCursorJustAfterParagraphBreakline(array, 1, 4), true);
+    }
+
+    // Cursor index: 2
+    function test_case2() {
+        const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis is a paragraph<br/>another paragraph"}, {markdown: "\nthis is a paragraph<br/>another<br/>another"}]
+        const cursorPos = MdArray.getTotalLength(array) - 7
+        compare(MdArray.isCursorJustAfterParagraphBreakline(array, 2, cursorPos), true);
     }
 }

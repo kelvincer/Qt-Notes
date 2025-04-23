@@ -310,7 +310,6 @@ TextArea {
                                 if(textArray[indexOnTextArray]?.markdown?.includes(breakLine)) {
 
                                     if(MdArray.isCursorJustAfterParagraphBreakline(textArray, indexOnTextArray, ta.cursorPosition)) {
-                                        console.log("31")
 
                                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
 
@@ -323,13 +322,21 @@ TextArea {
                                     } else {
 
                                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-                                        const firstNewParagraphBreaklineIndex = Block.getFirstParagraphBreaklineIndex(textArray[indexOnTextArray].markdown)
+                                           
+                                        if(markdownDisplacement === 1) {
+                                        
+                                            const firstNewParagraphBreaklineIndex = Block.getFirstParagraphBreaklineIndex(textArray[indexOnTextArray].markdown)
 
-                                        console.log("1", textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(1, firstNewParagraphBreaklineIndex))
-                                        console.log("2", Constants.newline + textArray[indexOnTextArray].markdown.substring(firstNewParagraphBreaklineIndex + Constants._break.length, textArray[indexOnTextArray].markdown.length))
+                                            console.log("1", textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(1, firstNewParagraphBreaklineIndex))
+                                            console.log("2", Constants.newline + textArray[indexOnTextArray].markdown.substring(firstNewParagraphBreaklineIndex + Constants._break.length, textArray[indexOnTextArray].markdown.length))
 
-                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(1, firstNewParagraphBreaklineIndex)
-                                        textArray[indexOnTextArray].markdown = Constants.newline + textArray[indexOnTextArray].markdown.substring(firstNewParagraphBreaklineIndex + Constants._break.length, textArray[indexOnTextArray].markdown.length)
+                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(1, firstNewParagraphBreaklineIndex)
+                                            textArray[indexOnTextArray].markdown = Constants.newline + textArray[indexOnTextArray].markdown.substring(firstNewParagraphBreaklineIndex + Constants._break.length, textArray[indexOnTextArray].markdown.length)
+
+                                        } else {
+                                            console.log("breaklines here")
+                                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1) + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)  
+                                        }                                    
                                     }
 
                                 } else {
