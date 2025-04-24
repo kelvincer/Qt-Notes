@@ -16,6 +16,7 @@ TextArea {
     property var textArray : [{markdown: "", isTitle: false}]
     property int maxCursorPosValue: 0
     property int noteIndex
+    property bool isUpOrDown: false
 
     id: ta
     text: backend.md
@@ -51,6 +52,10 @@ TextArea {
     }
     onCursorPositionChanged: {
         console.log("onCursorPositionChanged", cursorPosition)
+        if(isUpOrDown) {
+            cursorPos = cursorPosition
+            isUpOrDown = false
+        }
     }
     onTextChanged: {
         
@@ -73,23 +78,42 @@ TextArea {
 
                         // textArray[indexOnTextArray].isTitleFirstChar = Block.isTitleFirstChar(textArray[indexOnTextArray]?.markdown, event.text) ?? false
 
+                        if(event.key === Qt.Key_Up) {
+                            //event.accepted = true
+                            console.log("KEY UP")
+                            isUpOrDown = true
+                            return
+                        }
+
+                        if(event.key === Qt.Key_Down) {
+                            //event.accepted = true
+                            console.log("KEY DOWN")
+                            isUpOrDown = true
+                            return
+                        }
+                        
+                        
                         if(event.key === Qt.Key_Left) {
 
-                            event.accepted = true
+                            console.log("KEY LEFT")
+                            isUpOrDown = true
+                            return
 
-                            console.log("num", "0")
+                            //event.accepted = true
 
-                            cursorPos = backend.cursorPosition === 0 ? 0 : ta.cursorPosition - 1
+                            //cursorPos = backend.cursorPosition === 0 ? 0 : ta.cursorPosition - 1
 
                         }
 
                         if(event.key === Qt.Key_Right) {
 
-                            console.log("num", "01")
+                            console.log("KEY RIGHT")
+                            isUpOrDown = true
+                            return
 
-                            event.accepted = true
+                            //event.accepted = true
 
-                            cursorPos = maxCursorPosValue > ta.cursorPosition ? ta.cursorPosition + 1 : ta.cursorPosition
+                            //cursorPos = maxCursorPosValue > ta.cursorPosition ? ta.cursorPosition + 1 : ta.cursorPosition
 
                         }
 
@@ -100,12 +124,6 @@ TextArea {
                             console.log("NEW CHARACTER")
 
                             if(textArray[indexOnTextArray]?.isTitle ?? false) {
-
-                                // if(textArray[indexOnTextArray].isTitleFirstChar) {
-                                //     cursorPos = MdArray.getLengthBeforeCursorBlock(MdArray, ta.cursorPosition) + 1
-                                // } else {
-                                //     cursorPos = ta.cursorPosition + 1
-                                // }
 
                                 const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
 
@@ -130,13 +148,6 @@ TextArea {
                                     cursorPos = ta.cursorPosition + 1
                                 }
 
-                                // console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, cursorPos + 1).split("") ?? "")
-                                // console.log("2", event.text)
-                                // console.log("3", textArray[indexOnTextArray]?.markdown?.substring(cursorPos + 1, textArray[indexOnTextArray].markdown.length).split("") ?? "")
-
-                                // textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, cursorPos + 1) ?? "").concat(
-                                //     event.text).concat(textArray[indexOnTextArray]?.markdown?.substring(cursorPos + 1, textArray[indexOnTextArray]?.markdown?.length) ?? "")
-
                             } else {
 
                                 if(MdArray.isStartingATitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
@@ -152,8 +163,6 @@ TextArea {
                                     cursorPos = ta.cursorPosition + 1
 
                                     if(textArray[indexOnTextArray]?.markdown?.includes(breakLine)) {
-
-                                        console.log("12")
 
                                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
 
@@ -374,26 +383,19 @@ TextArea {
 
                                 if(Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
 
-                                    if(MdArray.getCursorDisplacementInsideBlock(textArray, ta.cursorPosition) + 2 === textArray[indexOnTextArray].markdown.length)
-                                    {
-                                        if (textArray[indexOnTextArray + 1] === undefined) {
-                                            textArray[indexOnTextArray + 1] = { markdown: "" , isTitle: false};
-                                        }
-                                        textArray[indexOnTextArray + 1].markdown = "\n" + zeroWidthSpace
-                                    } else {
+                                    const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
 
-                                        const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
+                                    if(displacement === textArray[indexOnTextArray].markdown.length)
+                                    {
+                                        textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + zeroWidthSpace , isTitle: false});
+                                    } else {
                                         textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length), isTitle: false})
 
                                         textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
                                     }
                                 } else {
-                                    //if (textArray[indexOnTextArray + 1] === undefined) {
-                                            //textArray[indexOnTextArray + 1] = { markdown: "" , isTitle: false};
-
-                                            textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false});
-                                       // }
-
+                                        textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false});
+                                       
                                         const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
                                         console.log("displacement", displacement)
 
@@ -440,7 +442,7 @@ TextArea {
                         console.log("cursorPos", cursorPos)
 
                         if(textArray[indexOnTextArray]?.markdown?.endsWith('\n') ?? false) {
-                            textArray[indexOnTextArray].markdown += zeroWidthSpace
+                            //textArray[indexOnTextArray].markdown += zeroWidthSpace
                         }
 
                         //textArray = textArray.filter(e => e?.markdown?.length !== 0)
@@ -470,4 +472,88 @@ TextArea {
                         MdArray.printBlocks(textArray)
                         console.log("current index", MdArray.getCursorBlockIndex(textArray, cursorPos))
                     }
+    
+    selectByMouse: true
+    // focus: true
+
+    property string userSelected: ""
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        // propagateComposedEvents: false
+
+        property bool selecting: false // Track whether selection is active
+        property int startPos: -1     // Store the start position of the selection
+
+
+        onClicked: mouse => {
+                        //notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
+                    }
+        onDoubleClicked: mouse => {
+                                const position = markDownInput.cursorPosition
+                                selectWordAtPos(position)
+                            }
+
+        function selectWordAtPos(position) {
+
+            const textContent = markDownInput.getText(0, markDownInput.length); // Full text in the TextArea
+            let start = position;
+            let end = position;
+
+            // Find the start of the word
+            while (start > 0 && !isDelimiter(textContent[start - 1])) {
+                start--;
+            }
+
+            // Find the end of the word
+            while (end < textContent.length && !isDelimiter(textContent[end])) {
+                end++;
+            }
+
+            // Below line also works
+            // notesBackend.cursorPosition = end
+
+            markDownInput.moveCursorSelection(end)
+
+            markDownInput.select(start, end)
+
+            console.log("Word selected from", start, "to", end, ":", textContent.substring(start, end));
+        }
+
+        function isDelimiter(character) {
+            return character === ' ' || character === '\n' || character === '\t'
+                    || character === '.' || character === ',' || character === ';'
+                    || character === '\u2029' || character === '\u00a0'
+        }
+
+        onPressed: mouse => {
+            // Start selection
+            selecting = true;
+            startPos = markDownInput.positionAt(mouse.x, mouse.y);
+            backend.cursorPosition = startPos; // Move cursor to start position
+        }
+
+        onPositionChanged: mouse => {
+            if (selecting) {
+                const endPos = markDownInput.positionAt(mouse.x, mouse.y);
+                console.log("endPos:", endPos)
+
+                if (startPos !== -1) {
+
+                    markDownInput.moveCursorSelection(endPos)
+                    markDownInput.select(startPos, endPos); // Select text between start and end
+                }
+            }
+        }
+
+        onReleased: {
+            // End selection
+            selecting = false;
+            console.log("Selected text:", markDownInput.selectedText);
+            markDownInput.userSelected = markDownInput.selectedText;
+
+            markDownInput.forceActiveFocus()
+        }
+    }
 }
