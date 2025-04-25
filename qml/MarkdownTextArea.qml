@@ -147,7 +147,6 @@ TextArea {
                                 } else {
                                     cursorPos = ta.cursorPosition + 1
                                 }
-
                             } else {
 
                                 if(MdArray.isStartingATitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
@@ -177,13 +176,13 @@ TextArea {
 
                                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
 
-                                        console.log("displacement", markdownDisplacement)
                                         console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
                                         console.log("2", event.text)
                                         console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
 
                                         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
                                             event.text).concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+
                                     }
                                 }
                             }
@@ -287,8 +286,8 @@ TextArea {
                                 } else {
 
                                     if(textArray[indexOnTextArray].markdown.length === 4) {
-                                        
-                                         //textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(4, textArray[indexOnTextArray].markdown.length)
+
+                                        //textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(4, textArray[indexOnTextArray].markdown.length)
                                         textArray[indexOnTextArray].markdown = ""
                                         cursorPos = ta.cursorPosition - 2
 
@@ -331,7 +330,7 @@ TextArea {
                                     } else {
 
                                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-                                           
+                                        
                                         if(markdownDisplacement === 1) {
                                         
                                             const firstNewParagraphBreaklineIndex = Block.getFirstParagraphBreaklineIndex(textArray[indexOnTextArray].markdown)
@@ -343,22 +342,22 @@ TextArea {
                                             textArray[indexOnTextArray].markdown = Constants.newline + textArray[indexOnTextArray].markdown.substring(firstNewParagraphBreaklineIndex + Constants._break.length, textArray[indexOnTextArray].markdown.length)
 
                                         } else {
+
                                             console.log("breaklines here")
                                             textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1) + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)  
-                                        }                                    
+                                        }
                                     }
-
                                 } else {
 
                                     const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
                                     console.log("displacement", displacement)
 
                                     if (displacement === 1) {
-                                            
-                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
-                                        textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                        if(indexOnTextArray > 1) {
+                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
+                                            textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                        }
                                         textArray[indexOnTextArray].markdown = ""
-
                                     } else {
 
                                         console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1).split("") ?? "")
@@ -374,7 +373,6 @@ TextArea {
                         if(event.key === Qt.Key_Return) {
 
                             event.accepted = true
-
                             console.log("KEY RETURN")
 
                             if(textArray[indexOnTextArray]?.isTitle) {
@@ -394,18 +392,19 @@ TextArea {
                                         textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
                                     }
                                 } else {
-                                        textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false});
-                                       
-                                        const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-                                        console.log("displacement", displacement)
+                                    
+                                    textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false});
+                                    
+                                    const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
+                                    console.log("displacement", displacement)
 
-                                        if(displacement === textArray[indexOnTextArray].markdown.length) {
-                                            textArray[indexOnTextArray + 1].markdown = "\n" + zeroWidthSpace
-                                        } else {
-                                                               
-                                            textArray[indexOnTextArray + 1].markdown = "\n" + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length)
-                                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
-                                        }
+                                    if(displacement === textArray[indexOnTextArray].markdown.length) {
+                                        textArray[indexOnTextArray + 1].markdown = "\n" + zeroWidthSpace
+                                    } else {
+                                                            
+                                        textArray[indexOnTextArray + 1].markdown = "\n" + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length)
+                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
+                                    }
                                 }
 
                             } else {
@@ -422,7 +421,6 @@ TextArea {
                         }
 
                         if (event.key === Qt.Key_Hash || event.text === "#") {
-
                             event.accepted = true
                             console.log("KEY HASH")
                             
@@ -442,14 +440,10 @@ TextArea {
                         console.log("cursorPos", cursorPos)
 
                         if(textArray[indexOnTextArray]?.markdown?.endsWith('\n') ?? false) {
-                            //textArray[indexOnTextArray].markdown += zeroWidthSpace
+                            textArray[indexOnTextArray].markdown += zeroWidthSpace
                         }
 
-                        //textArray = textArray.filter(e => e?.markdown?.length !== 0)
                         if(textArray.filter(e => e?.markdown?.length !== 0).length === 0) {
-                            //backend.blocks = []
-                            //backend.cursorPosition = cursorPos
-                            //textArray.push({markdown: ""})
                             backend.sendNoteInfo([], cursorPos, true, noteIndex)
                             return
                         }

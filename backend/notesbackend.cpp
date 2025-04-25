@@ -33,6 +33,7 @@ void NotesBackend::sendNoteInfo(QStringList blocks, int cursorPosition, bool isS
     if(m_blocks != blocks) { 
 
         qDebug() << "Blocks" << blocks << isSameNote << noteIndex;
+        removeZeroWidthSpace(blocks);
 
         if (isSameNote) {
             myNotes[noteIndex] = std::make_tuple(blocks, cursorPosition); // Update
@@ -118,9 +119,6 @@ void NotesBackend::sendNoteInfo(QStringList blocks, int cursorPosition, bool isS
     setCursorPosition(cursorPosition);
 
     qDebug() << "NOTES" << blocks;
-    for(auto n: myNotes) {
-        qDebug() << std::get<0>(n) << std::get<1>(n);
-    }
 }
 
 int NotesBackend::cursorPosition()
@@ -223,6 +221,14 @@ bool NotesBackend::isStartingH1TitleWithNewLine(QString title) const
 {
     return !title.isEmpty() && title.length() == 2 && title[0] == '\x0a' && title[1] == '#'
            || !title.isEmpty() && title.length() == 3 && title[0] == '\x0a' && title[1] == '#' && title[2] == '\xa0';
+}
+
+void NotesBackend::removeZeroWidthSpace(QStringList &stringList) {
+    for (auto & s: stringList) {
+        if (s.endsWith(zeroWidthSpace) && s.length() > 2) {
+            s.removeLast();
+        }
+    }
 }
 
 void NotesBackend::setMd(QString userInput) {

@@ -25,6 +25,7 @@ class NotesBackend : public QObject
     //std::u16string u16ParagraphSeparator = u"\u2029";
     QString titleStarted = "#\u00A0";
     QString newline = "\n";
+    QString zeroWidthSpace = "\u200B";
 
     QStringList m_blocks;
     int m_cursorPosition = 0;
@@ -57,6 +58,7 @@ class NotesBackend : public QObject
     bool isStartingH1Title(QString title) const;
     bool isH1TitleWithNewline(std::string & title) const;
     bool isStartingH1TitleWithNewLine(QString title) const;
+    void removeZeroWidthSpace(QStringList & stringList);
 
 public:
     explicit NotesBackend(QObject *parent = nullptr);
