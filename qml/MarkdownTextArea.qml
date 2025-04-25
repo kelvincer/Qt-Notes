@@ -16,7 +16,7 @@ TextArea {
     property var textArray : [{markdown: "", isTitle: false}]
     property int maxCursorPosValue: 0
     property int noteIndex
-    property bool isUpOrDown: false
+    property bool isPressedArrowKey: false
 
     id: ta
     text: backend.md
@@ -52,9 +52,9 @@ TextArea {
     }
     onCursorPositionChanged: {
         console.log("onCursorPositionChanged", cursorPosition)
-        if(isUpOrDown) {
+        if(isPressedArrowKey) {
             cursorPos = cursorPosition
-            isUpOrDown = false
+            isPressedArrowKey = false
         }
     }
     onTextChanged: {
@@ -81,14 +81,14 @@ TextArea {
                         if(event.key === Qt.Key_Up) {
                             //event.accepted = true
                             console.log("KEY UP")
-                            isUpOrDown = true
+                            isPressedArrowKey = true
                             return
                         }
 
                         if(event.key === Qt.Key_Down) {
                             //event.accepted = true
                             console.log("KEY DOWN")
-                            isUpOrDown = true
+                            isPressedArrowKey = true
                             return
                         }
                         
@@ -96,7 +96,7 @@ TextArea {
                         if(event.key === Qt.Key_Left) {
 
                             console.log("KEY LEFT")
-                            isUpOrDown = true
+                            isPressedArrowKey = true
                             return
 
                             //event.accepted = true
@@ -108,7 +108,7 @@ TextArea {
                         if(event.key === Qt.Key_Right) {
 
                             console.log("KEY RIGHT")
-                            isUpOrDown = true
+                            isPressedArrowKey = true
                             return
 
                             //event.accepted = true
@@ -287,7 +287,6 @@ TextArea {
 
                                     if(textArray[indexOnTextArray].markdown.length === 4) {
 
-                                        //textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(4, textArray[indexOnTextArray].markdown.length)
                                         textArray[indexOnTextArray].markdown = ""
                                         cursorPos = ta.cursorPosition - 2
 
@@ -331,8 +330,8 @@ TextArea {
 
                                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
                                         
-                                        if(markdownDisplacement === 1) {
-                                        
+                                        if(markdownDisplacement === 1 && textArray[indexOnTextArray].markdown.startsWith(Constants.newline)) {
+
                                             const firstNewParagraphBreaklineIndex = Block.getFirstParagraphBreaklineIndex(textArray[indexOnTextArray].markdown)
 
                                             console.log("1", textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(1, firstNewParagraphBreaklineIndex))
@@ -352,11 +351,11 @@ TextArea {
                                     const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
                                     console.log("displacement", displacement)
 
-                                    if (displacement === 1) {
-                                        if(indexOnTextArray > 1) {
-                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
+                                    if (displacement === 1 && textArray[indexOnTextArray].markdown.startsWith(Constants.newline)) {
+                                            
+                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
                                             textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
-                                        }
+                                        
                                         textArray[indexOnTextArray].markdown = ""
                                     } else {
 
