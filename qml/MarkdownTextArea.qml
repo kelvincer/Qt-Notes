@@ -17,6 +17,7 @@ TextArea {
     property int maxCursorPosValue: 0
     property int noteIndex
     property bool isPressedArrowKey: false
+    property int indexOnTextArray : 0
 
     id: ta
     text: backend.md
@@ -66,17 +67,13 @@ TextArea {
 
                         console.log("Key pressed:", event.text, "cursorPos:", cursorPos, "ta cp:", ta.cursorPosition)
 
-                        const indexOnTextArray = MdArray.getCursorBlockIndex(textArray, ta.cursorPosition)
+                        indexOnTextArray = MdArray.getCursorBlockIndex(textArray, ta.cursorPosition)
                         console.log("current index", indexOnTextArray)
                         console.log("cursor", ta.cursorPosition)
 
                         MdArray.printBlocks(textArray)
 
-                        // const isH1Title = Block.isTitle(textArray[indexOnTextArray]?.markdown ?? "")
-
                         console.log("current index a title?", textArray[indexOnTextArray]?.isTitle ?? false)
-
-                        // textArray[indexOnTextArray].isTitleFirstChar = Block.isTitleFirstChar(textArray[indexOnTextArray]?.markdown, event.text) ?? false
 
                         if(event.key === Qt.Key_Up) {
                             //event.accepted = true
@@ -482,6 +479,8 @@ TextArea {
 
         onClicked: mouse => {
                         //notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
+                        indexOnTextArray = MdArray.getCursorBlockIndex(textArray, ta.cursorPosition)
+                        cursorPos = ta.positionAt(mouse.x, mouse.y)
                     }
         onDoubleClicked: mouse => {
                                 const position = markDownInput.cursorPosition

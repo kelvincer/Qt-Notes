@@ -198,3 +198,32 @@ function getLengthBeforeCursorBlockIndex(array, cursorBlockIndex) {
 function isStartingATitleInsideParagraph(markdown) {
     return markdown !== undefined && markdown.substring(markdown.length - 7) === Constants._break + Constants.titleStarted
 }
+
+function getStartAndEndOnMarkownForItalic(array, start, end) {
+
+    const startBlockIndex = getCursorBlockIndex(array, start)
+    const endBlockIndex = getCursorBlockIndex(array, end)
+
+    printBlocks(array)
+
+    console.log("startBlockIndex:", startBlockIndex, "endBlockIndex:", endBlockIndex)
+
+    let indexes = []
+
+    for(let i = startBlockIndex; i <= endBlockIndex; i++) {
+        indexes.push(i)
+        console.log(i)
+    }
+
+    if(indexes.length > 1) {
+
+    } else {
+
+        const startDisplacement = getCursorDisplacementInsideMarkdownBlock(array, startBlockIndex, start)
+        const endDisplacement = getCursorDisplacementInsideMarkdownBlock(array, endBlockIndex, end)
+
+        console.log("startDisplacement:", startDisplacement, "endDisplacement:", endDisplacement)
+
+
+    }
+}

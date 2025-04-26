@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Notes
 import "../js/Constants.js" as Constants
 import "../js/TextBlock.js" as Block
+import "../js/MdArray.js" as MdArray
 
 Window {
     id: mainWindow
@@ -179,7 +180,7 @@ Window {
                                 });
                             }
 
-                            sendLoadedText(currentEditorText);
+                            //sendLoadedText(currentEditorText);
 
                             const result = currentEditorText.map(e => e.markdown);
                             const maxCursorPosValue = MdArray.getTotalLength(currentEditorText);
@@ -253,9 +254,35 @@ Window {
             }
 
             Button {
-                text: "B"
+                text: "I"
                 onClicked: {
-                    console.log("B");
+                    console.log("I");
+
+                    console.log("start", markDownInput.selectionStart);
+                    console.log("end", markDownInput.selectionEnd);
+                    MdArray.getStartAndEndOnMarkownForItalic(markDownInput.textArray, markDownInput.selectionStart, markDownInput.selectionEnd)
+
+                    return
+                    console.log("cursorPos", markDownInput.cursorPos);
+
+                    const lengthBeforeCursor = MdArray.getLengthBeforeCursorBlockIndex(markDownInput.textArray, markDownInput.indexOnTextArray)   
+
+                    console.log("lengthBeforeCursor", lengthBeforeCursor);
+                    console.log("start", markDownInput.selectionStart);
+                    console.log("end", markDownInput.selectionEnd);
+                    console.log("cursorOnIndexArray", markDownInput.indexOnTextArray);
+
+
+                    console.log("1", markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, markDownInput.selectionStart - lengthBeforeCursor))
+                    console.log("2", markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(markDownInput.selectionEnd - lengthBeforeCursor, markDownInput.textArray[markDownInput.indexOnTextArray].markdown.length))
+
+                    markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, markDownInput.selectionStart - lengthBeforeCursor) + 
+                        "*" + markDownInput.selectedText 
+                        + "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(markDownInput.selectionEnd - lengthBeforeCursor, markDownInput.textArray[markDownInput.indexOnTextArray].markdown.length);
+
+                    const result = markDownInput.textArray.map((e) => e.markdown);
+                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+
                     if (markDownInput.userSelected !== "") {
                         notesBackend.setBoldFormat(markDownInput.getText(0, markDownInput.length), markDownInput.selectionStart, markDownInput.selectionEnd);
                     }

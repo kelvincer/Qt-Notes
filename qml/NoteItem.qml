@@ -3,13 +3,10 @@ import QtQuick.Controls.Universal
 import QtQuick.Layouts
 
 ColumnLayout {
-
     anchors.fill: parent
 
     RowLayout {
-
-        Layout.preferredWidth: parent.width
-        Layout.preferredHeight: parent.height
+        Layout.fillWidth: true
 
         Rectangle {
             Layout.preferredWidth: 20
@@ -24,8 +21,7 @@ ColumnLayout {
         }
 
         ColumnLayout {
-            Layout.preferredWidth: parent.width
-            Layout.preferredHeight: parent.height
+            Layout.fillWidth: true
 
             Text {
                 text: "### " + title
@@ -60,7 +56,7 @@ ColumnLayout {
     Rectangle {
         color: "#DFDFDF"
         Layout.preferredHeight: 1
-        Layout.preferredWidth: parent.width
-        visible: true //(index !== (list.count - 1))
+        Layout.fillWidth: true
+        visible: true
     }
 }

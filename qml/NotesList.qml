@@ -1,4 +1,4 @@
-import QtQuick
+import QtQuick 2.12
 import "model"
 
 ListView {
@@ -14,7 +14,7 @@ ListView {
     model: ListNoteModel{}
 
     delegate: Item {
-        width: parent.width
+        width: list.width
         height: 150
 
         NoteItem {
