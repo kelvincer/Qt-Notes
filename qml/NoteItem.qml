@@ -24,12 +24,11 @@ ColumnLayout {
             Layout.fillWidth: true
 
             Text {
-                text: "### " + title
-                elide: Text.ElideMiddle
+                text: title
+                elide: Text.ElideRight
                 maximumLineCount: 1
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
-                textFormat: Text.MarkdownText
                 Layout.alignment: Qt.AlignTop
             }
 
@@ -40,9 +39,6 @@ ColumnLayout {
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Component.onCompleted: {
-                    console.log("description", description)
-                }
             }
 
             Text {

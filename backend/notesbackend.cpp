@@ -98,10 +98,12 @@ void NotesBackend::sendNoteInfo(QStringList blocks, int cursorPosition, bool isS
             }
         }
 
+        QString title = "<h3>" + itemTitle + "</h3>";
+        QString description = "<p>" + itemDescription.removeLast() + "</p>";
         if(isSameNote) {
-            updateNoteChanged(itemTitle, itemDescription.removeLast());
+            updateNoteChanged(title, description);
         } else {
-            addNewNoteChanged(itemTitle, itemDescription.removeLast());
+            addNewNoteChanged(title, description);
         }
 
         qDebug() << "final converted" << m_md;
