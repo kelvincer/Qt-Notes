@@ -20,4 +20,9 @@ TestCase {
         const length = "This is".length + "a small".length + "paragraph".length + 2
         compare(Block.getParagraphLength(paragraph), length)
     }
+
+    function test_case01() {
+        const paragraph = "\n*italic*"
+        compare(Block.getParagraphLength(paragraph), 7)
+    }
 }

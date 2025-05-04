@@ -15,17 +15,26 @@ TestCase {
 
     function test_TwoTitleArray_ReturnLength() {
         const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis is a paragraph<br/>another paragraph"}
-                       , {markdown: "#\u00A0Another title"}]
+                       , {markdown: "\n#\u00A0Another title"}]
         let length = Block.getTitleLength(array[0].markdown)
                 + Block.getParagraphLength(array[1].markdown)
-            + Block.getTitleLength(array[2].markdown)
+            + Block.getTitleWithNewLineLength(array[2].markdown)
         compare(MdArray.getTotalLength(array), length);
     }
 
     function test_FirstAParagraph_ReturnLength() {
-        const array = [{markdown: "\nthis is a paragraph<br/>another paragraph"}, {markdown: "#\u00A0title"}]
+        const array = [{markdown: "\nthis is a paragraph<br/>another paragraph"}, {markdown: "\n#\u00A0title"}]
         let length =  Block.getParagraphLength(array[0].markdown)
-                + Block.getTitleLength(array[1].markdown)
+                + Block.getTitleWithNewLineLength(array[1].markdown)
+        compare(MdArray.getTotalLength(array), length);
+    }
+
+    // Cursor index: 1
+    function test_case01() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You* paragraph<br/>*You*"}]
+        const length = Block.getTitleLength(array[0].markdown)
+                + Block.getParagraphLength(array[1].markdown)
+
         compare(MdArray.getTotalLength(array), length);
     }
 }
