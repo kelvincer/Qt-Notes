@@ -120,7 +120,6 @@ TestCase {
         //compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 3), 3)
     }
 
-    // this test fails
     function test_case11() {
         const array = [{markdown: "*You paragraph"}]
         compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 4), 4)  
