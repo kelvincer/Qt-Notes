@@ -67,4 +67,62 @@ TestCase {
         const array = [{markdown: "#\u00A0tit"}, {markdown: "\n#\u00A0dem"}]
         compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 7), 6);
     }
+
+    // Cursor index: 1
+    function test_case02() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You*"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 6), 6);
+    }
+
+    // Cursor index: 1
+    function test_case03() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You* paragraph<br/>*You*"}]
+        const cursorPos = MdArray.getTotalLength(array)
+        const length = "\n*You* paragraph<br/>*You*".length // 26
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, cursorPos), length)
+    }
+
+    function test_case04() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You* paragraph<br/>*You*"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 6), 6)   
+    }
+
+    function test_case05() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You* paragraph<br/>*You* paragraph *italic*"}]
+        const cursorPos = MdArray.getTotalLength(array)
+        const expected = Block.getParagraphLength(array[1].markdown) + 10
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, cursorPos), expected)   
+    }
+
+    function test_case06() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You* paragraph<br/>*You* paragraph *italic*"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 5), 4)   
+    }
+
+    function test_case07() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You paragraph<br/>You paragraph italic"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 5), 3)   
+    }
+
+    function test_case08() {
+        const array = [{markdown: "*You* *You* paragraph<br/>*You* paragraph *italic*"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 5), 8)   
+    }
+
+    function test_case09() {
+        const array = [{markdown: "*You paragraph<br/>*You* paragraph *italic*"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 4), 5)   
+    }
+
+    // on development: asterisk line
+    function test_case10() {  
+        const array = [{markdown: "***You paragraph<br/>You paragraph italic"}]
+        //compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 3), 3)
+    }
+
+    // this test fails
+    function test_case11() {
+        const array = [{markdown: "*You paragraph"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 4), 4)  
+    }
 }

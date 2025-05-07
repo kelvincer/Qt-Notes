@@ -2,7 +2,7 @@
 
 function isACharacter(character) {
     //return (/[a-zA-ZñÑ0-9,.;]/).test(character);
-    return (/[^\s#]/).test(character)
+    return (/[^\s#*]/).test(character)
 }
 
 function isH1Title(title) {
@@ -88,9 +88,11 @@ function getParagraphLength(markdown) {
         return 0
     }
 
-    const array = markdown.split(Constants._break)
+    let markdownWithoutItalics = removeItalics(markdown)
 
-    let breaks = countBreaks(markdown)
+    const array = markdownWithoutItalics.split(Constants._break)
+
+    let breaks = countBreaks(markdownWithoutItalics)
 
     let length = 0
 
@@ -106,7 +108,7 @@ function getParagraphLength(markdown) {
 // abcdf<br/>bcd|e<br/>qweet -> return 1
 function getBrickIndexAtWhichCursoIsLocated(paragraph, displacement) {
 
-    if(paragraph === undefined)
+    if (paragraph === undefined)
         return 0
 
     const array = paragraph.split(Constants._break)
@@ -129,7 +131,7 @@ function getBrickIndexAtWhichCursoIsLocated(paragraph, displacement) {
 
 function isFirstCharOfTitle(markdown) {
 
-    if(markdown === undefined) {
+    if (markdown === undefined) {
         return false
     }
 
@@ -141,6 +143,110 @@ function getBlocksFromText(text) {
 }
 
 function getFirstParagraphBreaklineIndex(paragraph) {
-
     return paragraph.indexOf(Constants._break)
 }
+
+function findItalicIndices(markdown) {
+    const pattern = /(\*|_)([^*_\n]+?)\1/g // Matches *italic* or _italic_
+    const matches = []
+    let match
+
+    while ((match = pattern.exec(markdown)) !== null) {
+        const [fullMatch, marker, text] = match;
+        const start = match.index;
+        const end = start + fullMatch.length - 1;
+
+        matches.push({
+            text,
+            start, // Start of opening * or _
+            end,   // End of closing * or _
+            fullMatch,
+        })
+    }
+
+    return matches
+}
+
+function detectItalicIntent(text) {
+    // Common plain-text italic indicators
+    const patterns = [
+        /\/\/(.*?)\/\//g,    // //italic//
+        /_(.*?)_/g,          // _italic_
+        /(^|[^*])\*(?!\*)([^*\n]+?)\*($|[^*])/g,      // *italic*
+        /I\((.*?)\)/g        // I(italic)
+    ]
+
+    return patterns.some(p => p.test(text))
+}
+
+function removeItalics(paragraph) {
+
+    let italics = findItalicIndices(paragraph)
+
+    while (italics.length > 0) {
+        const element = italics.pop()
+        paragraph = paragraph.substring(0, element.start) + paragraph.substring(element.start + 1, element.end)
+            + paragraph.substring(element.end + 1);
+        italics = findItalicIndices(paragraph)
+    }
+
+    //console.log("paragraph after removing italics", paragraph)
+
+    return paragraph
+}
+
+function countItalicsBeforeCursor(markdownText, cursorVisibleCharIndex) {
+    let visibleCount = 0;
+    let italicCount = 0;
+    let i = 0;
+    let firstAsterisk = false;
+
+    while (i < markdownText.length && visibleCount < cursorVisibleCharIndex + 1) {
+        const char = markdownText[i];
+
+        // Handle <br/>
+        if (markdownText.startsWith('<br/>', i)) {
+            visibleCount += 1;
+            i += 5;
+            continue;
+        }
+
+        // Handle newline
+        if (char === '\n') {
+            visibleCount++;
+            i++;
+            continue;
+        }
+
+        // Handle escaped characters
+        if (char === '\\' && (markdownText[i + 1] === '*' || markdownText[i + 1] === '_')) {
+            i += 2; // skip escaped
+            continue;
+        }
+
+        // Count italics markers
+        if ((char === '*' || char === '_') && firstAsterisk) {
+            italicCount++;
+            i++;
+            firstAsterisk = false
+            continue;
+        }
+
+        // Count italics markers
+        const italics = findItalicIndices(markdownText)
+        const found = italics.findIndex(italic => italic.start === i);
+        if ((char === '*' || char === '_') && (markdownText[i + 1] !== '*' || markdownText[i + 1] !== '_') && found !== -1 ) {
+            italicCount++;
+            i++;
+            firstAsterisk = true;
+            continue;
+        }
+
+        // Default visible char
+        visibleCount++;
+        i++;
+    }
+
+    return italicCount
+}
+

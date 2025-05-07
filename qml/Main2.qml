@@ -260,7 +260,14 @@ Window {
 
                     console.log("start", markDownInput.selectionStart);
                     console.log("end", markDownInput.selectionEnd);
-                    MdArray.getStartAndEndOnMarkownForItalic(markDownInput.textArray, markDownInput.selectionStart, markDownInput.selectionEnd)
+                    const displacement = MdArray.getStartAndEndOnMarkownForItalic(markDownInput.textArray, markDownInput.selectionStart, markDownInput.selectionEnd)
+
+                    markDownInput.textArray[displacement.index].markdown = markDownInput.textArray[displacement.index].markdown.substring(0, displacement.start) + 
+                        "*" + markDownInput.selectedText 
+                        + "*" + markDownInput.textArray[displacement.index].markdown.substring(displacement.end, markDownInput.textArray[displacement.index].markdown.length);
+
+                    const result = markDownInput.textArray.map((e) => e.markdown);
+                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
 
                     return
                     console.log("cursorPos", markDownInput.cursorPos);
@@ -280,7 +287,7 @@ Window {
                         "*" + markDownInput.selectedText 
                         + "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(markDownInput.selectionEnd - lengthBeforeCursor, markDownInput.textArray[markDownInput.indexOnTextArray].markdown.length);
 
-                    const result = markDownInput.textArray.map((e) => e.markdown);
+                    //const result = markDownInput.textArray.map((e) => e.markdown);
                     notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
 
                     if (markDownInput.userSelected !== "") {

@@ -18,6 +18,7 @@ TextArea {
     property int noteIndex
     property bool isPressedArrowKey: false
     property int indexOnTextArray : 0
+    property int italicStartPos : -1
 
     id: ta
     text: backend.md
@@ -239,7 +240,7 @@ TextArea {
                                 console.log("CURSOR POSITION 22")
 
                                 const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-
+                                console.log("markdownDisplacement", markdownDisplacement)
                                 console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
                                 console.log("2", "space")
                                 console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
@@ -364,6 +365,22 @@ TextArea {
                                     }
                                 }
                             }
+                        }
+
+                        if(event.text === '*') {
+                            event.accepted = true
+                            console.log("KEY ASTERISK")
+
+                            if(italicStartPos === -1) {
+                                cursorPos = ta.cursorPosition + 1
+                                italicStartPos = ta.cursorPosition
+                            } else {
+                                italicStartPos = -1
+                                cursorPos = ta.cursorPosition - 1
+                            }
+
+                            const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
+                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement) + event.text + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length)
                         }
 
                         if(event.key === Qt.Key_Return) {
