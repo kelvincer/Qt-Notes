@@ -195,13 +195,13 @@ function removeItalics(paragraph) {
     return paragraph
 }
 
-function countItalicsBeforeCursor(markdownText, cursorVisibleCharIndex) {
+function countItalicsBeforeCursor(markdownText, cursorPositionOnBlock) {
     let visibleCount = 0;
     let italicCount = 0;
     let i = 0;
     let firstAsterisk = false;
 
-    while (i < markdownText.length && visibleCount < cursorVisibleCharIndex + 1) {
+    while (i < markdownText.length && visibleCount < cursorPositionOnBlock + 1) {
         const char = markdownText[i];
 
         // Handle <br/>

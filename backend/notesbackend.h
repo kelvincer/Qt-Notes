@@ -59,6 +59,7 @@ class NotesBackend : public QObject
     bool isH1TitleWithNewline(std::string & title) const;
     bool isStartingH1TitleWithNewLine(QString title) const;
     void removeZeroWidthSpace(QStringList & stringList);
+    bool isStartingWithAsterisk(QString block);
 
 public:
     explicit NotesBackend(QObject *parent = nullptr);

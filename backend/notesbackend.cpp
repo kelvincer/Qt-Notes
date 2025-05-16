@@ -72,6 +72,11 @@ void NotesBackend::sendNoteInfo(QStringList blocks, int cursorPosition, bool isS
 
                 qDebug() << "title newline converted" << m_md;
             }
+            else if(isStartingWithAsterisk(blocks[i])) {
+                blocks[i].replace(1, 1, "&#42;");
+                m_md += "<p>" + blocks[i] + "</p>";
+                qDebug() << "block saterick";
+            }
             else {
 
                 std::string blockString = remove_non_breaking_spaces(blocks[i].toStdString());
@@ -231,6 +236,11 @@ void NotesBackend::removeZeroWidthSpace(QStringList &stringList) {
             s.removeLast();
         }
     }
+}
+
+bool NotesBackend::isStartingWithAsterisk(QString block)
+{
+    return block.length() == 2 && block[0] == '\x0a' && block[1] == '*';
 }
 
 void NotesBackend::setMd(QString userInput) {

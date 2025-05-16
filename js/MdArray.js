@@ -132,7 +132,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos) 
         const numBreaksBeforeIndex = brickIndex
 
         let length = 0
-        const bricks = array[blockIndex].markdown.split(Constants._break)
+        const bricks = Block.removeItalics(array[blockIndex].markdown).split(Constants._break)
 
         for (let i = 0; i < brickIndex; i++) {
             length += bricks[i].length

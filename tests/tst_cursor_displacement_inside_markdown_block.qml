@@ -90,7 +90,7 @@ TestCase {
     function test_case05() {
         const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You* paragraph<br/>*You* paragraph *italic*"}]
         const cursorPos = MdArray.getTotalLength(array)
-        const expected = Block.getParagraphLength(array[1].markdown) + 10
+        const expected = array[1].markdown.length
         compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, cursorPos), expected)   
     }
 
