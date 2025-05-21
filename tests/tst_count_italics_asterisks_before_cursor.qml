@@ -10,4 +10,16 @@ TestCase {
         const prevItalics = [{start: 7, end: 13}, {start: 1, end: 5}]
         compare(Block.countItalicsAsterisksBeforeCursor(markdown, 10, prevItalics), 4)
     }
+
+    function test_case2() {
+        const markdown = "\n*You* *graph*"
+        const prevItalics = [{start: 7, end: 13}, {start: 1, end: 5}]
+        compare(Block.countItalicsAsterisksBeforeCursor(markdown, 4, prevItalics), 2)
+    }
+
+    function test_case3() {
+        const markdown = "\n*You* *graph*"
+        const prevItalics = [{start: 7, end: 13}, {start: 1, end: 5}]
+        compare(Block.countItalicsAsterisksBeforeCursor(markdown, 2, prevItalics), 1)
+    }
 }

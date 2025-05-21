@@ -113,7 +113,11 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
         } else {
 
-            return cursorPos - lengthBeforeCursorBlock + 2
+            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+
+            return cursorPos - lengthBeforeCursorBlock + 2 + asteriskNum
         }
     }
     else if (Block.isH1TitleWithNewline(array[blockIndex]?.markdown)) {
@@ -123,7 +127,12 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
         if (array[blockIndex].markdown.length <= 3) {
             return cursorPos - lengthBeforeCursorBlock
         } else {
-            return cursorPos - lengthBeforeCursorBlock + 2
+
+            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+
+            return cursorPos - lengthBeforeCursorBlock + 2 + asteriskNum
         }
     }
     else {
@@ -138,13 +147,13 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
             length += bricks[i].length
         }
 
-        console.log("cursorPositionOnBlock", cursorPositionOnBlock)
+        //console.log("cursorPositionOnBlock", cursorPositionOnBlock)
 
         const distanceBetweenBreaklineAndCursor = cursorPositionOnBlock - (length + numBreaksBeforeIndex)
 
         const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
 
-        console.log("asteriskNum:", asteriskNum)
+        //console.log("asteriskNum:", asteriskNum)
         
         length += Constants._break.length * numBreaksBeforeIndex + distanceBetweenBreaklineAndCursor + asteriskNum
 

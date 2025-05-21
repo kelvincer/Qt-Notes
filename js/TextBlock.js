@@ -249,7 +249,7 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
     let i = 0;
     let firstAsterisk = false;
 
-    console.log("markdown", markdownText, cursorPositionOnBlock)
+    //console.log("markdown", markdownText, cursorPositionOnBlock)
 
     while (i < markdownText.length && visibleCount < cursorPositionOnBlock + 1) {
         const char = markdownText[i];
@@ -289,7 +289,55 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
             italicCount++;
             i++;
             firstAsterisk = true;
-            //console.log(italicCount)
+            continue;
+        }
+
+        // Default visible char
+        visibleCount++;
+        i++;
+    }
+
+    return italicCount
+}
+
+function countH1ItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, prevItalics) {
+
+    let visibleCount = 0;
+    let italicCount = 0;
+    let i = 0;
+    let firstAsterisk = false;
+
+    //console.log("markdown", markdownText, cursorPositionOnBlock)
+
+    while (i < markdownText.length && visibleCount < cursorPositionOnBlock + 1) {
+        const char = markdownText[i];
+
+        if(char === '#' || char === Constants.nonBreakingSpace) {
+            i++;
+            continue;
+        }
+
+        // Handle escaped characters
+        if (char === '\\' && (markdownText[i + 1] === '*' || markdownText[i + 1] === '_')) {
+            i += 2; // skip escaped
+            continue;
+        }
+
+        // Count italics markers
+        if ((char === '*' || char === '_') && firstAsterisk) {
+            italicCount++;
+            i++;
+            firstAsterisk = false
+            continue;
+        }
+
+        // Count italics markers
+        const found = prevItalics.findIndex(italic => italic.start === i);
+        //console.log("found", found, char, i)
+        if ((char === '*' || char === '_') && (markdownText[i + 1] !== '*' || markdownText[i + 1] !== '_') && found !== -1 ) {
+            italicCount++;
+            i++;
+            firstAsterisk = true;
             continue;
         }
 

@@ -124,4 +124,14 @@ TestCase {
         const array = [{markdown: "*You paragraph"}]
         compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 4, []), 4)
     }
+
+    function test_case12() {
+        const array = [{markdown: "#\u00A0Hi *hi*"}, {markdown: "\n*You paragraph<br/>You paragraph italic"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 5, [{start: 5, end: 8}]), 9)
+    }
+
+    function test_case13() {
+        const array = [{markdown: "#\u00A0Hi *hi*"}, {markdown: "\n*You paragraph<br/>You paragraph italic"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 4, [{start: 5, end: 8}]), 7)
+    }
 }

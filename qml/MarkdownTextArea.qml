@@ -122,13 +122,11 @@ TextArea {
 
                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition, italics)
 
+                        console.log("displacement", markdownDisplacement)
+
                         if(Block.isACharacter(event.text)) {
                             event.accepted = true
-
-                            console.log("start cp", ta.cursorPosition)
                             console.log("NEW CHARACTER")
-
-                            console.log("displacement", markdownDisplacement)
 
                             if(textArray[indexOnTextArray]?.isTitle ?? false) {
 
@@ -193,8 +191,6 @@ TextArea {
 
                         if(event.key === Qt.Key_Space) {
                             event.accepted = true
-
-                            console.log("start cp", ta.cursorPosition)
                             console.log("NEW SPACE")
 
                             if(textArray[indexOnTextArray].isTitle) {
