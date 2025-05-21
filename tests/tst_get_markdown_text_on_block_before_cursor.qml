@@ -36,10 +36,8 @@ TestCase {
          compare(MdArray.getMarkdownTextOnBlockBeforeCursor(array, array[1].markdown, 16), "\n*this* other");
     }
 
-    // Unimportant test to compare two functions
     function test_case7() {
         const array = [{markdown: "#\u00A0Hi"}, {markdown: "\n*You*"}]
-        const d = MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 6)
-        compare(MdArray.getMarkdownTextOnBlockBeforeCursor(array, array[1].markdown, 6), array[1].markdown.substring(0, d));
+        compare(MdArray.getMarkdownTextOnBlockBeforeCursor(array, array[1].markdown, 6), "\n*You*");
     }
 }

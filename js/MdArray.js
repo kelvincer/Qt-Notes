@@ -96,7 +96,7 @@ function getCursorDisplacementInsideBlock(array, cursorPos) {
 }
 
 // Unit test ready
-function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos) {
+function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, italics) {
 
     const textArray = array.filter(e => e?.markdown?.length ?? 0 !== 0)
 
@@ -138,9 +138,11 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos) 
             length += bricks[i].length
         }
 
+        console.log("cursorPositionOnBlock", cursorPositionOnBlock)
+
         const distanceBetweenBreaklineAndCursor = cursorPositionOnBlock - (length + numBreaksBeforeIndex)
 
-        const asteriskNum = Block.countItalicsBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock)
+        const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
 
         console.log("asteriskNum:", asteriskNum)
         
@@ -298,11 +300,8 @@ function getMarkdownTextOnBlockBeforeCursor(array, markdownText, cursorPos) {
 
     // End of italic
     if (markdownText[i] === '*' && firstAsterisk) {
-        // console.log("added")
         i++
     }
-
-   // console.log("markdown", markdownText.substring(0, i))
 
     return markdownText.substring(0, i)
 }

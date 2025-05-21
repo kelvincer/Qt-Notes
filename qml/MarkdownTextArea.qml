@@ -19,6 +19,7 @@ TextArea {
     property bool isPressedArrowKey: false
     property int indexOnTextArray : 0
     property int italicStartPos : -1
+    property var italics : []
 
     id: ta
     text: backend.md
@@ -72,6 +73,10 @@ TextArea {
                         console.log("current index", indexOnTextArray)
                         console.log("cursor", ta.cursorPosition)
 
+                        for(const i of italics) {
+                            console.log("italic start", i.start, i.end)
+                        }
+
                         MdArray.printBlocks(textArray)
 
                         console.log("current index a title?", textArray[indexOnTextArray]?.isTitle ?? false)
@@ -115,15 +120,17 @@ TextArea {
 
                         }
 
+                        const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition, italics)
+
                         if(Block.isACharacter(event.text)) {
                             event.accepted = true
 
                             console.log("start cp", ta.cursorPosition)
                             console.log("NEW CHARACTER")
 
-                            if(textArray[indexOnTextArray]?.isTitle ?? false) {
+                            console.log("displacement", markdownDisplacement)
 
-                                const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
+                            if(textArray[indexOnTextArray]?.isTitle ?? false) {
 
                                 console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
                                 console.log("2", event.text)
@@ -161,8 +168,6 @@ TextArea {
 
                                     if(textArray[indexOnTextArray]?.markdown?.includes(breakLine)) {
 
-                                        const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-
                                         console.log("1", textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).split(""))
                                         console.log("2", event.text)
                                         console.log("3", textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split(""))
@@ -171,8 +176,6 @@ TextArea {
                                         + event.text + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
 
                                     } else {
-
-                                        const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
 
                                         console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
                                         console.log("2", event.text)
@@ -184,6 +187,8 @@ TextArea {
                                     }
                                 }
                             }
+
+                            italics = Block.updateItalics(event, italics, markdownDisplacement)
                         }
 
                         if(event.key === Qt.Key_Space) {
@@ -221,26 +226,19 @@ TextArea {
                                         cursorPos = ta.cursorPosition - 1
 
                                     } else {
-                                        //cursorPos = MdArray.getLengthUntilCursor(textArray, ta.cursorPosition) + 1
 
-                                        const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-
-                                        console.log("1", textArray[indexOnTextArray].markdown.substring(0, displacement).split(""))
+                                        console.log("1", textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).split(""))
                                         console.log("2", "space 2")
-                                        console.log("3", textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length).split(""))
+                                        console.log("3", textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split(""))
 
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
-                                        + nonBreakingSpace + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length)
+                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement)
+                                        + nonBreakingSpace + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
 
                                         cursorPos = ta.cursorPosition + 1
                                     }
                                 }
                             } else {
 
-                                console.log("CURSOR POSITION 22")
-
-                                const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-                                console.log("markdownDisplacement", markdownDisplacement)
                                 console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
                                 console.log("2", "space")
                                 console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
@@ -251,6 +249,8 @@ TextArea {
                                 cursorPos = ta.cursorPosition + 1
 
                             }
+
+                            italics = Block.updateItalics(event, italics, ta.cursorPosition)
                         }
 
                         if(event.key === Qt.Key_Backspace) {
@@ -292,10 +292,6 @@ TextArea {
 
                                         cursorPos = ta.cursorPosition - 1
 
-                                        const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-
-                                        console.log("displacement", markdownDisplacement)
-
                                         if(markdownDisplacement === 3) {
                                             
                                             textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
@@ -316,8 +312,6 @@ TextArea {
 
                                     if(MdArray.isCursorJustAfterParagraphBreakline(textArray, indexOnTextArray, ta.cursorPosition)) {
 
-                                        const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-
                                         console.log("1", textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - breakLine.length))
                                         console.log("2", textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length))
 
@@ -325,8 +319,6 @@ TextArea {
                                         + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
 
                                     } else {
-
-                                        const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
                                         
                                         if(markdownDisplacement === 1 && textArray[indexOnTextArray].markdown.startsWith(Constants.newline)) {
 
@@ -346,22 +338,19 @@ TextArea {
                                     }
                                 } else {
 
-                                    const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-                                    console.log("displacement", displacement)
-
-                                    if (displacement === 1 && textArray[indexOnTextArray].markdown.startsWith(Constants.newline)) {
+                                    if (markdownDisplacement === 1 && textArray[indexOnTextArray].markdown.startsWith(Constants.newline)) {
                                             
                                         textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
-                                            textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                            textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
                                         
                                         textArray[indexOnTextArray].markdown = ""
                                     } else {
 
-                                        console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1).split("") ?? "")
-                                        console.log("3", textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+                                        console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
+                                        console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
 
-                                        textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, displacement - 1) ?? "").concat(
-                                        textArray[indexOnTextArray]?.markdown?.substring(displacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                        textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
+                                        textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
                                     }
                                 }
                             }
@@ -379,8 +368,15 @@ TextArea {
                                 cursorPos = ta.cursorPosition - 1
                             }
 
-                            const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement) + event.text + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length)
+                            italics = Block.updateItalics(event.text, italics, markdownDisplacement)
+
+                            for(const i of italics) {
+                                console.log("italic asterik", i.start, i.end)
+                            }
+
+                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement) + event.text + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
+
+                            italics = Block.processNewItalic(textArray[indexOnTextArray].markdown, italics).italics
                         }
 
                         if(event.key === Qt.Key_Return) {
@@ -394,29 +390,24 @@ TextArea {
 
                                 if(Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
 
-                                    const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-
-                                    if(displacement === textArray[indexOnTextArray].markdown.length)
+                                    if(markdownDisplacement === textArray[indexOnTextArray].markdown.length)
                                     {
                                         textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + zeroWidthSpace , isTitle: false});
                                     } else {
-                                        textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length), isTitle: false})
+                                        textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length), isTitle: false})
 
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
+                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement)
                                     }
                                 } else {
                                     
                                     textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false});
-                                    
-                                    const displacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
-                                    console.log("displacement", displacement)
 
-                                    if(displacement === textArray[indexOnTextArray].markdown.length) {
+                                    if(markdownDisplacement === textArray[indexOnTextArray].markdown.length) {
                                         textArray[indexOnTextArray + 1].markdown = "\n" + zeroWidthSpace
                                     } else {
                                                             
-                                        textArray[indexOnTextArray + 1].markdown = "\n" + textArray[indexOnTextArray].markdown.substring(displacement, textArray[indexOnTextArray].markdown.length)
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, displacement)
+                                        textArray[indexOnTextArray + 1].markdown = "\n" + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
+                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement)
                                     }
                                 }
 
@@ -425,8 +416,6 @@ TextArea {
                                 console.log("return no breakline")
 
                                 cursorPos = ta.cursorPosition + 1
-
-                                const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
 
                                 textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
                                     breakLine).concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
@@ -437,7 +426,6 @@ TextArea {
                             event.accepted = true
                             console.log("KEY HASH")
                             
-                            const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition)
                             textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).concat("#").concat(textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length))
 
                             if(Block.isH1Title(textArray[indexOnTextArray].markdown)) {
@@ -451,6 +439,10 @@ TextArea {
                         }
 
                         console.log("cursorPos", cursorPos)
+
+                        for(const i of italics) {
+                            console.log("italic end", i.start, i.end)
+                        }
 
                         if(textArray[indexOnTextArray]?.markdown?.endsWith('\n') ?? false) {
                             textArray[indexOnTextArray].markdown += zeroWidthSpace

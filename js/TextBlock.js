@@ -167,6 +167,54 @@ function findItalicIndices(markdown) {
     return matches
 }
 
+function processNewItalic(markdownText, italicsSpans) {
+    if (!Array.isArray(italicsSpans)) {
+        return markdownText
+    }
+
+    let result = markdownText
+
+    for (const { start, end } of italicsSpans) {
+        if (result[start] !== '*' || result[end] !== '*') continue
+
+        result =
+                result.slice(0, start) +
+                '~' +
+                result.slice(start + 1, end) +
+                '~' +
+                result.slice(end + 1)
+    }
+
+    console.log("rsult italic", result)
+
+    const newItalic = findItalicIndices(result)
+
+    if(newItalic.length > 0 && newItalic[0].start !== undefined) {
+        italicsSpans.push({start: newItalic[0].start, end: newItalic[0].end})
+    }
+
+    return { result: result, italics: italicsSpans }
+}
+
+function updateItalics(char, italics, cursorPos) {
+
+    if(italics.length === 0)
+        return italics
+
+    italics.sort((a, b) => b.start - a.start);
+    if(isACharacter(char) || char === '*') {
+        for (let italic of italics) {
+            console.log("uitlic", italic.start)
+            if(cursorPos <= italic.start) {
+                italic.start++
+                italic.end++
+            }
+        }
+    }
+
+    return italics
+}
+
 function detectItalicIntent(text) {
     // Common plain-text italic indicators
     const patterns = [
@@ -195,11 +243,13 @@ function removeItalics(paragraph) {
     return paragraph
 }
 
-function countItalicsBeforeCursor(markdownText, cursorPositionOnBlock) {
+function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, prevItalics) {
     let visibleCount = 0;
     let italicCount = 0;
     let i = 0;
     let firstAsterisk = false;
+
+    console.log("markdown", markdownText, cursorPositionOnBlock)
 
     while (i < markdownText.length && visibleCount < cursorPositionOnBlock + 1) {
         const char = markdownText[i];
@@ -233,12 +283,13 @@ function countItalicsBeforeCursor(markdownText, cursorPositionOnBlock) {
         }
 
         // Count italics markers
-        const italics = findItalicIndices(markdownText)
-        const found = italics.findIndex(italic => italic.start === i);
+        const found = prevItalics.findIndex(italic => italic.start === i);
+        //console.log("found", found, char, i)
         if ((char === '*' || char === '_') && (markdownText[i + 1] !== '*' || markdownText[i + 1] !== '_') && found !== -1 ) {
             italicCount++;
             i++;
             firstAsterisk = true;
+            //console.log(italicCount)
             continue;
         }
 

@@ -67,6 +67,8 @@ qt_add_qml_module(appNotes
         tests/tst_first_char_of_title.qml
         tests/tst_first_paragraph_breakline_index.qml
         tests/tst_get_markdown_text_on_block_before_cursor.qml
+        QML_FILES tests/tst_count_italics_asterisks_before_cursor.qml
+        QML_FILES tests/tst_update_italics.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
