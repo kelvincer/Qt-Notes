@@ -288,3 +288,5 @@ tmp/
 /*-debug/
 /*-release/
 /out/
+
+.idea/*
