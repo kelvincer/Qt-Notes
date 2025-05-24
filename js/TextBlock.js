@@ -198,7 +198,7 @@ function processNewItalic(markdownText, italicsSpans) {
 
 function updateItalics(char, italics, cursorPos) {
 
-    if(italics.length === 0)
+    if(italics === undefined || italics.length === 0)
         return italics
 
     italics.sort((a, b) => b.start - a.start);
@@ -283,7 +283,7 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
         }
 
         // Count italics markers
-        const found = prevItalics.findIndex(italic => italic.start === i);
+        const found = prevItalics !== undefined ? prevItalics.findIndex(italic => italic.start === i) : -1
         //console.log("found", found, char, i)
         if ((char === '*' || char === '_') && (markdownText[i + 1] !== '*' || markdownText[i + 1] !== '_') && found !== -1 ) {
             italicCount++;
@@ -313,6 +313,13 @@ function countH1ItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock
         const char = markdownText[i];
 
         if(char === '#' || char === Constants.nonBreakingSpace) {
+            i++;
+            continue;
+        }
+
+        // Handle newline
+        if (char === '\n') {
+            visibleCount++;
             i++;
             continue;
         }

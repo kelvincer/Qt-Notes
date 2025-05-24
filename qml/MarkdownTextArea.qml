@@ -73,8 +73,10 @@ TextArea {
                         console.log("current index", indexOnTextArray)
                         console.log("cursor", ta.cursorPosition)
 
-                        for(const i of italics) {
-                            console.log("italic start", i.start, i.end)
+                        if(italics[indexOnTextArray] !== undefined) {
+                            for(const i of italics[indexOnTextArray]) {
+                                console.log("italic start", i.start, i.end)
+                            }
                         }
 
                         MdArray.printBlocks(textArray)
@@ -120,7 +122,7 @@ TextArea {
 
                         }
 
-                        const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition, italics)
+                        const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])
 
                         console.log("displacement", markdownDisplacement)
 
@@ -186,7 +188,7 @@ TextArea {
                                 }
                             }
 
-                            italics = Block.updateItalics(event, italics, markdownDisplacement)
+                            italics[indexOnTextArray] = Block.updateItalics(event, italics[indexOnTextArray], markdownDisplacement)
                         }
 
                         if(event.key === Qt.Key_Space) {
@@ -246,7 +248,7 @@ TextArea {
 
                             }
 
-                            italics = Block.updateItalics(event, italics, ta.cursorPosition)
+                            italics[indexOnTextArray] = Block.updateItalics(event, italics[indexOnTextArray], ta.cursorPosition)
                         }
 
                         if(event.key === Qt.Key_Backspace) {
@@ -364,15 +366,17 @@ TextArea {
                                 cursorPos = ta.cursorPosition - 1
                             }
 
-                            italics = Block.updateItalics(event.text, italics, markdownDisplacement)
+                            italics[indexOnTextArray] = Block.updateItalics(event.text, italics[indexOnTextArray], markdownDisplacement)
 
-                            for(const i of italics) {
-                                console.log("italic asterik", i.start, i.end)
+                            if(italics[indexOnTextArray] !== undefined) {
+                                for(const i of italics[indexOnTextArray]) {
+                                    console.log("italic asterik", i.start, i.end)
+                                }
                             }
 
                             textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement) + event.text + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
 
-                            italics = Block.processNewItalic(textArray[indexOnTextArray].markdown, italics).italics
+                            italics[indexOnTextArray] = Block.processNewItalic(textArray[indexOnTextArray].markdown, italics[indexOnTextArray]).italics
                         }
 
                         if(event.key === Qt.Key_Return) {
@@ -436,8 +440,10 @@ TextArea {
 
                         console.log("cursorPos", cursorPos)
 
-                        for(const i of italics) {
-                            console.log("italic end", i.start, i.end)
+                        if(italics[indexOnTextArray] !== undefined) {
+                            for(const i of italics[indexOnTextArray]) {
+                                console.log("italic end", i.start, i.end)
+                            }
                         }
 
                         if(textArray[indexOnTextArray]?.markdown?.endsWith('\n') ?? false) {
