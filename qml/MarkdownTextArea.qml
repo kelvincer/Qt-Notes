@@ -188,7 +188,7 @@ TextArea {
                                 }
                             }
 
-                            italics[indexOnTextArray] = Block.updateItalics(event, italics[indexOnTextArray], markdownDisplacement)
+                            italics[indexOnTextArray] = Block.updateItalics(event.text, italics[indexOnTextArray], markdownDisplacement)
                         }
 
                         if(event.key === Qt.Key_Space) {
@@ -205,12 +205,12 @@ TextArea {
                                         cursorPos = ta.cursorPosition + 1
                                     }
 
-                                    console.log("1", textArray[indexOnTextArray].markdown.substring(0, cursorPos + 1).split(""))
+                                    console.log("1", textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).split(""))
                                     console.log("2", "space")
-                                    console.log("3", textArray[indexOnTextArray].markdown.substring(cursorPos + 1, textArray[indexOnTextArray].markdown.length).split(""))
+                                    console.log("3", textArray[indexOnTextArray].markdown.substring(markdownDisplacement).split(""))
 
-                                    textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, cursorPos + 1)
-                                    + nonBreakingSpace + textArray[indexOnTextArray].markdown.substring(cursorPos + 1, textArray[indexOnTextArray].markdown.length)
+                                    textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement)
+                                    + nonBreakingSpace + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
                                 } else {
 
                                     if(textArray[indexOnTextArray].isTitleFirstChar) {
@@ -248,7 +248,7 @@ TextArea {
 
                             }
 
-                            italics[indexOnTextArray] = Block.updateItalics(event, italics[indexOnTextArray], ta.cursorPosition)
+                            italics[indexOnTextArray] = Block.updateItalics(event.text, italics[indexOnTextArray], markdownDisplacement)
                         }
 
                         if(event.key === Qt.Key_Backspace) {
@@ -376,7 +376,7 @@ TextArea {
 
                             textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement) + event.text + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
 
-                            italics[indexOnTextArray] = Block.processNewItalic(textArray[indexOnTextArray].markdown, italics[indexOnTextArray]).italics
+                            italics[indexOnTextArray] = Block.processNewItalic(textArray[indexOnTextArray].markdown, italics[indexOnTextArray] !== undefined ? italics[indexOnTextArray] : []).italics
                         }
 
                         if(event.key === Qt.Key_Return) {

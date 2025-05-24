@@ -202,9 +202,9 @@ function updateItalics(char, italics, cursorPos) {
         return italics
 
     italics.sort((a, b) => b.start - a.start);
-    if(isACharacter(char) || char === '*') {
+    if(isACharacter(char) || char === '*' || char === ' ') {
         for (let italic of italics) {
-            console.log("uitlic", italic.start)
+            //console.log("uitlic", italic.start)
             if(cursorPos <= italic.start) {
                 italic.start++
                 italic.end++
@@ -302,24 +302,26 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
 
 function countH1ItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, prevItalics) {
 
-    let visibleCount = 0;
-    let italicCount = 0;
-    let i = 0;
-    let firstAsterisk = false;
+    let visibleCount = 0
+    let italicCount = 0
+    let i = 0
+    let firstAsterisk = false
+    let firstNonBreakingSpace = true
 
     //console.log("markdown", markdownText, cursorPositionOnBlock)
 
     while (i < markdownText.length && visibleCount < cursorPositionOnBlock + 1) {
         const char = markdownText[i];
 
-        if(char === '#' || char === Constants.nonBreakingSpace) {
-            i++;
-            continue;
+        //console.log("char", char)
+
+        if(char === Constants.nonBreakingSpace && firstNonBreakingSpace) {
+            i++
+            firstNonBreakingSpace = false
+            continue
         }
 
-        // Handle newline
-        if (char === '\n') {
-            visibleCount++;
+        if(char === '#') {
             i++;
             continue;
         }
@@ -339,7 +341,7 @@ function countH1ItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock
         }
 
         // Count italics markers
-        const found = prevItalics.findIndex(italic => italic.start === i);
+        const found = prevItalics !== undefined ? prevItalics.findIndex(italic => italic.start === i) : -1
         //console.log("found", found, char, i)
         if ((char === '*' || char === '_') && (markdownText[i + 1] !== '*' || markdownText[i + 1] !== '_') && found !== -1 ) {
             italicCount++;

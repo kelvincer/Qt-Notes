@@ -113,9 +113,15 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
         } else {
 
+            //console.log("markdown:", array[blockIndex].markdown)
+
             const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
 
+            //console.log("cursorPositionOnBlock", cursorPositionOnBlock)
+
             const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+
+            //console.log("asteriskNum:", asteriskNum)
 
             return cursorPos - lengthBeforeCursorBlock + 2 + asteriskNum
         }
