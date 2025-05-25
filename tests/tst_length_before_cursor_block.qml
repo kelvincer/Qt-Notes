@@ -32,4 +32,9 @@ TestCase {
         const array = []
         compare(MdArray.getLengthBeforeCursorBlock(array, 0), 0)
     }
+
+    function test_case01() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\nYou"}, {markdown:"\n#\u00A0a *b*"}, {markdown: "\n\u200B"}]
+        compare(MdArray.getLengthBeforeCursorBlock(array, 11), 10)
+    }
 }

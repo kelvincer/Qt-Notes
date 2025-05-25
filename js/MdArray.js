@@ -44,6 +44,8 @@ function getCursorBlockIndex(array, cursorPos) {
     let length = 0
     let i
 
+    array = removeAllItalics(array)
+
     for (i = 0; i < array.length; i++) {
 
         if (Block.isH1Title(array[i].markdown)) {
@@ -74,6 +76,7 @@ function getCursorBlockIndex(array, cursorPos) {
 function getLengthBeforeCursorBlock(array, cursorPos) {
 
     let length = 0
+    array = removeAllItalics(array)
     const cursorBlockIndex = getCursorBlockIndex(array, cursorPos)
     for (let i = 0; i < cursorBlockIndex; i++) {
         if (Block.isH1Title(array[i].markdown)) {
@@ -320,3 +323,11 @@ function getMarkdownTextOnBlockBeforeCursor(array, markdownText, cursorPos) {
 
     return markdownText.substring(0, i)
 }
+
+function removeAllItalics(array) {
+    const newArray = []
+    for (let i = 0; i < array.length; i++) {
+        newArray.push({markdown: Block.removeItalics(array[i].markdown)})
+    }
+    return newArray
+}   
