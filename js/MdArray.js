@@ -355,6 +355,14 @@ function isStartingATitleInsideParagraph(markdown) {
     return markdown !== undefined && markdown.substring(markdown.length - 7) === Constants._break + Constants.titleStarted
 }
 
+function isStartingH2TitleInsideParagraph(markdown) {
+    return markdown !== undefined && markdown.substring(markdown.length - 8) === Constants._break + Constants.h2TitleStarted
+}
+
+function isStartingH3TitleInsideParagraph(markdown) {
+    return markdown !== undefined && markdown.substring(markdown.length - 9) === Constants._break + Constants.h3TitleStarted
+}
+
 function getStartAndEndOnMarkownForItalic(array, start, end) {
 
     const startBlockIndex = getCursorBlockIndex(array, start)

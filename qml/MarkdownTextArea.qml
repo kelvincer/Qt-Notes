@@ -162,7 +162,24 @@ TextArea {
 
                                     cursorPos = ta.cursorPosition - 1
 
-                                } else {
+                                }
+                                else if(MdArray.isStartingH2TitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
+
+                                    textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, textArray[indexOnTextArray].markdown.length - 8)
+
+                                    textArray[indexOnTextArray + 1] = { markdown: Constants.h2TitleStartedWithNewline + event.text , isTitle: true};
+
+                                    cursorPos = ta.cursorPosition - 2
+                                }
+                                else if(MdArray.isStartingH3TitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
+
+                                    textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, textArray[indexOnTextArray].markdown.length - 9)
+
+                                    textArray[indexOnTextArray + 1] = { markdown: Constants.h3TitleStartedWithNewline + event.text , isTitle: true};
+
+                                    cursorPos = ta.cursorPosition - 3
+                                }
+                                else {
 
                                     cursorPos = ta.cursorPosition + 1
 
