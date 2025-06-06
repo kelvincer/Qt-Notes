@@ -55,7 +55,24 @@ function getCursorBlockIndex(array, cursorPos) {
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
 
             length += Block.getTitleWithNewLineLength(array[i].markdown)
-        } else {
+        }
+        else if(Block.isH2Title(array[i].markdown)) {
+
+            length += Block.getH2TitleLength(array[i].markdown)
+        }
+        else if(Block.isH2TitleWithNewline(array[i].markdown)) {
+
+            length += Block.getH2TitleWithNewLineLength(array[i].markdown)
+        }
+        else if(Block.isH3Title(array[i].markdown)) {
+
+            length += Block.getH3TitleLength(array[i].markdown)
+        }
+        else if(Block.isH3TitleWithNewline(array[i].markdown)) {
+
+            length += Block.getH3TitleWithNewLineLength(array[i].markdown)
+        }
+        else {
 
             length += Block.getParagraphLength(array[i].markdown)
         }
@@ -78,11 +95,26 @@ function getLengthBeforeCursorBlock(array, cursorPos) {
     let length = 0
     array = removeAllItalics(array)
     const cursorBlockIndex = getCursorBlockIndex(array, cursorPos)
+
+    console.log("cbi", cursorBlockIndex)
+
     for (let i = 0; i < cursorBlockIndex; i++) {
         if (Block.isH1Title(array[i].markdown)) {
             length += Block.getTitleLength(array[i].markdown)
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
             length += Block.getTitleWithNewLineLength(array[i].markdown)
+        }
+        else if(Block.isH2Title(array[i].markdown)) {
+            length += Block.getH2TitleLength(array[i].markdown)
+        }
+        else if(Block.isH2TitleWithNewline(array[i].markdown)){
+            length += Block.getH2TitleWithNewLineLength(array[i].markdown)
+        }
+        else if(Block.isH3Title(array[i].markdown)) {
+            length += Block.getH3TitleLength(array[i].markdown)
+        }
+        else if(Block.isH3TitleWithNewline(array[i].markdown)) {
+            length += Block.getH3TitleWithNewLineLength(array[i].markdown)
         }
         else {
             length += Block.getParagraphLength(array[i].markdown)
@@ -142,6 +174,94 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
             const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
 
             return cursorPos - lengthBeforeCursorBlock + 2 + asteriskNum
+        }
+    }
+    else if(Block.isH2Title(array[blockIndex]?.markdown)) {
+
+        const lengthBeforeCursorBlock = 0
+
+        if (array[blockIndex].markdown.length <= 3) {
+
+            return cursorPos - lengthBeforeCursorBlock
+
+        } else {
+
+            // console.log("markdown:", array[blockIndex].markdown)
+
+            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+
+            // console.log("cursorPositionOnBlock", cursorPositionOnBlock)
+
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+
+            // console.log("asteriskNum:", asteriskNum)
+
+            const h2TitleStartedLength = Constants.h2TitleStarted.length // 3
+
+            return cursorPos - lengthBeforeCursorBlock + h2TitleStartedLength + asteriskNum
+        }
+    }
+    else if (Block.isH2TitleWithNewline(array[blockIndex]?.markdown)) {
+
+        const lengthBeforeCursorBlock = getLengthBeforeCursorBlock(array, cursorPos)
+
+        if (array[blockIndex].markdown.length <= 3) {
+            return cursorPos - lengthBeforeCursorBlock
+        } else {
+
+            console.log("md", array[blockIndex]?.markdown)
+
+            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+
+            console.log("cursorPositionOnBlock", cursorPositionOnBlock)
+
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+
+            const h2TitleStartedLength = Constants.h2TitleStarted.length // 3
+
+            return cursorPos - lengthBeforeCursorBlock + h2TitleStartedLength + asteriskNum
+        }
+    }
+    else if (Block.isH3Title(array[blockIndex]?.markdown)) {
+
+        const lengthBeforeCursorBlock = 0//getLengthBeforeCursorBlock(array, cursorPos)
+
+        if (array[blockIndex].markdown.length <= 4) {
+
+            return cursorPos - lengthBeforeCursorBlock
+
+        } else {
+
+            //console.log("markdown:", array[blockIndex].markdown)
+
+            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+
+            //console.log("cursorPositionOnBlock", cursorPositionOnBlock)
+
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+
+            //console.log("asteriskNum:", asteriskNum)
+
+            const h3TitleStartedLength = Constants.h3TitleStarted.length // 4
+
+            return cursorPos - lengthBeforeCursorBlock + h3TitleStartedLength + asteriskNum
+        }
+    }
+    else if (Block.isH3TitleWithNewline(array[blockIndex]?.markdown)) {
+
+        const lengthBeforeCursorBlock = getLengthBeforeCursorBlock(array, cursorPos)
+
+        if (array[blockIndex].markdown.length <= 5) {
+            return cursorPos - lengthBeforeCursorBlock
+        } else {
+
+            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+
+            const h3TitleStartedLength = Constants.h3TitleStarted.length // 4
+
+            return cursorPos - lengthBeforeCursorBlock + h3TitleStartedLength + asteriskNum
         }
     }
     else {
@@ -210,6 +330,18 @@ function getLengthBeforeCursorBlockIndex(array, cursorBlockIndex) {
             length += Block.getTitleLength(array[i].markdown)
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
             length += Block.getTitleWithNewLineLength(array[i].markdown)
+        }
+        else if(Block.isH2Title(array[i].markdown)) {
+            length += Block.getH2TitleLength(array[i].markdown)
+        }
+        else if(Block.isH2TitleWithNewline(array[i].markdown)) {
+            length += Block.getH2TitleWithNewLineLength(array[i].markdown)
+        }
+        else if (Block.isH3Title(array[i].markdown)) {
+            length += Block.getH3TitleLength(array[i].markdown)
+        }
+        else if(Block.isH3TitleWithNewline(array[i].markdown)) {
+            length += Block.getH3TitleWithNewLineLength(array[i].markdown)
         }
         else {
             length += Block.getParagraphLength(array[i].markdown)

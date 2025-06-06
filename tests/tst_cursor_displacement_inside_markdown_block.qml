@@ -144,4 +144,19 @@ TestCase {
         const array = [{markdown: "#\u00A0Hi"}, {markdown: "\nYou"}, {markdown:"\n#\u00A0a *b*"}, {markdown: "\n\u200B"}]
         compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 3, 11, []), 1)
     }
+
+    function test_case16() {
+        const array = [{markdown: "##\u00A0Hi"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 2, []), 5)
+    }
+
+    function test_case17() {
+        const array = [{markdown: "##\u00A0Hi"}, {markdown: "\n##\u00A0Hi"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 5, []), 6)
+    }
+
+    function test_case18() {
+        const array = [{markdown: "##\u00A0Hi"}, {markdown: "\n###\u00A0Hi"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 5, []), 7)
+    }
 }

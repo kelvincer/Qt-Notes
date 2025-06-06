@@ -37,4 +37,9 @@ TestCase {
         const array = [{markdown: "#\u00A0Hi"}, {markdown: "\nYou"}, {markdown:"\n#\u00A0a *b*"}, {markdown: "\n\u200B"}]
         compare(MdArray.getLengthBeforeCursorBlock(array, 11), 10)
     }
+
+    function test_case02() {
+        const array = [{markdown: "##\u00A0Hi"}, {markdown: "\n##\u00A0Hi"}]
+        compare(MdArray.getLengthBeforeCursorBlock(array, 5), 2)
+    }
 }

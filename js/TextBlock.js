@@ -13,8 +13,30 @@ function isH1TitleWithNewline(title) {
     return title !== undefined && title.startsWith(Constants.titleStartedWithNewline)
 }
 
+function isH2Title(title) {
+    return title !== undefined && title.startsWith(Constants.h2TitleStarted)
+}
+
+function isH2TitleWithNewline(title) {
+    return title !== undefined && title.startsWith(Constants.h2TitleStartedWithNewline)
+}
+
+function isH3Title(title) {
+    return title !== undefined && title.startsWith(Constants.h3TitleStarted)
+}
+
+function isH3TitleWithNewline(title) {
+    return title !== undefined && title.startsWith(Constants.h3TitleStartedWithNewline)
+}
+
+function isTitleWithNewLine(title) {
+    return isH1TitleWithNewline(title) || isH2TitleWithNewline(title)
+    || isH3TitleWithNewline(title)
+}
+
 function isTitle(title) {
-    return isH1Title(title) || isH1TitleWithNewline(title)
+    return isH1Title(title) || isH1TitleWithNewline(title) || isH2Title(title)
+    || isH2TitleWithNewline(title) || isH3Title(title) || isH3TitleWithNewline(title)
 }
 
 // Unit test ready
@@ -64,6 +86,32 @@ function getTitleLength(markdown) {
     }
 }
 
+function getH2TitleLength(markdown) {
+    if (markdown === undefined)
+        return 0
+
+    if (markdown.length <= 3) {
+
+        return markdown.length
+    } else {
+
+        return markdown.length - 3
+    }
+}
+
+function getH3TitleLength(markdown) {
+    if (markdown === undefined)
+        return 0
+
+    if (markdown.length <= 4) {
+
+        return markdown.length
+    } else {
+
+        return markdown.length - 4
+    }
+}
+
 // Unit test ready
 // Visible characters
 function getTitleWithNewLineLength(markdown) {
@@ -77,6 +125,36 @@ function getTitleWithNewLineLength(markdown) {
     } else {
 
         return markdown.length - 2
+    }
+}
+
+// Visible characters
+function getH2TitleWithNewLineLength(markdown) {
+
+    if (markdown === undefined)
+        return 0
+
+    if (markdown.length <= 4) {
+
+        return markdown.length
+    } else {
+
+        return markdown.length - 3
+    }
+}
+
+// Visible characters
+function getH3TitleWithNewLineLength(markdown) {
+
+    if (markdown === undefined)
+        return 0
+
+    if (markdown.length <= 5) {
+
+        return markdown.length
+    } else {
+
+        return markdown.length - 4
     }
 }
 
@@ -135,7 +213,13 @@ function isFirstCharOfTitle(markdown) {
         return false
     }
 
-    return (markdown.startsWith(Constants.titleStarted) && markdown.length === 2) || (markdown.startsWith(Constants.titleStartedWithNewline) && markdown.length === 3)
+    return (markdown.startsWith(Constants.titleStarted) && markdown.length === 2)
+            || (markdown.startsWith(Constants.titleStartedWithNewline) && markdown.length === 3)
+            || (markdown.startsWith(Constants.h2TitleStarted) && markdown.length === 3)
+            || (markdown.startsWith(Constants.h2TitleStartedWithNewline) && markdown.length === 4)
+            || (markdown.startsWith(Constants.h3TitleStarted) && markdown.length === 4)
+            || (markdown.startsWith(Constants.h3TitleStartedWithNewline) && markdown.length === 5)
+
 }
 
 function getBlocksFromText(text) {

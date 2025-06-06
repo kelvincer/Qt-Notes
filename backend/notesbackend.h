@@ -53,11 +53,19 @@ class NotesBackend : public QObject
     bool containOnlyParagraphSeparatorCharacter(QString &text);
 
     std::string remove_non_breaking_spaces(const std::string &in) const;
+    bool isStartingH1Title(QString title) const;
+    bool isStartingH2Title(QString title) const;
+    bool isStartingH3Title(QString title) const;
     bool isH1Title(QString title) const;
     bool isH1Title(std::string & title) const;
-    bool isStartingH1Title(QString title) const;
+    bool isH2Title(std::string & title) const;
+    bool isH3Title(std::string & title) const;
     bool isH1TitleWithNewline(std::string & title) const;
+    bool isH2TitleWithNewline(std::string & title) const;
+    bool isH3TitleWithNewline(std::string & title) const;
     bool isStartingH1TitleWithNewLine(QString title) const;
+    bool isStartingH2TitleWithNewLine(QString title) const;
+    bool isStartingH3TitleWithNewLine(QString title) const;
     void removeZeroWidthSpace(QStringList & stringList);
     bool isStartingWithAsterisk(QString block);
 

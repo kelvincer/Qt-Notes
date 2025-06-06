@@ -72,6 +72,63 @@ void NotesBackend::sendNoteInfo(QStringList blocks, int cursorPosition, bool isS
 
                 qDebug() << "title newline converted" << m_md;
             }
+            else if(isStartingH2Title(blocks[i])) {
+
+                itemDescription = blocks[i];
+
+                blocks[i].replace(0, 1, "&#35;");
+
+                blocks[i].replace(5, 1, "&#35;");
+
+                m_md += QString(blocks[i]);
+
+                qDebug() << "H2 converted" << m_md;
+
+            }
+            else if(isStartingH2TitleWithNewLine(blocks[i])) {
+                itemDescription = blocks[i];
+
+                blocks[i].replace(0, 1, "&#10;");
+
+                blocks[i].replace(5, 1, "&#35;");
+
+                blocks[i].replace(10, 1, "&#35;");
+
+                //block.replace(10, 1, "&nbsp;");
+
+                m_md += QString(blocks[i]);
+
+                qDebug() << "H2 newline" << m_md;
+            }
+            else if(isStartingH3Title(blocks[i])) {
+                itemDescription = blocks[i];
+
+                blocks[i].replace(0, 1, "&#35;");
+
+                blocks[i].replace(5, 1, "&#35;");
+
+                blocks[i].replace(10, 1, "&#35;");
+
+                m_md += QString(blocks[i]);
+
+                qDebug() << "H3 converted" << m_md;
+
+            }
+            else if(isStartingH3TitleWithNewLine(blocks[i])) {
+                itemDescription = blocks[i];
+
+                blocks[i].replace(0, 1, "&#10;");
+
+                blocks[i].replace(5, 1, "&#35;");
+
+                blocks[i].replace(10, 1, "&#35;");
+
+                blocks[i].replace(15, 1, "&#35;");
+
+                m_md += QString(blocks[i]);
+
+                qDebug() << "H3 newline" << m_md;
+            }
             else if(isStartingWithAsterisk(blocks[i])) {
                 blocks[i].replace(1, 1, "&#42;");
                 m_md += "<p>" + blocks[i] + "</p>";
@@ -166,12 +223,23 @@ std::string NotesBackend::remove_non_breaking_spaces(const std::string &in) cons
     int j = 0;
 
     result.erase(std::remove(result.begin(), result.end(), '\x0A'), result.end());
-    qDebug() << "h1 title" << isH1Title(result);
 
     if(isH1Title(result)) {
         j = 2;
     } else if(isH1TitleWithNewline(result)) {
         j = 3;
+    }
+    else if(isH2Title(result)) {
+        j = 3;
+    }
+    else if(isH2TitleWithNewline(result)) {
+        j = 4;
+    }
+    else if(isH3Title(result)) {
+        j = 4;
+    }
+    else if(isH3TitleWithNewline(result)) {
+        j = 5;
     }
     else {
         j = 0;
@@ -197,9 +265,31 @@ std::string NotesBackend::remove_non_breaking_spaces(const std::string &in) cons
         }
     }
 
-    //qDebug() << "result:" << result;
+    qDebug() << "result:" << result;
 
     return result;
+}
+
+bool NotesBackend::isStartingH1Title(QString title) const
+{
+    return !title.isEmpty() && title.length() == 1 && title[0] == '#'
+           || !title.isEmpty() && title.length() == 2  && title[0] == '#' && title[1] == '\xa0';
+
+}
+
+bool NotesBackend::isStartingH2Title(QString title) const
+{
+    return !title.isEmpty() && title.length() == 1 && title[0] == '#'
+           || !title.isEmpty() && title.length() == 2  && title[0] == '#' && title[1] == '#'
+    || !title.isEmpty() && title.length() == 3  && title[0] == '#' && title[1] == '#' && title[2] == '\xa0';
+}
+
+bool NotesBackend::isStartingH3Title(QString title) const
+{
+    return !title.isEmpty() && title.length() == 1 && title[0] == '#'
+           || !title.isEmpty() && title.length() == 2  && title[0] == '#' && title[1] == '#'
+           || !title.isEmpty() && title.length() == 3  && title[0] == '#' && title[1] == '#' && title[2] == '#'
+           || !title.isEmpty() && title.length() == 4  && title[0] == '#' && title[1] == '#' && title[2] == '#' && title[3] == '\xa0';
 }
 
 bool NotesBackend::isH1Title(QString title) const
@@ -212,10 +302,14 @@ bool NotesBackend::isH1Title(std::string & title) const
     return title.length() >= 2 && title[0] == '#' && title[1] == ' ';
 }
 
-bool NotesBackend::isStartingH1Title(QString title) const
+bool NotesBackend::isH2Title(std::string &title) const
 {
-    return !title.isEmpty() && title.length() == 1 && title[0] == '#'
-           || !title.isEmpty() && title.length() == 2  && title[0] == '#' && title[1] == '\xa0';
+    return title.length() >= 4 && title[0] == '#' && title[1] == '#' && title[2] == ' ';
+}
+
+bool NotesBackend::isH3Title(std::string &title) const
+{
+    return title.length() >= 5 && title[0] == '#' && title[1] == '#' && title[2] == '#' && title[3] == ' ';
 
 }
 
@@ -224,10 +318,36 @@ bool NotesBackend::isH1TitleWithNewline(std::string &title) const
     return title.length() >= 3 && title[0] == '\x0a' && title[1] == '#' && title[2] == ' ';
 }
 
+bool NotesBackend::isH2TitleWithNewline(std::string &title) const
+{
+    return title.length() >= 4 && title[0] == '\x0a' && title[1] == '#' && title[2] == '#' && title[3] == ' ';
+}
+
+bool NotesBackend::isH3TitleWithNewline(std::string &title) const
+{
+    return title.length() >= 5 && title[0] == '\x0a' && title[1] == '#' && title[2] == '#' && title[3] == '#' && title[4] == ' ';
+}
+
 bool NotesBackend::isStartingH1TitleWithNewLine(QString title) const
 {
     return !title.isEmpty() && title.length() == 2 && title[0] == '\x0a' && title[1] == '#'
            || !title.isEmpty() && title.length() == 3 && title[0] == '\x0a' && title[1] == '#' && title[2] == '\xa0';
+}
+
+bool NotesBackend::isStartingH2TitleWithNewLine(QString title) const
+{
+    return !title.isEmpty() && title.length() == 2 && title[0] == '\x0a' && title[1] == '#'
+           || !title.isEmpty() && title.length() == 3 && title[0] == '\x0a' && title[1] == '#' && title[2] == '#'
+            || !title.isEmpty() && title.length() == 4 && title[0] == '\x0a' && title[1] == '#' && title[2] == '#' && title[3] == '\xa0';
+}
+
+bool NotesBackend::isStartingH3TitleWithNewLine(QString title) const
+{
+    return !title.isEmpty() && title.length() == 2 && title[0] == '\x0a' && title[1] == '#'
+           || !title.isEmpty() && title.length() == 3 && title[0] == '\x0a' && title[1] == '#' && title[2] == '#'
+           || !title.isEmpty() && title.length() == 4 && title[0] == '\x0a' && title[1] == '#' && title[2] == '#' && title[3] == '\xa0'
+           || !title.isEmpty() && title.length() == 5 && title[0] == '\x0a' && title[1] == '#' && title[2] == '#' && title[3] == '#' && title[4] == '\xa0';
+
 }
 
 void NotesBackend::removeZeroWidthSpace(QStringList &stringList) {

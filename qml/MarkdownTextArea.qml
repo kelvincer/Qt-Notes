@@ -141,7 +141,7 @@ TextArea {
 
                                 if(textArray[indexOnTextArray].isTitleFirstChar) {
 
-                                    if(Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {                                        cursorPos =
+                                    if(Block.isTitleWithNewLine(textArray[indexOnTextArray].markdown)) {                                        cursorPos =
                                         cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray) + 2
 
                                     } else {
