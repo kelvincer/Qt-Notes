@@ -59,6 +59,7 @@ TextArea {
             cursorPos = cursorPosition
             isPressedArrowKey = false
         }
+        console.log("cursorPos", cursorPos)
     }
     onTextChanged: {
         
@@ -86,6 +87,10 @@ TextArea {
                         if(event.key === Qt.Key_Up) {
                             //event.accepted = true
                             console.log("KEY UP")
+
+                            if(indexOnTextArray === 0)
+                                return
+
                             isPressedArrowKey = true
                             return
                         }
@@ -93,6 +98,10 @@ TextArea {
                         if(event.key === Qt.Key_Down) {
                             //event.accepted = true
                             console.log("KEY DOWN")
+
+                            if(indexOnTextArray === textArray.length - 1)
+                                return
+
                             isPressedArrowKey = true
                             return
                         }
@@ -113,6 +122,9 @@ TextArea {
                         if(event.key === Qt.Key_Right) {
 
                             console.log("KEY RIGHT")
+                            if(ta.cursorPosition >= maxCursorPosValue)
+                                return
+
                             isPressedArrowKey = true
                             return
 
@@ -154,28 +166,34 @@ TextArea {
                                 }
                             } else {
 
-                                if(MdArray.isStartingATitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
+                                if(Block.isStartingATitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
 
                                     textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, textArray[indexOnTextArray].markdown.length - 7)
 
-                                    textArray[indexOnTextArray + 1] = { markdown: Constants.titleStartedWithNewline + event.text , isTitle: true};
+                                    //textArray[indexOnTextArray + 1] = { markdown: Constants.titleStartedWithNewline + event.text , isTitle: true};
+
+                                    textArray.splice(indexOnTextArray + 1, 0, { markdown: Constants.titleStartedWithNewline + event.text , isTitle: true})
 
                                     cursorPos = ta.cursorPosition - 1
 
                                 }
-                                else if(MdArray.isStartingH2TitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
+                                else if(Block.isStartingH2TitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
 
                                     textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, textArray[indexOnTextArray].markdown.length - 8)
 
-                                    textArray[indexOnTextArray + 1] = { markdown: Constants.h2TitleStartedWithNewline + event.text , isTitle: true};
+                                    //textArray[indexOnTextArray + 1] = { markdown: Constants.h2TitleStartedWithNewline + event.text , isTitle: true}
+
+                                    textArray.splice(indexOnTextArray + 1, 0, { markdown: Constants.h2TitleStartedWithNewline + event.text , isTitle: true})
 
                                     cursorPos = ta.cursorPosition - 2
                                 }
-                                else if(MdArray.isStartingH3TitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
+                                else if(Block.isStartingH3TitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
 
                                     textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, textArray[indexOnTextArray].markdown.length - 9)
 
-                                    textArray[indexOnTextArray + 1] = { markdown: Constants.h3TitleStartedWithNewline + event.text , isTitle: true};
+                                    //textArray[indexOnTextArray + 1] = { markdown: Constants.h3TitleStartedWithNewline + event.text , isTitle: true};
+
+                                    textArray.splice(indexOnTextArray + 1, 0, { markdown: Constants.h3TitleStartedWithNewline + event.text , isTitle: true})
 
                                     cursorPos = ta.cursorPosition - 3
                                 }
@@ -280,23 +298,58 @@ TextArea {
 
                             if(textArray[indexOnTextArray]?.isTitle ?? false) {
 
-                                if(Block.isH1Title(textArray[indexOnTextArray].markdown)) {
+                                if(Block.isTitleDeleted(textArray[indexOnTextArray].markdown)) {
 
-                                    if(textArray[indexOnTextArray].markdown.length === 3) {
+                                    textArray[indexOnTextArray].markdown = ""
 
-                                        textArray[indexOnTextArray].markdown = ""
+                                    cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray)
 
-                                        cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray)
+                                }
+                                else {
+
+                                    cursorPos = ta.cursorPosition - 1
+
+                                    textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
+                                    + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
+                                }
+
+
+                                /*if(Block.isTitle(textArray[indexOnTextArray].markdown)) {
+
+                                    if(textArray[indexOnTextArray].markdown.length === 4) {
+
+                                        textArray[indexOnTextArray].markdown = "\n" + zeroWidthSpace
+
+                                        cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray) + 1
 
                                     } else {
+
                                         cursorPos = ta.cursorPosition - 1
 
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, cursorPos + 2)
-                                        + textArray[indexOnTextArray].markdown.substring(cursorPos + 3, textArray[indexOnTextArray].markdown.length)
-
+                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
+                                        + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
                                     }
 
-                                } else {
+                                }
+                                // else if(Block.isH2Title(textArray[indexOnTextArray].markdown)) {
+
+                                //     console.log("H2 title")
+
+                                //     if(textArray[indexOnTextArray].markdown.length === 4) {
+
+                                //         textArray[indexOnTextArray].markdown = ""
+
+                                //         cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray)
+
+                                //     } else {
+                                //         cursorPos = ta.cursorPosition - 1
+
+                                //         textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
+                                //         + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
+
+                                //     }
+                                // }
+                                else {
 
                                     if(textArray[indexOnTextArray].markdown.length === 4) {
 
@@ -318,6 +371,7 @@ TextArea {
                                         }
                                     }
                                 }
+                                */
 
                             } else {
 
@@ -355,6 +409,7 @@ TextArea {
 
                                     if (markdownDisplacement === 1 && textArray[indexOnTextArray].markdown.startsWith(Constants.newline)) {
                                             
+                                        if(indexOnTextArray > 0)
                                         textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
                                             textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
                                         
@@ -417,7 +472,7 @@ TextArea {
                                     }
                                 } else {
                                     
-                                    textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false});
+                                    textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false})
 
                                     if(markdownDisplacement === textArray[indexOnTextArray].markdown.length) {
                                         textArray[indexOnTextArray + 1].markdown = "\n" + zeroWidthSpace
@@ -480,6 +535,10 @@ TextArea {
                             textArray.splice(indexOnTextArray, 1)
                         }
 
+                        if(textArray[0]?.markdown?.startsWith('\n')) {
+                            textArray[0].markdown = textArray[0].markdown.slice(1)
+                        }
+
                         const result = textArray.map((e) => e.markdown);
 
                         maxCursorPosValue = MdArray.getTotalLength(textArray)
@@ -509,6 +568,9 @@ TextArea {
                         //notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
                         indexOnTextArray = MdArray.getCursorBlockIndex(textArray, ta.cursorPosition)
                         cursorPos = ta.positionAt(mouse.x, mouse.y)
+
+                        console.log("current index onclick", indexOnTextArray)
+
                     }
         onDoubleClicked: mouse => {
                                 const position = markDownInput.cursorPosition

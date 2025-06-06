@@ -294,7 +294,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 // Unit test ready
 function isCursorJustAfterParagraphBreakline(array, blockIndex, cursorPos) {
 
-    if (Block.isH1Title(array[blockIndex].markdown)) {
+    if (Block.isTitle(array[blockIndex].markdown)) {
         return false
     } else {
         const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
@@ -349,18 +349,6 @@ function getLengthBeforeCursorBlockIndex(array, cursorBlockIndex) {
     }
 
     return length
-}
-
-function isStartingATitleInsideParagraph(markdown) {
-    return markdown !== undefined && markdown.substring(markdown.length - 7) === Constants._break + Constants.titleStarted
-}
-
-function isStartingH2TitleInsideParagraph(markdown) {
-    return markdown !== undefined && markdown.substring(markdown.length - 8) === Constants._break + Constants.h2TitleStarted
-}
-
-function isStartingH3TitleInsideParagraph(markdown) {
-    return markdown !== undefined && markdown.substring(markdown.length - 9) === Constants._break + Constants.h3TitleStarted
 }
 
 function getStartAndEndOnMarkownForItalic(array, start, end) {

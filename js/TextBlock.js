@@ -442,3 +442,31 @@ function countH1ItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock
     return italicCount
 }
 
+function isStartingATitleInsideParagraph(markdown) {
+    return markdown !== undefined && markdown.substring(markdown.length - 7) === Constants._break + Constants.titleStarted
+}
+
+function isStartingH2TitleInsideParagraph(markdown) {
+    return markdown !== undefined && markdown.substring(markdown.length - 8) === Constants._break + Constants.h2TitleStarted
+}
+
+function isStartingH3TitleInsideParagraph(markdown) {
+    return markdown !== undefined && markdown.substring(markdown.length - 9) === Constants._break + Constants.h3TitleStarted
+}
+
+function isH1TitleDeleted(title) {
+    return (isH1Title(title) && title.length === 3) || (isH1TitleWithNewline(title) && title.length === 4)
+}
+
+function isH2TitleDeleted(title) {
+    return (isH2Title(title) && title.length === 4) || (isH2TitleWithNewline(title) && title.length === 5)
+}
+
+function isH3TitleDeleted(title) {
+    return (isH3Title(title) && title.length === 5) || (isH3TitleWithNewline(title) && title.length === 6)
+}
+
+function isTitleDeleted(title) {
+    return isH1TitleDeleted(title) || isH2TitleDeleted(title) || isH3TitleDeleted(title)
+}
+
