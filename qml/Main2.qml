@@ -231,30 +231,36 @@ Window {
         MarkdownTextArea {
             id: markDownInput
             Layout.fillHeight: true
-            Layout.preferredWidth: 0.55
+            Layout.preferredWidth: 0.6
             Layout.fillWidth: true
             backend: notesBackend
         }
 
         Column {
+            Layout.topMargin: 15
             Layout.fillHeight: true
-            Layout.preferredWidth: 0.1
+            Layout.preferredWidth: 0.05
             Layout.fillWidth: true
+            spacing: 15
 
             Text {
                 text: "H1"
+                anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Text {
                 text: "H2"
+                anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Text {
                 text: "H3"
+                anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Button {
                 text: "I"
+                anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: {
                     console.log("I");
 

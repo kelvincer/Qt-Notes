@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-//import Notes as Notes
 import "../js/TextBlock.js" as Block
 import "../js/MdArray.js" as MdArray
 import "../js/Constants.js" as Constants
@@ -105,7 +104,6 @@ TextArea {
                             isPressedArrowKey = true
                             return
                         }
-                        
                         
                         if(event.key === Qt.Key_Left) {
 
@@ -300,10 +298,43 @@ TextArea {
 
                                 if(Block.isTitleDeleted(textArray[indexOnTextArray].markdown)) {
 
+                                    textArray[indexOnTextArray].markdown = "\n"
+
+                                    cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray) + 1
+
+                                }
+                                else if(markdownDisplacement === 3 && Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
+
+                                    if(indexOnTextArray > 0) {
+                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
+                                        textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                    }
+
                                     textArray[indexOnTextArray].markdown = ""
 
-                                    cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray)
+                                    cursorPos = ta.cursorPosition - 1
+                                }
+                                else if(markdownDisplacement === 4 && Block.isH2TitleWithNewline(textArray[indexOnTextArray].markdown)) {
 
+                                    if(indexOnTextArray > 0) {
+                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
+                                        textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                    }
+
+                                    textArray[indexOnTextArray].markdown = ""
+
+                                    cursorPos = ta.cursorPosition - 1
+                                }
+                                else if(markdownDisplacement === 5 && Block.isH3TitleWithNewline(textArray[indexOnTextArray].markdown)) {
+
+                                    if(indexOnTextArray > 0) {
+                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
+                                        textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                    }
+
+                                    textArray[indexOnTextArray].markdown = ""
+
+                                    cursorPos = ta.cursorPosition - 1
                                 }
                                 else {
 
@@ -410,7 +441,7 @@ TextArea {
                                     if (markdownDisplacement === 1 && textArray[indexOnTextArray].markdown.startsWith(Constants.newline)) {
                                             
                                         if(indexOnTextArray > 0)
-                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
+                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
                                             textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
                                         
                                         textArray[indexOnTextArray].markdown = ""
