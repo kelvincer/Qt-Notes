@@ -150,11 +150,9 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             //console.log("markdown:", array[blockIndex].markdown)
 
-            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+            const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            //console.log("cursorPositionOnBlock", cursorPositionOnBlock)
-
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             //console.log("asteriskNum:", asteriskNum)
 
@@ -169,9 +167,9 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
             return cursorPos - lengthBeforeCursorBlock
         } else {
 
-            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+            const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             return cursorPos - lengthBeforeCursorBlock + 2 + asteriskNum
         }
@@ -188,11 +186,9 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             // console.log("markdown:", array[blockIndex].markdown)
 
-            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+            const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            // console.log("cursorPositionOnBlock", cursorPositionOnBlock)
-
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             // console.log("asteriskNum:", asteriskNum)
 
@@ -211,11 +207,9 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             console.log("md", array[blockIndex]?.markdown)
 
-            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+            const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            console.log("cursorPositionOnBlock", cursorPositionOnBlock)
-
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             const h2TitleStartedLength = Constants.h2TitleStarted.length // 3
 
@@ -234,11 +228,9 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             //console.log("markdown:", array[blockIndex].markdown)
 
-            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+            const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            //console.log("cursorPositionOnBlock", cursorPositionOnBlock)
-
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             //console.log("asteriskNum:", asteriskNum)
 
@@ -255,9 +247,9 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
             return cursorPos - lengthBeforeCursorBlock
         } else {
 
-            const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+            const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             const h3TitleStartedLength = Constants.h3TitleStarted.length // 4
 
@@ -265,8 +257,8 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
         }
     }
     else {
-        const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
-        const brickIndex = Block.getBrickIndexAtWhichCursoIsLocated(array[blockIndex]?.markdown, cursorPositionOnBlock, italics)
+        const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
+        const brickIndex = Block.getBrickIndexAtWhichCursoIsLocated(array[blockIndex]?.markdown, displacement, italics)
         const numBreaksBeforeIndex = brickIndex
 
         let length = 0
@@ -276,11 +268,9 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
             length += bricks[i].length
         }
 
-        //console.log("cursorPositionOnBlock", cursorPositionOnBlock)
+        const distanceBetweenBreaklineAndCursor = displacement - (length + numBreaksBeforeIndex)
 
-        const distanceBetweenBreaklineAndCursor = cursorPositionOnBlock - (length + numBreaksBeforeIndex)
-
-        const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, cursorPositionOnBlock, italics)
+        const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
         //console.log("asteriskNum:", asteriskNum)
         
@@ -386,10 +376,10 @@ function getMarkdownTextOnBlockBeforeCursor(array, markdownText, cursorPos) {
     let i = 0;
     let firstAsterisk = false;
 
-    const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
+    const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
     const italics = Block.findItalicIndices(markdownText)
 
-    while (i < markdownText.length && visibleCount < cursorPositionOnBlock) {
+    while (i < markdownText.length && visibleCount < displacement) {
         const char = markdownText[i];
         //console.log('Char', char, "i", i, "visibleCount", visibleCount)
 
