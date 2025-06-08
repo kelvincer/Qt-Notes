@@ -184,7 +184,7 @@ function getParagraphLength(markdown) {
 
 // Unit test ready
 // abcdf<br/>bcd|e<br/>qweet -> return 1
-function getBrickIndexAtWhichCursoIsLocated(paragraph, displacement) {
+function getBrickIndexAtWhichCursoIsLocated(paragraph, displacement, prevItalics = []) {
 
     if (paragraph === undefined)
         return 0
@@ -192,6 +192,8 @@ function getBrickIndexAtWhichCursoIsLocated(paragraph, displacement) {
     const array = paragraph.split(Constants._break)
     let i
     let length = 0
+
+    displacement += countItalicsAsterisksBeforeCursor(paragraph, displacement, prevItalics)
 
     for (i = 0; i < array.length; i++) {
 

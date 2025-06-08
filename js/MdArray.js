@@ -266,7 +266,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
     }
     else {
         const cursorPositionOnBlock = getCursorDisplacementInsideBlock(array, cursorPos)
-        const brickIndex = Block.getBrickIndexAtWhichCursoIsLocated(array[blockIndex]?.markdown, cursorPositionOnBlock)
+        const brickIndex = Block.getBrickIndexAtWhichCursoIsLocated(array[blockIndex]?.markdown, cursorPositionOnBlock, italics)
         const numBreaksBeforeIndex = brickIndex
 
         let length = 0

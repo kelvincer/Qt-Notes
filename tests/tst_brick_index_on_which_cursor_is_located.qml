@@ -16,4 +16,9 @@ TestCase {
         const displacement = Block.getParagraphLength(paragraph) - 1
         compare(Block.getBrickIndexAtWhichCursoIsLocated(paragraph, displacement), 2);
     }
+
+    function test_case01() {
+        const paragraph = "hi *i*<br/>"
+        compare(Block.getBrickIndexAtWhichCursoIsLocated(paragraph, 5, [{start: 3, end:5}] ), 1)
+    }
 }

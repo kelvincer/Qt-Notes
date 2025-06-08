@@ -159,4 +159,9 @@ TestCase {
         const array = [{markdown: "##\u00A0Hi"}, {markdown: "\n###\u00A0Hi"}]
         compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, 5, []), 7)
     }
+
+    function test_case19() {
+        const array = [{markdown: "hi *i*<br/>"}]
+        compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 5, [{start: 3, end: 5}]), 11)
+    }
 }
