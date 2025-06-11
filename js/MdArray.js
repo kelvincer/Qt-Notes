@@ -25,11 +25,28 @@ function getTotalLength(array) {
         if (Block.isH1Title(array[i].markdown)) {
 
             length += Block.getTitleLength(array[i].markdown)
-
-        } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
+        }
+        else if (Block.isH1TitleWithNewline(array[i].markdown)) {
 
             length += Block.getTitleWithNewLineLength(array[i].markdown)
-        } else {
+        }
+        else if(Block.isH2Title(array[i].markdown)) {
+
+            length += Block.getH2TitleLength(array[i].markdown)
+        }
+        else if(Block.isH2TitleWithNewline(array[i].markdown)) {
+
+            length += Block.getH2TitleWithNewLineLength(array[i].markdown)
+        }
+        else if(Block.isH3Title(array[i].markdown)) {
+
+            length += Block.getH3TitleLength(array[i].markdown)
+        }
+        else if(Block.isH3TitleWithNewline(array[i].markdown)) {
+
+            length += Block.getH3TitleWithNewLineLength(array[i].markdown)
+        }
+        else {
 
             length += Block.getParagraphLength(array[i].markdown)
         }
