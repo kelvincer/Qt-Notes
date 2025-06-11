@@ -113,7 +113,7 @@ function getLengthBeforeCursorBlock(array, cursorPos) {
     array = removeAllItalics(array)
     const cursorBlockIndex = getCursorBlockIndex(array, cursorPos)
 
-    console.log("cbi", cursorBlockIndex)
+    //console.log("cbi", cursorBlockIndex)
 
     for (let i = 0; i < cursorBlockIndex; i++) {
         if (Block.isH1Title(array[i].markdown)) {
@@ -299,19 +299,21 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
 
 // Unit test ready
-function isCursorJustAfterParagraphBreakline(array, blockIndex, cursorPos) {
+function isCursorJustAfterParagraphBreakline(array, blockIndex, cursorPos, italics) {
 
     if (Block.isTitle(array[blockIndex].markdown)) {
         return false
     } else {
         const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
-        const brickIndex = Block.getBrickIndexAtWhichCursoIsLocated(array[blockIndex].markdown, displacement)
+        const brickIndex = Block.getBrickIndexAtWhichCursoIsLocated(array[blockIndex].markdown, displacement, italics)
         const numBreaksBeforeIndex = brickIndex
 
         let length = 0
-        const bricks = array[blockIndex].markdown.split(Constants._break)
+
+        const bricks = Block.removeItalics(array[blockIndex].markdown).split(Constants._break)
 
         for (let i = 0; i < brickIndex; i++) {
+            console.log("brick", bricks[i])
             length += bricks[i].length
         }
 

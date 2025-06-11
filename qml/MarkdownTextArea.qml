@@ -410,7 +410,7 @@ TextArea {
 
                                 if(textArray[indexOnTextArray]?.markdown?.includes(breakLine)) {
 
-                                    if(MdArray.isCursorJustAfterParagraphBreakline(textArray, indexOnTextArray, ta.cursorPosition)) {
+                                    if(MdArray.isCursorJustAfterParagraphBreakline(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])) {
 
                                         console.log("1", textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - breakLine.length))
                                         console.log("2", textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length))

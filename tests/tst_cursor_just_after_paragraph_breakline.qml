@@ -42,4 +42,16 @@ TestCase {
         const cursorPos = MdArray.getTotalLength(array) - 7
         compare(MdArray.isCursorJustAfterParagraphBreakline(array, 2, cursorPos), true);
     }
+
+    // \nthis *italy*<br/>|
+    function test_case3() {
+        const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis *italy*<br/>"}]
+        compare(MdArray.isCursorJustAfterParagraphBreakline(array, 1, 17, [{start: 6, end: 12}]), true);
+    }
+
+    // \nthis *italy*|<br/>
+    function test_case4() {
+        const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis *italy*<br/>"}]
+        compare(MdArray.isCursorJustAfterParagraphBreakline(array, 1, 16, [{start: 6, end: 12}]), false);
+    }
 }
