@@ -447,11 +447,34 @@ TextArea {
                                         textArray[indexOnTextArray].markdown = ""
                                     } else {
 
-                                        console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
-                                        console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+                                        if(MdArray.isCursorJustAfterItalic(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])) {
 
-                                        textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
-                                        textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                            console.log("italics")
+
+                                            if(textArray[indexOnTextArray].markdown.charAt(markdownDisplacement - 1) === '*' && textArray[indexOnTextArray].markdown.charAt(markdownDisplacement - 3) === '*'
+                                               && Block.isACharacter(textArray[indexOnTextArray].markdown.charAt(markdownDisplacement - 2))) {
+
+                                                textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 3) ?? "").concat(
+                                                textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+
+                                            } else {
+
+                                                textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 2) ?? "").concat("*").concat(
+                                                textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+                                            }
+
+
+                                            italics[indexOnTextArray] = Block.decreaseItalics(italics[indexOnTextArray], italics)
+
+                                        } else {
+
+                                            console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
+                                            console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+
+                                            textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
+                                            textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+
+                                        }
                                     }
                                 }
                             }
@@ -544,8 +567,11 @@ TextArea {
                         console.log("cursorPos", cursorPos)
 
                         if(italics[indexOnTextArray] !== undefined) {
-                            for(const i of italics[indexOnTextArray]) {
-                                console.log("italic end", i.start, i.end)
+                            for(let i = 0; i < italics[indexOnTextArray].length; i++) {
+                                console.log("italic end", italics[indexOnTextArray][i].start, italics[indexOnTextArray][i].end)
+                                if(italics[indexOnTextArray][i].start + 1 === italics[indexOnTextArray][i].end) {
+                                    italics[indexOnTextArray].splice(i, 1)
+                                }
                             }
                         }
 

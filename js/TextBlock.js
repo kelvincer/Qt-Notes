@@ -282,20 +282,31 @@ function processNewItalic(markdownText, italicsSpans) {
     return { result: result, italics: italicsSpans }
 }
 
-function updateItalics(char, italics, cursorPos) {
+function updateItalics(char, italics, markdownDisplacement) {
 
     if(italics === undefined || italics.length === 0)
         return italics
 
-    italics.sort((a, b) => b.start - a.start);
+    italics.sort((a, b) => b.start - a.start) // descending
     if(isACharacter(char) || char === '*' || char === ' ') {
         for (let italic of italics) {
-            //console.log("uitlic", italic.start)
-            if(cursorPos <= italic.start) {
+            if(markdownDisplacement <= italic.start) {
                 italic.start++
                 italic.end++
             }
         }
+    }
+
+    return italics
+}
+
+function decreaseItalics(italics, markdownDisplacement) {
+
+    if(italics === undefined || italics.length === 0)
+        return italics
+
+    for(let italic of italics) {
+        italic.end--
     }
 
     return italics
