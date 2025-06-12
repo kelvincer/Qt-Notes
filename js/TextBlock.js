@@ -504,3 +504,7 @@ function isTitleDeleted(title) {
     return isH1TitleDeleted(title) || isH2TitleDeleted(title) || isH3TitleDeleted(title)
 }
 
+function isDeletingFinalItalicChar(markdown, markdownDisplacement) {
+    return markdown.charAt(markdownDisplacement - 1) === '*' && markdown.charAt(markdownDisplacement - 3) === '*'
+                                               && isACharacter(markdown.charAt(markdownDisplacement - 2))
+}

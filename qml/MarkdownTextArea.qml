@@ -340,8 +340,41 @@ TextArea {
 
                                     cursorPos = ta.cursorPosition - 1
 
-                                    textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
-                                    + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
+                                    MdArray.deleteBlockChar(textArray, indexOnTextArray, ta.cursorPosition, italics, markdownDisplacement)
+
+                                    // textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
+                                    // + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
+
+                                    // if(MdArray.isCursorJustAfterItalic(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])) {
+
+                                    //     console.log("italics")
+
+                                    //     if(Block.isDeletingFinalItalicChar(textArray[indexOnTextArray].markdown, markdownDisplacement)) {
+
+                                    //         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 3) ?? "").concat(
+                                    //         textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+
+                                    //     } else {
+
+                                    //         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 2) ?? "").concat("*").concat(
+                                    //         textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+                                    //     }
+
+                                    // } else {
+
+                                    //     console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
+                                    //     console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+
+                                    //     textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
+                                    //     textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                    // }
+
+                                    // // Update italics
+                                    // let indices = Block.findItalicIndices(textArray[indexOnTextArray].markdown)
+                                    // italics[indexOnTextArray] = []
+                                    // for(const i of indices) {
+                                    //     italics[indexOnTextArray].push({start: i.start, end: i.end})
+                                    // }
                                 }
 
 
@@ -447,39 +480,40 @@ TextArea {
                                         textArray[indexOnTextArray].markdown = ""
                                     } else {
 
-                                        if(MdArray.isCursorJustAfterItalic(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])) {
+                                        MdArray.deleteBlockChar(textArray, indexOnTextArray, ta.cursorPosition, italics, markdownDisplacement)
 
-                                            console.log("italics")
+                                        // if(MdArray.isCursorJustAfterItalic(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])) {
 
-                                            if(textArray[indexOnTextArray].markdown.charAt(markdownDisplacement - 1) === '*' && textArray[indexOnTextArray].markdown.charAt(markdownDisplacement - 3) === '*'
-                                               && Block.isACharacter(textArray[indexOnTextArray].markdown.charAt(markdownDisplacement - 2))) {
+                                        //     console.log("italics")
 
-                                                textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 3) ?? "").concat(
-                                                textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+                                        //     if(Block.isDeletingFinalItalicChar(textArray[indexOnTextArray].markdown, markdownDisplacement)) {
 
-                                            } else {
+                                        //         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 3) ?? "").concat(
+                                        //             textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
 
-                                                textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 2) ?? "").concat("*").concat(
-                                                textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
-                                            }
+                                        //     } else {
 
-                                            //italics[indexOnTextArray] = Block.updateItalicEnd(italics[indexOnTextArray], markdownDisplacement)
+                                        //         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 2) ?? "").concat("*").concat(
+                                        //             textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+                                        //     }
 
-                                        } else {
+                                        //     //italics[indexOnTextArray] = Block.updateItalicEnd(italics[indexOnTextArray], markdownDisplacement)
 
-                                            console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
-                                            console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+                                        // } else {
 
-                                            textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
-                                            textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
-                                        }
+                                        //     console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
+                                        //     console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
 
-                                        // Update italics
-                                        let indices = Block.findItalicIndices(textArray[indexOnTextArray].markdown)
-                                        italics[indexOnTextArray] = []
-                                        for(const i of indices) {
-                                            italics[indexOnTextArray].push({start: i.start, end: i.end})
-                                        }
+                                        //     textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
+                                        //         textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                        // }
+
+                                        // // Update italics
+                                        // let indices = Block.findItalicIndices(textArray[indexOnTextArray].markdown)
+                                        // italics[indexOnTextArray] = []
+                                        // for(const i of indices) {
+                                        //     italics[indexOnTextArray].push({start: i.start, end: i.end})
+                                        // }
                                     }
                                 }
                             }
