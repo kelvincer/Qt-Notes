@@ -300,17 +300,38 @@ function updateItalics(char, italics, markdownDisplacement) {
     return italics
 }
 
-function decreaseItalics(italics, markdownDisplacement) {
+// function updateItalicEnd(italics, markdownDisplacement) {
 
-    if(italics === undefined || italics.length === 0)
-        return italics
+//     if(italics === undefined || italics.length === 0)
+//         return italics
 
-    for(let italic of italics) {
-        italic.end--
-    }
+//     for(let italic of italics) {
+//         if(markdownDisplacement === italic.end + 1) {
+//             italic.end--
+//             break
+//         }
+//     }
 
-    return italics
-}
+//     return italics
+// }
+
+// function decreaseItalics(italics, markdownDisplacement) {
+
+//     if(italics === undefined || italics.length === 0)
+//         return italics
+
+//     italics.sort((a, b) => b.start - a.start) // descending
+
+//     for (let italic of italics) {
+//         console.log("disp", markdownDisplacement, italic.start)
+//         if(markdownDisplacement <= italic.start) {
+//             italic.start--
+//             italic.end--
+//         }
+//     }
+
+//     return italics
+// }
 
 function detectItalicIntent(text) {
     // Common plain-text italic indicators

@@ -463,8 +463,7 @@ TextArea {
                                                 textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
                                             }
 
-
-                                            italics[indexOnTextArray] = Block.decreaseItalics(italics[indexOnTextArray], italics)
+                                            //italics[indexOnTextArray] = Block.updateItalicEnd(italics[indexOnTextArray], markdownDisplacement)
 
                                         } else {
 
@@ -473,7 +472,13 @@ TextArea {
 
                                             textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
                                             textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                        }
 
+                                        // Update italics
+                                        let indices = Block.findItalicIndices(textArray[indexOnTextArray].markdown)
+                                        italics[indexOnTextArray] = []
+                                        for(const i of indices) {
+                                            italics[indexOnTextArray].push({start: i.start, end: i.end})
                                         }
                                     }
                                 }

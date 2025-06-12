@@ -471,11 +471,14 @@ function removeAllItalics(array) {
 
 function isCursorJustAfterItalic(array, blockIndex, cursorPos, italics) {
 
+    if(italics === undefined || italics.length === 0)
+        return false
+
     const markdownDisplacement = getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, italics)
 
     for(const italic of italics) {
 
-        console.log("mdd", markdownDisplacement, italic.end)
+        //console.log("mdd", markdownDisplacement, italic.end)
 
         if(italic.end === markdownDisplacement - 1) {
             return true
