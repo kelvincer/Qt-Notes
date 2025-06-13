@@ -296,7 +296,8 @@ TextArea {
 
                             if(textArray[indexOnTextArray]?.isTitle ?? false) {
 
-                                if(Block.isTitleDeleted(textArray[indexOnTextArray].markdown)) {
+                                if(Block.isTitleDeleted(textArray[indexOnTextArray].markdown)
+                                   || Block.isItalicTitleDeleted(textArray[indexOnTextArray].markdown, markdownDisplacement)) {
 
                                     textArray[indexOnTextArray].markdown = "\n"
 
@@ -341,101 +342,7 @@ TextArea {
                                     cursorPos = ta.cursorPosition - 1
 
                                     MdArray.deleteBlockChar(textArray, indexOnTextArray, ta.cursorPosition, italics, markdownDisplacement)
-
-                                    // textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
-                                    // + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
-
-                                    // if(MdArray.isCursorJustAfterItalic(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])) {
-
-                                    //     console.log("italics")
-
-                                    //     if(Block.isDeletingFinalItalicChar(textArray[indexOnTextArray].markdown, markdownDisplacement)) {
-
-                                    //         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 3) ?? "").concat(
-                                    //         textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
-
-                                    //     } else {
-
-                                    //         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 2) ?? "").concat("*").concat(
-                                    //         textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
-                                    //     }
-
-                                    // } else {
-
-                                    //     console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
-                                    //     console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
-
-                                    //     textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
-                                    //     textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
-                                    // }
-
-                                    // // Update italics
-                                    // let indices = Block.findItalicIndices(textArray[indexOnTextArray].markdown)
-                                    // italics[indexOnTextArray] = []
-                                    // for(const i of indices) {
-                                    //     italics[indexOnTextArray].push({start: i.start, end: i.end})
-                                    // }
                                 }
-
-
-                                /*if(Block.isTitle(textArray[indexOnTextArray].markdown)) {
-
-                                    if(textArray[indexOnTextArray].markdown.length === 4) {
-
-                                        textArray[indexOnTextArray].markdown = "\n" + zeroWidthSpace
-
-                                        cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray) + 1
-
-                                    } else {
-
-                                        cursorPos = ta.cursorPosition - 1
-
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
-                                        + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
-                                    }
-
-                                }
-                                // else if(Block.isH2Title(textArray[indexOnTextArray].markdown)) {
-
-                                //     console.log("H2 title")
-
-                                //     if(textArray[indexOnTextArray].markdown.length === 4) {
-
-                                //         textArray[indexOnTextArray].markdown = ""
-
-                                //         cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray)
-
-                                //     } else {
-                                //         cursorPos = ta.cursorPosition - 1
-
-                                //         textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
-                                //         + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
-
-                                //     }
-                                // }
-                                else {
-
-                                    if(textArray[indexOnTextArray].markdown.length === 4) {
-
-                                        textArray[indexOnTextArray].markdown = ""
-                                        cursorPos = ta.cursorPosition - 2
-
-                                    } else {
-
-                                        cursorPos = ta.cursorPosition - 1
-
-                                        if(markdownDisplacement === 3) {
-                                            
-                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
-                                            textArray[indexOnTextArray].markdown = ""
-
-                                        } else {
-                                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1)
-                                        + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
-                                        }
-                                    }
-                                }
-                                */
 
                             } else {
 
@@ -524,11 +431,19 @@ TextArea {
                             console.log("KEY ASTERISK")
 
                             if(italicStartPos === -1) {
-                                cursorPos = ta.cursorPosition + 1
+                                if(Block.isStartingTitleWithNewline(textArray[indexOnTextArray].markdown)) {
+                                    cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray) + 2
+                                }
+                                else if(Block.isStartingTitle(textArray[indexOnTextArray].markdown)) {
+                                    cursorPos = 1
+                                }
+                                // else {
+                                //     cursorPos = ta.cursorPosition + 1
+                                // }
                                 italicStartPos = ta.cursorPosition
                             } else {
-                                italicStartPos = -1
                                 cursorPos = ta.cursorPosition - 1
+                                italicStartPos = -1
                             }
 
                             italics[indexOnTextArray] = Block.updateItalics(event.text, italics[indexOnTextArray], markdownDisplacement)
@@ -539,7 +454,7 @@ TextArea {
                                 }
                             }
 
-                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement) + event.text + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
+                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement) + event.text + textArray[indexOnTextArray].markdown.substring(markdownDisplacement)
 
                             italics[indexOnTextArray] = Block.processNewItalic(textArray[indexOnTextArray].markdown, italics[indexOnTextArray] !== undefined ? italics[indexOnTextArray] : []).italics
                         }
@@ -550,6 +465,8 @@ TextArea {
                             console.log("KEY RETURN")
 
                             if(textArray[indexOnTextArray]?.isTitle) {
+
+                                italicStartPos = -1
 
                                 cursorPos = ta.cursorPosition + 1
 
@@ -578,8 +495,6 @@ TextArea {
 
                             } else {
 
-                                console.log("return no breakline")
-
                                 cursorPos = ta.cursorPosition + 1
 
                                 textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
@@ -591,16 +506,18 @@ TextArea {
                             event.accepted = true
                             console.log("KEY HASH")
                             
-                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).concat("#").concat(textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length))
+                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).concat("#").concat(textArray[indexOnTextArray].markdown.substring(markdownDisplacement))
 
-                            if(Block.isH1Title(textArray[indexOnTextArray].markdown)) {
-                                cursorPos = 0
-                            }
-                            else if(Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
-                                cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) + 1
-                            } else {
-                                cursorPos = ta.cursorPosition + 1 
-                            }
+                            cursorPos = ta.cursorPosition + 1
+
+                            // if(Block.isH1Title(textArray[indexOnTextArray].markdown)) {
+                            //     cursorPos = 0
+                            // }
+                            // else if(Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
+                            //     cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) + 1
+                            // } else {
+                            //     cursorPos = ta.cursorPosition + 1
+                            // }
                         }
 
                         console.log("cursorPos", cursorPos)

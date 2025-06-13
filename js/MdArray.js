@@ -103,6 +103,7 @@ function getCursorBlockIndex(array, cursorPos) {
     return i
 }
 
+// This is similar to: getLengthBeforeCursorBlockIndex
 // Unit test ready
 // Counting only visible characters, <br/> and '\n'
 // # title title
@@ -112,8 +113,6 @@ function getLengthBeforeCursorBlock(array, cursorPos) {
     let length = 0
     array = removeAllItalics(array)
     const cursorBlockIndex = getCursorBlockIndex(array, cursorPos)
-
-    //console.log("cbi", cursorBlockIndex)
 
     for (let i = 0; i < cursorBlockIndex; i++) {
         if (Block.isH1Title(array[i].markdown)) {

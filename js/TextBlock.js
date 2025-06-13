@@ -77,6 +77,8 @@ function getTitleLength(markdown) {
     if (markdown === undefined)
         return 0
 
+    markdown = removeItalics(markdown)
+
     if (markdown.length <= 2) {
 
         return markdown.length
@@ -90,6 +92,8 @@ function getH2TitleLength(markdown) {
     if (markdown === undefined)
         return 0
 
+    markdown = removeItalics(markdown)
+
     if (markdown.length <= 3) {
 
         return markdown.length
@@ -102,6 +106,8 @@ function getH2TitleLength(markdown) {
 function getH3TitleLength(markdown) {
     if (markdown === undefined)
         return 0
+
+    markdown = removeItalics(markdown)
 
     if (markdown.length <= 4) {
 
@@ -119,6 +125,8 @@ function getTitleWithNewLineLength(markdown) {
     if (markdown === undefined)
         return 0
 
+    markdown = removeItalics(markdown)
+
     if (markdown.length <= 3) {
 
         return markdown.length
@@ -134,6 +142,8 @@ function getH2TitleWithNewLineLength(markdown) {
     if (markdown === undefined)
         return 0
 
+    markdown = removeItalics(markdown)
+
     if (markdown.length <= 4) {
 
         return markdown.length
@@ -148,6 +158,8 @@ function getH3TitleWithNewLineLength(markdown) {
 
     if (markdown === undefined)
         return 0
+
+    markdown = removeItalics(markdown)
 
     if (markdown.length <= 5) {
 
@@ -356,8 +368,6 @@ function removeItalics(paragraph) {
         italics = findItalicIndices(paragraph)
     }
 
-    //console.log("paragraph after removing italics", paragraph)
-
     return paragraph
 }
 
@@ -508,3 +518,78 @@ function isDeletingFinalItalicChar(markdown, markdownDisplacement) {
     return markdown.charAt(markdownDisplacement - 1) === '*' && markdown.charAt(markdownDisplacement - 3) === '*'
                                                && isACharacter(markdown.charAt(markdownDisplacement - 2))
 }
+
+function isStartingH1TitleWithNewline(title) {
+    return title !== undefined && title.startsWith(Constants.titleStartedWithNewline) && title.length === 3
+}
+
+function isStartingH2TitleWithNewline(title) {
+    return title !== undefined && title.startsWith(Constants.h2TitleStartedWithNewline) && title.length === 4
+}
+
+function isStartingH3TitleWithNewline(title) {
+    return title !== undefined && title.startsWith(Constants.h3TitleStartedWithNewline) && title.length === 5
+}
+
+function isStartingTitleWithNewline(title) {
+    return isStartingH1TitleWithNewline(title) || isStartingH2TitleWithNewline(title)
+    || isStartingH3TitleWithNewline(title)
+}
+
+function isStartingH1Title(title) {
+    return title !== undefined && title.startsWith(Constants.titleStarted) && title.length === 2
+}
+
+function isStartingH2Title(title) {
+    return title !== undefined && title.startsWith(Constants.h2TitleStarted) && title.length === 3
+}
+
+function isStartingH3Title(title) {
+    return title !== undefined && title.startsWith(Constants.h3TitleStarted) && title.length === 4
+}
+
+function isStartingTitle(title) {
+
+    return isStartingH1Title(title) || isStartingH2Title(title)
+    || isStartingH3Title(title)
+}
+
+// \n# *t*
+function isH1ItalicNewlineDeleted(title, markdownDisplacement) {
+    return title.length === 6 && isTitle(title) && isDeletingFinalItalicChar(title, markdownDisplacement)
+}
+
+// # *t*
+function isH1ItalicDeleted(title, markdownDisplacement) {
+    return title.length === 5 && isTitle(title) && isDeletingFinalItalicChar(title, markdownDisplacement)
+}
+
+// \n## *t*
+function isH2ItalicNewlineDeleted(title, markdownDisplacement) {
+    return title.length === 7 && isTitle(title) && isDeletingFinalItalicChar(title, markdownDisplacement)
+}
+
+// ## *t*
+function isH2ItalicDeleted(title, markdownDisplacement) {
+    return title.length === 6 && isTitle(title) && isDeletingFinalItalicChar(title, markdownDisplacement)
+}
+
+// \n### *t*
+function isH3ItalicNewlineDeleted(title, markdownDisplacement) {
+    return title.length === 8 && isTitle(title) && isDeletingFinalItalicChar(title, markdownDisplacement)
+}
+
+// ### *t*
+function isH3ItalicDeleted(title, markdownDisplacement) {
+    return title.length === 7 && isTitle(title) && isDeletingFinalItalicChar(title, markdownDisplacement)
+}
+
+function isItalicTitleDeleted(title, markdownDisplacement) {
+    return isH1ItalicNewlineDeleted(title, markdownDisplacement) || isH2ItalicNewlineDeleted(title, markdownDisplacement)
+    || isH3ItalicNewlineDeleted(title, markdownDisplacement) || isH1ItalicDeleted(title, markdownDisplacement)
+    || isH2ItalicDeleted(title, markdownDisplacement) || isH3ItalicDeleted(title, markdownDisplacement)
+}
+
+
+
+
