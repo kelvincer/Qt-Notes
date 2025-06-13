@@ -437,9 +437,9 @@ TextArea {
                                 else if(Block.isStartingTitle(textArray[indexOnTextArray].markdown)) {
                                     cursorPos = 1
                                 }
-                                // else {
-                                //     cursorPos = ta.cursorPosition + 1
-                                // }
+                                else {
+                                    cursorPos = ta.cursorPosition + 1
+                                }
                                 italicStartPos = ta.cursorPosition
                             } else {
                                 cursorPos = ta.cursorPosition - 1
