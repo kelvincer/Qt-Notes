@@ -365,7 +365,6 @@ function removeItalics(paragraph) {
         const element = italics.pop()
         paragraph = paragraph.substring(0, element.start) + paragraph.substring(element.start + 1, element.end)
             + paragraph.substring(element.end + 1);
-        italics = findItalicIndices(paragraph)
     }
 
     return paragraph

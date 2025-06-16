@@ -330,6 +330,7 @@ function getLengthUntilCursor(array, cursorPos) {
         getCursorDisplacementInsideBlock(array, cursorPos)
 }
 
+// This is similar to: getLengthBeforeCursorBlock
 function getLengthBeforeCursorBlockIndex(array, cursorBlockIndex) {
 
     let length = 0

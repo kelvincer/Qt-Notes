@@ -373,7 +373,7 @@ TextArea {
                                         } else {
 
                                             console.log("breaklines here")
-                                            textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement - 1) + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)  
+                                            MdArray.deleteBlockChar(textArray, indexOnTextArray, ta.cursorPosition, italics, markdownDisplacement)
                                         }
                                     }
                                 } else {
