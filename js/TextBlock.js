@@ -266,21 +266,22 @@ function findItalicIndices(markdown) {
 }
 
 function processNewItalic(markdownText, italicsSpans) {
-    if (!Array.isArray(italicsSpans)) {
-        return markdownText
-    }
 
     let result = markdownText
 
-    for (const { start, end } of italicsSpans) {
-        if (result[start] !== '*' || result[end] !== '*') continue
+    if(italicsSpans !== undefined) {
+        for (const {start, end} of italicsSpans) {
+            if (result[start] !== '*' || result[end] !== '*') continue
 
-        result =
+            result =
                 result.slice(0, start) +
                 '~' +
                 result.slice(start + 1, end) +
                 '~' +
                 result.slice(end + 1)
+        }
+    } else {
+        italicsSpans = []
     }
 
     console.log("rsult italic", result)

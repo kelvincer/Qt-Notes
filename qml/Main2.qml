@@ -264,41 +264,30 @@ Window {
                 onClicked: {
                     console.log("I");
 
-                    console.log("start", markDownInput.selectionStart);
-                    console.log("end", markDownInput.selectionEnd);
-                    const displacement = MdArray.getStartAndEndOnMarkownForItalic(markDownInput.textArray, markDownInput.selectionStart, markDownInput.selectionEnd)
+                    // console.log("start", markDownInput.selectionStart);
+                    // console.log("end", markDownInput.selectionEnd);
+                    // console.log("selectedText", markDownInput.selectedText)
+                    // console.log("size", markDownInput.selectedText.length)
 
-                    markDownInput.textArray[displacement.index].markdown = markDownInput.textArray[displacement.index].markdown.substring(0, displacement.start) + 
-                        "*" + markDownInput.selectedText 
-                        + "*" + markDownInput.textArray[displacement.index].markdown.substring(displacement.end, markDownInput.textArray[displacement.index].markdown.length);
+                    const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionStart, markDownInput.italics[markDownInput.indexOnTextArray])
+                    const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionEnd, markDownInput.italics[markDownInput.indexOnTextArray])
+
+                    // console.log("s", startDisplacement)
+                    // console.log("e", endDisplacement)
+                    // console.log("markdown init", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+
+                    markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement)
+                    markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], endDisplacement)
+
+                    markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, startDisplacement)
+                    +  "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
+                        "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
+
+                    // console.log("markdown", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+                    markDownInput.italics[markDownInput.indexOnTextArray] = Block.processNewItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray]).italics
 
                     const result = markDownInput.textArray.map((e) => e.markdown);
                     notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
-
-                    return
-                    console.log("cursorPos", markDownInput.cursorPos);
-
-                    const lengthBeforeCursor = MdArray.getLengthBeforeCursorBlockIndex(markDownInput.textArray, markDownInput.indexOnTextArray)   
-
-                    console.log("lengthBeforeCursor", lengthBeforeCursor);
-                    console.log("start", markDownInput.selectionStart);
-                    console.log("end", markDownInput.selectionEnd);
-                    console.log("cursorOnIndexArray", markDownInput.indexOnTextArray);
-
-
-                    console.log("1", markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, markDownInput.selectionStart - lengthBeforeCursor))
-                    console.log("2", markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(markDownInput.selectionEnd - lengthBeforeCursor, markDownInput.textArray[markDownInput.indexOnTextArray].markdown.length))
-
-                    markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, markDownInput.selectionStart - lengthBeforeCursor) + 
-                        "*" + markDownInput.selectedText 
-                        + "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(markDownInput.selectionEnd - lengthBeforeCursor, markDownInput.textArray[markDownInput.indexOnTextArray].markdown.length);
-
-                    //const result = markDownInput.textArray.map((e) => e.markdown);
-                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
-
-                    if (markDownInput.userSelected !== "") {
-                        notesBackend.setBoldFormat(markDownInput.getText(0, markDownInput.length), markDownInput.selectionStart, markDownInput.selectionEnd);
-                    }
                 }
             }
         }
