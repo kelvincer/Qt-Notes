@@ -590,6 +590,31 @@ function isItalicTitleDeleted(title, markdownDisplacement) {
     || isH2ItalicDeleted(title, markdownDisplacement) || isH3ItalicDeleted(title, markdownDisplacement)
 }
 
+function startedTypingFromItalicEnd(markdown, markdownDisplacement, italics) {
+
+    if (italics === undefined)
+        return false
+
+    for (const {start, end} of italics) {
+        if (end === markdownDisplacement - 1) {
+            return true
+        }
+    }
+
+    return false
+}
+
+function updateItalicEndAsterisk(markdownDisplacement, italics) {
+
+    italics.forEach((italic, index)=>{
+        if(italic.end === markdownDisplacement- 1){
+            italic.end = italic.end + 1
+        }
+    })
+
+    return italics
+}
+
 
 
 

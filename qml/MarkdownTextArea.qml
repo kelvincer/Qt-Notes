@@ -210,13 +210,30 @@ TextArea {
 
                                     } else {
 
-                                        console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
-                                        console.log("2", event.text)
-                                        console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                        if(Block.startedTypingFromItalicEnd(textArray[indexOnTextArray].markdown,markdownDisplacement, italics[indexOnTextArray])) {
 
-                                        textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
-                                            event.text).concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                            console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
+                                            console.log("2", event.text)
+                                            console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement).split("") ?? "")
 
+                                            textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
+                                                event.text).concat("*").concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+
+                                            cursorPos = ta.cursorPosition + 1
+
+                                            italics[indexOnTextArray] = Block.updateItalicEndAsterisk(markdownDisplacement, italics[indexOnTextArray])
+
+                                        } else {
+
+                                            console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
+                                            console.log("2", event.text)
+                                            console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+
+                                            textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
+                                                event.text).concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+
+                                            cursorPos = ta.cursorPosition + 1
+                                        }
                                     }
                                 }
                             }
@@ -270,15 +287,30 @@ TextArea {
                                 }
                             } else {
 
-                                console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
-                                console.log("2", "space")
-                                console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+                                if(Block.startedTypingFromItalicEnd(textArray[indexOnTextArray].markdown,markdownDisplacement, italics[indexOnTextArray])) {
 
-                                textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
-                                    nonBreakingSpace).concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                    console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
+                                    console.log("2", "space")
+                                    console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement).split("") ?? "")
 
-                                cursorPos = ta.cursorPosition + 1
+                                    textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
+                                        nonBreakingSpace).concat("*").concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
 
+                                    cursorPos = ta.cursorPosition + 1
+
+                                    italics[indexOnTextArray] = Block.updateItalicEndAsterisk(markdownDisplacement, italics[indexOnTextArray])
+
+                                } else {
+
+                                    console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement).split("") ?? "")
+                                    console.log("2", "space")
+                                    console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
+
+                                    textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
+                                        nonBreakingSpace).concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+
+                                    cursorPos = ta.cursorPosition + 1
+                                }
                             }
 
                             italics[indexOnTextArray] = Block.updateItalics(event.text, italics[indexOnTextArray], markdownDisplacement)
