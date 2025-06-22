@@ -497,7 +497,6 @@ TextArea {
                             if(textArray[indexOnTextArray].markdown.endsWith(zeroWidthSpace)) {
                                 textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.slice(0, -1)
                             }
-                            cursorPos = ta.cursorPosition + 1
 
                             textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).concat("#").concat(textArray[indexOnTextArray].markdown.substring(markdownDisplacement))
 
