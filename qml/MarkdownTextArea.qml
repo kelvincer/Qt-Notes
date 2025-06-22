@@ -22,7 +22,7 @@ TextArea {
 
     id: ta
     text: backend.md
-    textFormat: TextArea.MarkdownText
+    textFormat: TextArea.RichText
     cursorVisible: true
     cursorPosition: backend.cursorPosition
     wrapMode: TextEdit.Wrap
@@ -494,10 +494,11 @@ TextArea {
                         if (event.key === Qt.Key_Hash || event.text === "#") {
                             event.accepted = true
                             console.log("KEY HASH")
-                            if(textArray[indexOnTextArray].markdown === Constants.newlineZeroWidthSpace) {
-                                textArray[indexOnTextArray].markdown = "\n"
+                            if(textArray[indexOnTextArray].markdown.endsWith(zeroWidthSpace)) {
+                                textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.slice(0, -1)
                             }
-                            
+                            cursorPos = ta.cursorPosition + 1
+
                             textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).concat("#").concat(textArray[indexOnTextArray].markdown.substring(markdownDisplacement))
 
                             cursorPos = ta.cursorPosition + 1
