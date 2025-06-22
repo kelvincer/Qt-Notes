@@ -76,7 +76,7 @@ function countBreaks(text) {
 
 // Unit test ready
 // Visible characters
-function getTitleLength(markdown) {
+function getH1TitleLength(markdown) {
 
     if (markdown === undefined)
         return 0
@@ -120,6 +120,19 @@ function getH3TitleLength(markdown) {
 
         return markdown.length - 4
     }
+}
+
+function getTitleWithoutNewlineLength(title) {
+
+    if(isH1Title(title)) {
+        return getH1TitleLength(title)
+    } else if (isH2Title(title)) {
+        return getH2TitleLength(title)
+    } else if(isH3Title(title)) {
+        return getH3TitleLength(title)
+    }
+
+    return undefined
 }
 
 // Unit test ready

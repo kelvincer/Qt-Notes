@@ -24,7 +24,7 @@ function getTotalLength(array) {
 
         if (Block.isH1Title(array[i].markdown)) {
 
-            length += Block.getTitleLength(array[i].markdown)
+            length += Block.getH1TitleLength(array[i].markdown)
         }
         else if (Block.isH1TitleWithNewline(array[i].markdown)) {
 
@@ -67,7 +67,7 @@ function getCursorBlockIndex(array, cursorPos) {
 
         if (Block.isH1Title(array[i].markdown)) {
 
-            length += Block.getTitleLength(array[i].markdown)
+            length += Block.getH1TitleLength(array[i].markdown)
 
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
 
@@ -115,7 +115,7 @@ function getLengthBeforeCursorBlock(array, cursorPos) {
 
     for (let i = 0; i < cursorBlockIndex; i++) {
         if (Block.isH1Title(array[i].markdown)) {
-            length += Block.getTitleLength(array[i].markdown)
+            length += Block.getH1TitleLength(array[i].markdown)
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
             length += Block.getTitleWithNewLineLength(array[i].markdown)
         }
@@ -335,7 +335,7 @@ function getLengthBeforeCursorBlockIndex(array, cursorBlockIndex) {
     let length = 0
     for (let i = 0; i < cursorBlockIndex; i++) {
         if (Block.isH1Title(array[i].markdown)) {
-            length += Block.getTitleLength(array[i].markdown)
+            length += Block.getH1TitleLength(array[i].markdown)
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
             length += Block.getTitleWithNewLineLength(array[i].markdown)
         }

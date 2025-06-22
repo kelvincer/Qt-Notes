@@ -325,7 +325,7 @@ TextArea {
                                         if(Block.isStartingTitle(lastParagraphSegment)) {
                                             cursorPos = ta.cursorPosition + 1
                                         } else {
-                                            cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) + 1 //ta.cursorPosition - 1
+                                            cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) +  Block.getTitleWithoutNewlineLength(lastParagraphSegment) + 1//ta.cursorPosition - 1
                                         }
                                     } else {
                                         cursorPos = ta.cursorPosition + 1
