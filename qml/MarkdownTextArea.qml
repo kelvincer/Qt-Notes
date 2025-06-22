@@ -55,8 +55,13 @@ TextArea {
     onCursorPositionChanged: {
         console.log("onCursorPositionChanged", cursorPosition)
         if(isPressedArrowKey) {
-            cursorPos = cursorPosition
             isPressedArrowKey = false
+            indexOnTextArray = MdArray.getCursorBlockIndex(textArray, cursorPosition)
+            if(textArray[indexOnTextArray].markdown === Constants.newlineZeroWidthSpace) {
+                cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) + 1
+            } else {
+                cursorPos = cursorPosition
+            }
         }
         console.log("cursorPos", cursorPos)
     }
@@ -67,11 +72,10 @@ TextArea {
 
                         console.log("===============================")
 
-                        console.log("Key pressed:", event.text, "cursorPos:", cursorPos, "ta cp:", ta.cursorPosition)
+                        console.log("Key pressed:", event.text, "cursorPos:", cursorPos, "ta.cp:", ta.cursorPosition)
 
                         indexOnTextArray = MdArray.getCursorBlockIndex(textArray, ta.cursorPosition)
                         console.log("current index", indexOnTextArray)
-                        console.log("cursor", ta.cursorPosition)
 
                         if(italics[indexOnTextArray] !== undefined) {
                             for(const i of italics[indexOnTextArray]) {
@@ -133,8 +137,10 @@ TextArea {
                         }
 
                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])
+                        console.log("markdownDisplacement", markdownDisplacement)
 
-                        console.log("displacement", markdownDisplacement)
+                        const displacement = MdArray.getCursorDisplacementInsideBlock(textArray, ta.cursorPosition)
+                        console.log("displacement", displacement)
 
                         if(Block.isACharacter(event.text)) {
                             event.accepted = true
@@ -178,8 +184,6 @@ TextArea {
                                 else if(Block.isStartingH2TitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
 
                                     textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, textArray[indexOnTextArray].markdown.length - 8)
-
-                                    //textArray[indexOnTextArray + 1] = { markdown: Constants.h2TitleStartedWithNewline + event.text , isTitle: true}
 
                                     textArray.splice(indexOnTextArray + 1, 0, { markdown: Constants.h2TitleStartedWithNewline + event.text , isTitle: true})
 
@@ -332,50 +336,36 @@ TextArea {
                                    || Block.isItalicTitleDeleted(textArray[indexOnTextArray].markdown, markdownDisplacement)) {
 
                                     textArray[indexOnTextArray].markdown = "\n"
-
                                     cursorPos = MdArray.getLengthBeforeCursorBlockIndex(textArray, indexOnTextArray) + 1
 
                                 }
-                                else if(markdownDisplacement === 3 && Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
+                                else if(Block.isTitleWithNewLine(textArray[indexOnTextArray].markdown) && displacement === 1) {
+                                    let isEmptyLine = false
 
                                     if(indexOnTextArray > 0) {
-                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
-                                        textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                        if(textArray[indexOnTextArray - 1].markdown.includes(zeroWidthSpace)) {
+                                            isEmptyLine = true
+                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1].markdown.slice(0, -2)
+                                        }
+
+                                        if(isEmptyLine) {
+                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray]?.markdown
+                                        } else {
+                                            textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
+                                                textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
+                                        }
                                     }
-
                                     textArray[indexOnTextArray].markdown = ""
-
-                                    cursorPos = ta.cursorPosition - 1
-                                }
-                                else if(markdownDisplacement === 4 && Block.isH2TitleWithNewline(textArray[indexOnTextArray].markdown)) {
-
-                                    if(indexOnTextArray > 0) {
-                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
-                                        textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
+                                    if(isEmptyLine) {
+                                        cursorPos = ta.cursorPosition - 2
+                                    } else {
+                                        cursorPos = ta.cursorPosition - 1
                                     }
-
-                                    textArray[indexOnTextArray].markdown = ""
-
-                                    cursorPos = ta.cursorPosition - 1
-                                }
-                                else if(markdownDisplacement === 5 && Block.isH3TitleWithNewline(textArray[indexOnTextArray].markdown)) {
-
-                                    if(indexOnTextArray > 0) {
-                                        textArray[indexOnTextArray - 1].markdown = textArray[indexOnTextArray - 1]?.markdown.concat(
-                                        textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
-                                    }
-
-                                    textArray[indexOnTextArray].markdown = ""
-
-                                    cursorPos = ta.cursorPosition - 1
                                 }
                                 else {
-
                                     cursorPos = ta.cursorPosition - 1
-
                                     MdArray.deleteBlockChar(textArray, indexOnTextArray, ta.cursorPosition, italics, markdownDisplacement)
                                 }
-
                             } else {
 
                                 cursorPos = ta.cursorPosition - 1
@@ -420,39 +410,6 @@ TextArea {
                                     } else {
 
                                         MdArray.deleteBlockChar(textArray, indexOnTextArray, ta.cursorPosition, italics, markdownDisplacement)
-
-                                        // if(MdArray.isCursorJustAfterItalic(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])) {
-
-                                        //     console.log("italics")
-
-                                        //     if(Block.isDeletingFinalItalicChar(textArray[indexOnTextArray].markdown, markdownDisplacement)) {
-
-                                        //         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 3) ?? "").concat(
-                                        //             textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
-
-                                        //     } else {
-
-                                        //         textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 2) ?? "").concat("*").concat(
-                                        //             textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement) ?? "")
-                                        //     }
-
-                                        //     //italics[indexOnTextArray] = Block.updateItalicEnd(italics[indexOnTextArray], markdownDisplacement)
-
-                                        // } else {
-
-                                        //     console.log("1", textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1).split("") ?? "")
-                                        //     console.log("3", textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length).split("") ?? "")
-
-                                        //     textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement - 1) ?? "").concat(
-                                        //         textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
-                                        // }
-
-                                        // // Update italics
-                                        // let indices = Block.findItalicIndices(textArray[indexOnTextArray].markdown)
-                                        // italics[indexOnTextArray] = []
-                                        // for(const i of indices) {
-                                        //     italics[indexOnTextArray].push({start: i.start, end: i.end})
-                                        // }
                                     }
                                 }
                             }
@@ -500,31 +457,31 @@ TextArea {
 
                                 italicStartPos = -1
 
-                                cursorPos = ta.cursorPosition + 1
-
-                                if(Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
-
+                                if(Block.isTitleWithNewLine(textArray[indexOnTextArray].markdown) && displacement === 1) {
+                                    console.log("zero 1")
+                                    cursorPos = MdArray.getLengthUntilCursor(textArray, ta.cursorPosition) + 2
+                                    textArray.splice(indexOnTextArray + 1, 0, {
+                                        markdown: textArray[indexOnTextArray].markdown,
+                                        isTitle: true
+                                    })
+                                    textArray[indexOnTextArray].markdown = newline
+                                } else if(Block.isTitleWithoutNewline(textArray[indexOnTextArray].markdown) && displacement === 0) {
+                                    console.log("zero")
+                                    cursorPos = 2
+                                    textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + textArray[indexOnTextArray].markdown, isTitle: true})
+                                    textArray[indexOnTextArray].markdown = zeroWidthSpace
+                                }
+                                else {
+                                    cursorPos = ta.cursorPosition + 1
                                     if(markdownDisplacement === textArray[indexOnTextArray].markdown.length)
                                     {
                                         textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + zeroWidthSpace , isTitle: false});
                                     } else {
-                                        textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length), isTitle: false})
 
-                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement)
-                                    }
-                                } else {
-                                    
-                                    textArray.splice(indexOnTextArray + 1, 0, {markdown: "" , isTitle: false})
-
-                                    if(markdownDisplacement === textArray[indexOnTextArray].markdown.length) {
-                                        textArray[indexOnTextArray + 1].markdown = "\n" + zeroWidthSpace
-                                    } else {
-                                                            
-                                        textArray[indexOnTextArray + 1].markdown = "\n" + textArray[indexOnTextArray].markdown.substring(markdownDisplacement, textArray[indexOnTextArray].markdown.length)
+                                        textArray.splice(indexOnTextArray + 1, 0, {markdown: "\n" + textArray[indexOnTextArray].markdown.substring(markdownDisplacement), isTitle: false})
                                         textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement)
                                     }
                                 }
-
                             } else {
 
                                 cursorPos = ta.cursorPosition + 1
@@ -537,19 +494,13 @@ TextArea {
                         if (event.key === Qt.Key_Hash || event.text === "#") {
                             event.accepted = true
                             console.log("KEY HASH")
+                            if(textArray[indexOnTextArray].markdown === Constants.newlineZeroWidthSpace) {
+                                textArray[indexOnTextArray].markdown = "\n"
+                            }
                             
                             textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, markdownDisplacement).concat("#").concat(textArray[indexOnTextArray].markdown.substring(markdownDisplacement))
 
                             cursorPos = ta.cursorPosition + 1
-
-                            // if(Block.isH1Title(textArray[indexOnTextArray].markdown)) {
-                            //     cursorPos = 0
-                            // }
-                            // else if(Block.isH1TitleWithNewline(textArray[indexOnTextArray].markdown)) {
-                            //     cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) + 1
-                            // } else {
-                            //     cursorPos = ta.cursorPosition + 1
-                            // }
                         }
 
                         console.log("cursorPos", cursorPos)
@@ -592,7 +543,7 @@ TextArea {
                         backend.sendNoteInfo(result, cursorPos, true, noteIndex)
 
                         MdArray.printBlocks(textArray)
-                        console.log("current index", MdArray.getCursorBlockIndex(textArray, cursorPos))
+                        console.log("current index", MdArray.getCursorBlockIndex(textArray, ta.cursorPosition))
                     }
     
     selectByMouse: true

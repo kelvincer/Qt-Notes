@@ -8,15 +8,15 @@ function printBlocks(array) {
 }
 
 // Unit test ready
-// Counting only visible characters, <br/> and '\n'
+// Counting visible characters, '<br/>', '\n', '\u200B'
 function getTotalLength(array) {
 
-    array.map((element) => {
-
-        if (element?.markdown?.endsWith(Constants.zeroWidthSpace)) {
-            element.markdown = element.markdown.slice(0, -1)
-        }
-    })
+    // array.map((element) => {
+    //
+    //     if (element?.markdown?.endsWith(Constants.zeroWidthSpace)) {
+    //         element.markdown = element.markdown.slice(0, -1)
+    //     }
+    // })
 
     let length = 0
 
@@ -94,7 +94,6 @@ function getCursorBlockIndex(array, cursorPos) {
             length += Block.getParagraphLength(array[i].markdown)
         }
 
-
         if (length >= cursorPos) {
             break
         }
@@ -156,7 +155,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
     if (Block.isH1Title(array[blockIndex]?.markdown)) {
 
-        const lengthBeforeCursorBlock = 0//getLengthBeforeCursorBlock(array, cursorPos)
+        const lengthBeforeCursorBlock = 0
 
         if (array[blockIndex].markdown.length <= 2) {
 
@@ -221,7 +220,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
             return cursorPos - lengthBeforeCursorBlock
         } else {
 
-            console.log("md", array[blockIndex]?.markdown)
+            // console.log("md", array[blockIndex]?.markdown)
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
@@ -312,7 +311,7 @@ function isCursorJustAfterParagraphBreakline(array, blockIndex, cursorPos, itali
         const bricks = Block.removeItalics(array[blockIndex].markdown).split(Constants._break)
 
         for (let i = 0; i < brickIndex; i++) {
-            console.log("brick", bricks[i])
+            //console.log("brick", bricks[i])
             length += bricks[i].length
         }
 

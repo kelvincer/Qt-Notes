@@ -39,6 +39,10 @@ function isTitle(title) {
     || isH2TitleWithNewline(title) || isH3Title(title) || isH3TitleWithNewline(title)
 }
 
+function isTitleWithoutNewline(title) {
+    return isH1Title(title) || isH2Title(title) || isH3Title(title)
+}
+
 // Unit test ready
 function countBreaks(text) {
 
@@ -595,8 +599,12 @@ function startedTypingFromItalicEnd(markdown, markdownDisplacement, italics) {
     if (italics === undefined)
         return false
 
+    // console.log("mark", markdown, markdownDisplacement)
+    // console.log("italic", markdown.substring(markdownDisplacement).split(""))
+
     for (const {start, end} of italics) {
-        if (end === markdownDisplacement - 1) {
+        // console.log("end", end)
+        if (end === markdownDisplacement - 1 && markdown.substring(markdownDisplacement).length > 0) {
             return true
         }
     }

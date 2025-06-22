@@ -44,4 +44,9 @@ TestCase {
         const array = [{markdown: "#\u00A0Hi"}, {markdown: "\nYou"}, {markdown:"\n#\u00A0a *b*"}, {markdown: "\n\u200B"}]
         compare(MdArray.getCursorBlockIndex(array, 11), 3)
     }
+
+    function test_case03() {
+        const array = [{markdown: "#\u00A0Hi"}, {markdown: "\nYou"}, {markdown: "\n\u200B"}, {markdown: "\n\u200B"}, {markdown: "\n#\u00A0Another title"}]
+        compare(MdArray.getCursorBlockIndex(array, 10), 3)
+    }
 }
