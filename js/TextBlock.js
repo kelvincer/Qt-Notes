@@ -490,7 +490,7 @@ function countH1ItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock
     return italicCount
 }
 
-function isStartingATitleInsideParagraph(markdown) {
+function isStartingH1TitleInsideParagraph(markdown) {
     return markdown !== undefined && markdown.substring(markdown.length - 7) === Constants._break + Constants.titleStarted
 }
 
@@ -621,6 +621,19 @@ function updateItalicEndAsterisk(markdownDisplacement, italics) {
     })
 
     return italics
+}
+
+function findLastHTMLBreakEndIndex(paragraph) {
+
+    //let markdownWithoutItalics = removeItalics(paragraph)
+    const splitted = paragraph.split(Constants._break)
+    let length = 0
+
+    for(let i = 0; i < splitted.length - 1; i++) {
+        length += splitted[i].length
+    }
+
+    return length + Constants._break.length * (splitted.length - 1) - 1
 }
 
 

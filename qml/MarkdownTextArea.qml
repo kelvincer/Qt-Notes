@@ -170,7 +170,7 @@ TextArea {
                                 }
                             } else {
 
-                                if(Block.isStartingATitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
+                                if(Block.isStartingH1TitleInsideParagraph(textArray[indexOnTextArray]?.markdown) ?? false) {
 
                                     textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, textArray[indexOnTextArray].markdown.length - 7)
 
@@ -313,7 +313,19 @@ TextArea {
                                     textArray[indexOnTextArray].markdown = (textArray[indexOnTextArray]?.markdown?.substring(0, markdownDisplacement) ?? "").concat(
                                         nonBreakingSpace).concat(textArray[indexOnTextArray]?.markdown?.substring(markdownDisplacement, textArray[indexOnTextArray]?.markdown?.length) ?? "")
 
-                                    cursorPos = ta.cursorPosition + 1
+                                    const lastBreakIndex = Block.findLastHTMLBreakEndIndex(textArray[indexOnTextArray].markdown)
+                                    const lastParagraphSegment = textArray[indexOnTextArray].markdown.substring(lastBreakIndex + 1)
+
+                                    //console.log("last", lastParagraphSegment)
+
+                                    if(Block.isTitleWithoutNewline(lastParagraphSegment)) {
+
+                                        textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, lastBreakIndex - 4)
+                                        textArray.splice(indexOnTextArray + 1, 0, { markdown: newline + lastParagraphSegment , isTitle: true})
+                                        cursorPos = ta.cursorPosition - 1
+                                    } else {
+                                        cursorPos = ta.cursorPosition + 1
+                                    }
                                 }
                             }
 
