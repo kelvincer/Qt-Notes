@@ -316,13 +316,17 @@ TextArea {
                                     const lastBreakIndex = Block.findLastHTMLBreakEndIndex(textArray[indexOnTextArray].markdown)
                                     const lastParagraphSegment = textArray[indexOnTextArray].markdown.substring(lastBreakIndex + 1)
 
-                                    //console.log("last", lastParagraphSegment)
+                                    console.log("last", lastParagraphSegment)
 
                                     if(Block.isTitleWithoutNewline(lastParagraphSegment)) {
 
                                         textArray[indexOnTextArray].markdown = textArray[indexOnTextArray].markdown.substring(0, lastBreakIndex - 4)
                                         textArray.splice(indexOnTextArray + 1, 0, { markdown: newline + lastParagraphSegment , isTitle: true})
-                                        cursorPos = ta.cursorPosition - 1
+                                        if(Block.isStartingTitle(lastParagraphSegment)) {
+                                            cursorPos = ta.cursorPosition + 1
+                                        } else {
+                                            cursorPos = MdArray.getLengthBeforeCursorBlock(textArray, ta.cursorPosition) + 1 //ta.cursorPosition - 1
+                                        }
                                     } else {
                                         cursorPos = ta.cursorPosition + 1
                                     }
