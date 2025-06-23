@@ -258,15 +258,15 @@ std::string NotesBackend::remove_non_breaking_spaces(const std::string &in) cons
         else if (result[i] == '#') {
             result.replace(i, 1, "&#35;");
             i += 5;
-        } else if (result[i] == '<') {
+        } else if (result[i] == '<' && result.substr(i, 5) != "<br/>") {
             result.replace(i, 1, "&lt;");
             i += 4;
-        } else if (result[i] == '>') {
+        } else if (result[i] == '>' && result.substr(i - 4, 5) != "<br/>") {
             result.replace(i, 1, "&gt;");
             i += 4;
         }
         else {
-            result.replace(i, 1, 1, result[i]);
+            //result.replace(i, 1, 1, result[i]);
             i++;
         }
     }

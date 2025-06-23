@@ -248,46 +248,56 @@ Window {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: {
                     console.log("H1")
-                    const arrayIndex = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.cursorPosition)
-                    console.log("pos", arrayIndex)
-                    if(arrayIndex === 0) {
-                        if(!Block.isH1Title(markDownInput.textArray[arrayIndex].markdown)) {
-                            console.log("new H1 title")
-                            let startIndex = 0
-                            if(Block.isH2Title(markDownInput.textArray[arrayIndex].markdown)) {
-                                startIndex = 3
-                            } else if (Block.isH3Title(markDownInput.textArray[arrayIndex].markdown)) {
-                                startIndex = 4
-                            }
-                            markDownInput.textArray[arrayIndex].markdown = Constants.titleStartedWithNewline + markDownInput.textArray[arrayIndex].markdown.substring(startIndex)
-                            const result = markDownInput.textArray.map((e) => e.markdown);
-                            notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
-                        }
-                    } else {
-                        if(!Block.isH1TitleWithNewline(markDownInput.textArray[arrayIndex].markdown)) {
-                            console.log("new H1 title")
-                            let startIndex = 1
-                            if(Block.isH2TitleWithNewline(markDownInput.textArray[arrayIndex].markdown)) {
-                                startIndex = 4
-                            } else if (Block.isH3TitleWithNewline(markDownInput.textArray[arrayIndex].markdown)) {
-                                startIndex = 5
-                            }
-                            markDownInput.textArray[arrayIndex].markdown = Constants.titleStartedWithNewline + markDownInput.textArray[arrayIndex].markdown.substring(startIndex)
-                            const result = markDownInput.textArray.map((e) => e.markdown);
-                            notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
-                        }
+                    //console.log("starts", markDownInput.selectionStart)
+                    //console.log("ends", markDownInput.selectionEnd)
+                    const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                    const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
+
+                    for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                        markDownInput.textArray[i].markdown = Block.getNewH1Title(i, markDownInput.textArray[i].markdown)
                     }
+
+                    const result = markDownInput.textArray.map((e) => e.markdown);
+                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
                 }
             }
 
-            Text {
+            Button {
                 text: "H2"
                 anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: {
+                    console.log("H1")
+                    //console.log("starts", markDownInput.selectionStart)
+                    //console.log("ends", markDownInput.selectionEnd)
+                    const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                    const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
+
+                    for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                        markDownInput.textArray[i].markdown = Block.getNewH2Title(i, markDownInput.textArray[i].markdown)
+                    }
+
+                    const result = markDownInput.textArray.map((e) => e.markdown);
+                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                }
             }
 
-            Text {
+             Button {
                 text: "H3"
                 anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: {
+                    console.log("H1")
+                    //console.log("starts", markDownInput.selectionStart)
+                    //console.log("ends", markDownInput.selectionEnd)
+                    const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                    const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
+
+                    for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                        markDownInput.textArray[i].markdown = Block.getNewH3Title(i, markDownInput.textArray[i].markdown)
+                    }
+
+                    const result = markDownInput.textArray.map((e) => e.markdown);
+                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                }
             }
 
             Button {
@@ -300,6 +310,9 @@ Window {
                     // console.log("end", markDownInput.selectionEnd);
                     // console.log("selectedText", markDownInput.selectedText)
                     // console.log("size", markDownInput.selectedText.length)
+
+                    if(markDownInput.selectionStart === markDownInput.selectionEnd)
+                        return
 
                     const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionStart, markDownInput.italics[markDownInput.indexOnTextArray])
                     const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionEnd, markDownInput.italics[markDownInput.indexOnTextArray])

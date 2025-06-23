@@ -649,6 +649,90 @@ function findLastHTMLBreakEndIndex(paragraph) {
     return length + Constants._break.length * (splitted.length - 1) - 1
 }
 
+function getNewH1Title(arrayIndex, markdown) {
+    if(arrayIndex === 0) {
+        if(!isH1Title(markdown)) {
+            let startIndex = 0
+            if(isH2Title(markdown)) {
+                startIndex = 3
+            } else if (isH3Title(markdown)) {
+                startIndex = 4
+            }
+            return Constants.titleStarted + markdown.substring(startIndex)
+        } else {
+            return markdown
+        }
+    } else {
+        if(!isH1TitleWithNewline(markdown)) {
+            let startIndex = 1
+            if(isH2TitleWithNewline(markdown)) {
+                startIndex = 4
+            } else if (isH3TitleWithNewline(markdown)) {
+                startIndex = 5
+            }
+            return Constants.titleStartedWithNewline + markdown.substring(startIndex)
+        } else {
+            return markdown
+        }
+    }
+}
+
+function getNewH2Title(arrayIndex, markdown) {
+    if(arrayIndex === 0) {
+        if(!isH2Title(markdown)) {
+            let startIndex = 0
+            if(isH1Title(markdown)) {
+                startIndex = 2
+            } else if (isH3Title(markdown)) {
+                startIndex = 4
+            }
+            return Constants.h2TitleStarted + markdown.substring(startIndex)
+        } else {
+            return markdown
+        }
+    } else {
+        if(!isH2TitleWithNewline(markdown)) {
+            let startIndex = 1
+            if(isH1TitleWithNewline(markdown)) {
+                startIndex = 3
+            } else if (isH3TitleWithNewline(markdown)) {
+                startIndex = 5
+            }
+            return Constants.h2TitleStartedWithNewline + markdown.substring(startIndex)
+        } else {
+            return markdown
+        }
+    }
+}
+
+function getNewH3Title(arrayIndex, markdown) {
+    if(arrayIndex === 0) {
+        if(!isH3Title(markdown)) {
+            let startIndex = 0
+            if(isH1Title(markdown)) {
+                startIndex = 2
+            } else if (isH2Title(markdown)) {
+                startIndex = 3
+            }
+            return Constants.h3TitleStarted + markdown.substring(startIndex)
+        } else {
+            return markdown
+        }
+    } else {
+        if(!isH3TitleWithNewline(markdown)) {
+            let startIndex = 1
+            if(isH1TitleWithNewline(markdown)) {
+                startIndex = 3
+            } else if (isH2TitleWithNewline(markdown)) {
+                startIndex = 4
+            }
+            return Constants.h3TitleStartedWithNewline + markdown.substring(startIndex)
+        } else {
+            return markdown
+        }
+    }
+}
+
 
 
 

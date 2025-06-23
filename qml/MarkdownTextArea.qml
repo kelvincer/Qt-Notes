@@ -114,11 +114,6 @@ TextArea {
                             console.log("KEY LEFT")
                             isPressedArrowKey = true
                             return
-
-                            //event.accepted = true
-
-                            //cursorPos = backend.cursorPosition === 0 ? 0 : ta.cursorPosition - 1
-
                         }
 
                         if(event.key === Qt.Key_Right) {
@@ -129,11 +124,6 @@ TextArea {
 
                             isPressedArrowKey = true
                             return
-
-                            //event.accepted = true
-
-                            //cursorPos = maxCursorPosValue > ta.cursorPosition ? ta.cursorPosition + 1 : ta.cursorPosition
-
                         }
 
                         const markdownDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(textArray, indexOnTextArray, ta.cursorPosition, italics[indexOnTextArray])
@@ -646,6 +636,9 @@ TextArea {
             selecting = false;
             console.log("Selected text:", markDownInput.selectedText);
             markDownInput.userSelected = markDownInput.selectedText;
+
+            console.log("selectionStart", markDownInput.selectionStart)
+            console.log("selectionEnd", markDownInput.selectionEnd)
 
             markDownInput.forceActiveFocus()
         }
