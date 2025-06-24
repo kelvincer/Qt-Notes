@@ -236,105 +236,191 @@ Window {
             backend: notesBackend
         }
 
-        Column {
-            Layout.topMargin: 15
+        Item {
+            Layout.topMargin: 0
             Layout.fillHeight: true
             Layout.preferredWidth: 0.05
             Layout.fillWidth: true
-            spacing: 15
 
             Button {
+                id: h1Button
                 text: "H1"
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: {
-                    console.log("H1")
-                    //console.log("starts", markDownInput.selectionStart)
-                    //console.log("ends", markDownInput.selectionEnd)
-                    const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
-                    const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
-
-                    for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
-                        markDownInput.textArray[i].markdown = Block.getNewH1Title(i, markDownInput.textArray[i].markdown)
+                x: (parent.width - width) / 2 // Center horizontally within parent
+                y: 0 // Start at the top of the container
+                height: 40
+                width: 40
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        console.log("Mouse entered the area")
+                        h1Button.font.pixelSize = 17
+                        h1Button.font.bold = true
                     }
+                    onExited: {
+                        console.log("Mouse exited the area")
+                        h1Button.font.pixelSize = 13
+                        h1Button.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("H1")
+                        //console.log("starts", markDownInput.selectionStart)
+                        //console.log("ends", markDownInput.selectionEnd)
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
 
-                    const result = markDownInput.textArray.map((e) => e.markdown);
-                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                        for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                            markDownInput.textArray[i].markdown = Block.getNewH1Title(i, markDownInput.textArray[i].markdown)
+                        }
+
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                    }
                 }
             }
 
             Button {
+                id: h2Button
                 text: "H2"
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: {
-                    console.log("H1")
-                    //console.log("starts", markDownInput.selectionStart)
-                    //console.log("ends", markDownInput.selectionEnd)
-                    const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
-                    const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
-
-                    for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
-                        markDownInput.textArray[i].markdown = Block.getNewH2Title(i, markDownInput.textArray[i].markdown)
-                    }
-
-                    const result = markDownInput.textArray.map((e) => e.markdown);
-                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                width: 40
+                height: 40
+                x: (parent.width - width) / 2
+                y: h1Button.y + h1Button.height + 5
+                Layout.leftMargin: 5
+                Layout.rightMargin: 5
+                background: Rectangle {
+                    color: "transparent"
                 }
-            }
-
-             Button {
-                text: "H3"
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: {
-                    console.log("H1")
-                    //console.log("starts", markDownInput.selectionStart)
-                    //console.log("ends", markDownInput.selectionEnd)
-                    const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
-                    const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
-
-                    for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
-                        markDownInput.textArray[i].markdown = Block.getNewH3Title(i, markDownInput.textArray[i].markdown)
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        console.log("Mouse entered the area")
+                        h2Button.font.pixelSize = 17
+                        h2Button.font.bold = true
                     }
+                    onExited: {
+                        console.log("Mouse exited the area")
+                        h2Button.font.pixelSize = 13
+                        h2Button.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("H1")
+                        //console.log("starts", markDownInput.selectionStart)
+                        //console.log("ends", markDownInput.selectionEnd)
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
 
-                    const result = markDownInput.textArray.map((e) => e.markdown);
-                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                        for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                            markDownInput.textArray[i].markdown = Block.getNewH2Title(i, markDownInput.textArray[i].markdown)
+                        }
+
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                    }
                 }
             }
 
             Button {
+                id: h3Button
+                text: "H3"
+                width: 40
+                height: 40
+                x: (parent.width - width) / 2
+                y: h2Button.y + h2Button.height + 5
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        console.log("Mouse entered the area")
+                        h3Button.font.pixelSize = 17
+                        h3Button.font.bold = true
+                    }
+                    onExited: {
+                        console.log("Mouse exited the area")
+                        h3Button.font.pixelSize = 13
+                        h3Button.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("H1")
+                        //console.log("starts", markDownInput.selectionStart)
+                        //console.log("ends", markDownInput.selectionEnd)
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
+
+                        for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                            markDownInput.textArray[i].markdown = Block.getNewH3Title(i, markDownInput.textArray[i].markdown)
+                        }
+
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                    }
+                }
+            }
+
+            Button {
+                id: italicButton
                 text: "I"
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: {
-                    console.log("I");
+                width: 40
+                height: 40
+                x: (parent.width - width) / 2
+                y: h3Button.y + h3Button.height + 5
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        console.log("Mouse entered the area")
+                        italicButton.font.pixelSize = 17
+                        italicButton.font.bold = true
+                    }
+                    onExited: {
+                        console.log("Mouse exited the area")
+                        italicButton.font.pixelSize = 13
+                        italicButton.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("I");
 
-                    // console.log("start", markDownInput.selectionStart);
-                    // console.log("end", markDownInput.selectionEnd);
-                    // console.log("selectedText", markDownInput.selectedText)
-                    // console.log("size", markDownInput.selectedText.length)
+                        // console.log("start", markDownInput.selectionStart);
+                        // console.log("end", markDownInput.selectionEnd);
+                        // console.log("selectedText", markDownInput.selectedText)
+                        // console.log("size", markDownInput.selectedText.length)
 
-                    if(markDownInput.selectionStart === markDownInput.selectionEnd)
-                        return
+                        if(markDownInput.selectionStart === markDownInput.selectionEnd)
+                            return
 
-                    const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionStart, markDownInput.italics[markDownInput.indexOnTextArray])
-                    const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionEnd, markDownInput.italics[markDownInput.indexOnTextArray])
+                        const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionStart, markDownInput.italics[markDownInput.indexOnTextArray])
+                        const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionEnd, markDownInput.italics[markDownInput.indexOnTextArray])
 
-                    // console.log("s", startDisplacement)
-                    // console.log("e", endDisplacement)
-                    // console.log("markdown init", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+                        // console.log("s", startDisplacement)
+                        // console.log("e", endDisplacement)
+                        // console.log("markdown init", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
 
-                    markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement)
-                    markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], endDisplacement)
+                        markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement)
+                        markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], endDisplacement)
 
-                    markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, startDisplacement)
-                    +  "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
-                        "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
+                        markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, startDisplacement)
+                        +  "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
+                            "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
 
-                    // console.log("markdown", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
-                    markDownInput.italics[markDownInput.indexOnTextArray] = Block.processNewItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray]).italics
+                        // console.log("markdown", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+                        markDownInput.italics[markDownInput.indexOnTextArray] = Block.processNewItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray]).italics
 
-                    const result = markDownInput.textArray.map((e) => e.markdown);
-                    notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                    }
                 }
             }
         }
     }
 }
+
