@@ -445,7 +445,7 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
     return italicCount
 }
 
-function countH1ItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, prevItalics) {
+function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, prevItalics) {
 
     let visibleCount = 0
     let italicCount = 0

@@ -167,7 +167,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
+            const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             //console.log("asteriskNum:", asteriskNum)
 
@@ -184,7 +184,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
+            const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             return cursorPos - lengthBeforeCursorBlock + 2 + asteriskNum
         }
@@ -203,7 +203,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
+            const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             // console.log("asteriskNum:", asteriskNum)
 
@@ -224,7 +224,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
+            const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             const h2TitleStartedLength = Constants.h2TitleStarted.length // 3
 
@@ -245,7 +245,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
+            const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             //console.log("asteriskNum:", asteriskNum)
 
@@ -264,7 +264,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
 
-            const asteriskNum = Block.countH1ItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
+            const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
             const h3TitleStartedLength = Constants.h3TitleStarted.length // 4
 
