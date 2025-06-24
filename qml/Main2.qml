@@ -256,12 +256,12 @@ Window {
                     anchors.fill: parent
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
-                        console.log("Mouse entered the area")
+                        //console.log("Mouse entered the area")
                         h1Button.font.pixelSize = 17
                         h1Button.font.bold = true
                     }
                     onExited: {
-                        console.log("Mouse exited the area")
+                        //console.log("Mouse exited the area")
                         h1Button.font.pixelSize = 13
                         h1Button.font.bold = false
                     }
@@ -298,12 +298,12 @@ Window {
                     anchors.fill: parent
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
-                        console.log("Mouse entered the area")
+                        //console.log("Mouse entered the area")
                         h2Button.font.pixelSize = 17
                         h2Button.font.bold = true
                     }
                     onExited: {
-                        console.log("Mouse exited the area")
+                        //console.log("Mouse exited the area")
                         h2Button.font.pixelSize = 13
                         h2Button.font.bold = false
                     }
@@ -338,12 +338,12 @@ Window {
                     anchors.fill: parent
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
-                        console.log("Mouse entered the area")
+                        //console.log("Mouse entered the area")
                         h3Button.font.pixelSize = 17
                         h3Button.font.bold = true
                     }
                     onExited: {
-                        console.log("Mouse exited the area")
+                        //console.log("Mouse exited the area")
                         h3Button.font.pixelSize = 13
                         h3Button.font.bold = false
                     }
@@ -378,45 +378,50 @@ Window {
                     anchors.fill: parent
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
-                        console.log("Mouse entered the area")
+                        //console.log("Mouse entered the area")
                         italicButton.font.pixelSize = 17
                         italicButton.font.bold = true
                     }
                     onExited: {
-                        console.log("Mouse exited the area")
+                        //console.log("Mouse exited the area")
                         italicButton.font.pixelSize = 13
                         italicButton.font.bold = false
                     }
                     onClicked: {
-                        console.log("I");
+                        console.log("I")
 
-                        // console.log("start", markDownInput.selectionStart);
-                        // console.log("end", markDownInput.selectionEnd);
-                        // console.log("selectedText", markDownInput.selectedText)
-                        // console.log("size", markDownInput.selectedText.length)
-
-                        if(markDownInput.selectionStart === markDownInput.selectionEnd)
+                        if (markDownInput.selectionStart === markDownInput.selectionEnd)
                             return
 
                         const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionStart, markDownInput.italics[markDownInput.indexOnTextArray])
                         const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionEnd, markDownInput.italics[markDownInput.indexOnTextArray])
 
-                        // console.log("s", startDisplacement)
-                        // console.log("e", endDisplacement)
-                        // console.log("markdown init", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+                        if (MdArray.isItalicSelected(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)) {
 
-                        markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement)
-                        markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], endDisplacement)
+                            const newMarkdownAndItalic = MdArray.removeItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)
+                            markDownInput.textArray[markDownInput.indexOnTextArray].markdown = newMarkdownAndItalic.markdown
+                            markDownInput.italics[markDownInput.indexOnTextArray] = newMarkdownAndItalic.italic
+                            const result = markDownInput.textArray.map((e) => e.markdown);
+                            notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
 
-                        markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, startDisplacement)
-                        +  "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
-                            "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
+                        } else {
 
-                        // console.log("markdown", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
-                        markDownInput.italics[markDownInput.indexOnTextArray] = Block.processNewItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray]).italics
+                            // console.log("s", startDisplacement)
+                            // console.log("e", endDisplacement)
+                            // console.log("markdown init", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
 
-                        const result = markDownInput.textArray.map((e) => e.markdown);
-                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                            markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement)
+                            markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], endDisplacement)
+
+                            markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, startDisplacement)
+                                + "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
+                                "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
+
+                            markDownInput.italics[markDownInput.indexOnTextArray] = Block.processNewItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray]).italics
+
+                            const result = markDownInput.textArray.map((e) => e.markdown);
+                            notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                        }
                     }
                 }
             }

@@ -733,6 +733,14 @@ function getNewH3Title(arrayIndex, markdown) {
     }
 }
 
+function removeItalic(paragraph, start, end) {
+
+    paragraph = paragraph.substring(0, start) + paragraph.substring(start + 1, end)
+            + paragraph.substring(end + 1);
+
+    return paragraph
+}
+
 
 
 

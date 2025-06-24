@@ -516,3 +516,31 @@ function deleteBlockChar(array, indexOnTextArray, cursorPos, italics, markdownDi
         italics[indexOnTextArray].push({start: i.start, end: i.end})
     }
 }
+
+function isItalicSelected(markdown, blockItalics, startDisplacement, endDisplacement) {
+
+    if(blockItalics === undefined)
+        return false
+
+    for (const {start, end} of blockItalics) {
+        console.log("s", start, "e", end)
+        if (start === startDisplacement - 1 && end === endDisplacement - 1) {
+            return true
+        }
+    }
+    return false
+}
+
+function removeItalic(markdown, blockItalics, startDisplacement, endDisplacement) {
+
+    for (const {start, end} of blockItalics) {
+        console.log("s", start, "e", end)
+        if(start === startDisplacement - 1 && end === endDisplacement - 1) {
+            markdown = Block.removeItalic(markdown, start, end)
+            const newItalic = blockItalics.filter(italic => italic.start !== startDisplacement - 1 && italic.end !== endDisplacement - 1);
+            return { markdown: markdown, italic: newItalic }
+        }
+    }
+
+    return { markdown: markdown, italic: blockItalics }
+}
