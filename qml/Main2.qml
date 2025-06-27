@@ -400,7 +400,7 @@ Window {
 
                             const newMarkdownAndItalic = MdArray.removeItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)
                             markDownInput.textArray[markDownInput.indexOnTextArray].markdown = newMarkdownAndItalic.markdown
-                            markDownInput.italics[markDownInput.indexOnTextArray] = newMarkdownAndItalic.italic
+                           // markDownInput.italics[markDownInput.indexOnTextArray] = newMarkdownAndItalic.italic
                             const result = markDownInput.textArray.map((e) => e.markdown);
                             notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
 
@@ -417,10 +417,18 @@ Window {
                                 + "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
                                 "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
 
-                            markDownInput.italics[markDownInput.indexOnTextArray] = Block.processNewItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray]).italics
+                            // markDownInput.italics[markDownInput.indexOnTextArray] = Block.processNewItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray]).italics
 
                             const result = markDownInput.textArray.map((e) => e.markdown);
                             notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                        }
+
+                        markDownInput.italics[markDownInput.indexOnTextArray] = Block.findItalicIndices(markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+
+                        if(markDownInput.italics[markDownInput.indexOnTextArray] !== undefined) {
+                            for(const i of markDownInput.italics[markDownInput.indexOnTextArray]) {
+                                console.log("final italic", i.start, i.end)
+                            }
                         }
                     }
                 }
