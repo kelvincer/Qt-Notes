@@ -393,6 +393,19 @@ Window {
                         paragraphButton.font.pointSize = 20
                         paragraphButton.font.bold = false
                     }
+                    onClicked: {
+                        console.log("P")
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
+
+                        for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                            markDownInput.textArray[i].markdown = Block.getNewParagraph(i, markDownInput.textArray[i].markdown)
+                        }
+
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+
+                    }
                 }
             }
 

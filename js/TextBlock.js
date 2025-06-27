@@ -5,6 +5,14 @@ function isACharacter(character) {
     return (/[^\s#*]/).test(character)
 }
 
+function isParagraph(markdown) {
+    return markdown !== undefined && !isTitleWithoutNewline(markdown)
+}
+
+function isParagraphWithNewline(markdown) {
+    return markdown !== undefined && !isTitleWithNewLine(markdown)
+}
+
 function isH1Title(title) {
     return title !== undefined && title.startsWith(Constants.titleStarted)
 }
@@ -647,6 +655,38 @@ function findLastHTMLBreakEndIndex(paragraph) {
     }
 
     return length + Constants._break.length * (splitted.length - 1) - 1
+}
+
+function getNewParagraph(arrayIndex, markdown) {
+    if (arrayIndex === 0) {
+        if(!isParagraph(markdown)) {
+            let startIndex = undefined
+            if(isH1Title(markdown)) {
+                startIndex = 2
+            } else if(isH2Title(markdown)) {
+                startIndex = 3
+            } else if(isH3Title(markdown)) {
+                startIndex = 4
+            }
+            return markdown.substring(startIndex)
+        } else {
+            return markdown
+        }
+    } else {
+        if(!isParagraphWithNewline(markdown)) {
+            let startIndex = undefined
+            if(isH1TitleWithNewline(markdown)) {
+                startIndex = 3
+            } else if(isH2TitleWithNewline(markdown)) {
+                startIndex = 4
+            } else if(isH3TitleWithNewline(markdown)) {
+                startIndex = 5
+            }
+            return Constants.newline + markdown.substring(startIndex)
+        } else {
+            return markdown
+        }
+    }
 }
 
 function getNewH1Title(arrayIndex, markdown) {
