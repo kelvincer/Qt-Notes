@@ -245,10 +245,12 @@ Window {
             Button {
                 id: h1Button
                 text: "H1"
-                x: (parent.width - width) / 2 // Center horizontally within parent
-                y: 0 // Start at the top of the container
                 height: 40
-                width: 40
+                width: 50
+                x: (parent.width - width) / 2
+                y: 0
+                font.family: "Courier New"
+                font.pointSize: 20
                 background: Rectangle {
                     color: "transparent"
                 }
@@ -257,12 +259,12 @@ Window {
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
                         //console.log("Mouse entered the area")
-                        h1Button.font.pixelSize = 17
+                        h1Button.font.pixelSize = 23
                         h1Button.font.bold = true
                     }
                     onExited: {
                         //console.log("Mouse exited the area")
-                        h1Button.font.pixelSize = 13
+                        h1Button.font.pixelSize = 20
                         h1Button.font.bold = false
                     }
                     onClicked: {
@@ -285,12 +287,12 @@ Window {
             Button {
                 id: h2Button
                 text: "H2"
-                width: 40
+                width: 50
                 height: 40
                 x: (parent.width - width) / 2
                 y: h1Button.y + h1Button.height + 5
-                Layout.leftMargin: 5
-                Layout.rightMargin: 5
+                font.family: "Courier New"
+                font.pointSize: 20
                 background: Rectangle {
                     color: "transparent"
                 }
@@ -299,12 +301,12 @@ Window {
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
                         //console.log("Mouse entered the area")
-                        h2Button.font.pixelSize = 17
+                        h2Button.font.pixelSize = 23
                         h2Button.font.bold = true
                     }
                     onExited: {
                         //console.log("Mouse exited the area")
-                        h2Button.font.pixelSize = 13
+                        h2Button.font.pixelSize = 20
                         h2Button.font.bold = false
                     }
                     onClicked: {
@@ -327,10 +329,12 @@ Window {
             Button {
                 id: h3Button
                 text: "H3"
-                width: 40
+                width: 50
                 height: 40
                 x: (parent.width - width) / 2
                 y: h2Button.y + h2Button.height + 5
+                font.family: "Courier New"
+                font.pointSize: 20
                 background: Rectangle {
                     color: "transparent"
                 }
@@ -339,12 +343,12 @@ Window {
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
                         //console.log("Mouse entered the area")
-                        h3Button.font.pixelSize = 17
+                        h3Button.font.pixelSize = 23
                         h3Button.font.bold = true
                     }
                     onExited: {
                         //console.log("Mouse exited the area")
-                        h3Button.font.pixelSize = 13
+                        h3Button.font.pixelSize = 20
                         h3Button.font.bold = false
                     }
                     onClicked: {
@@ -367,10 +371,12 @@ Window {
             Button {
                 id: italicButton
                 text: "I"
-                width: 40
+                width: 50
                 height: 40
                 x: (parent.width - width) / 2
                 y: h3Button.y + h3Button.height + 5
+                font.family: "Courier New"
+                font.pointSize: 20
                 background: Rectangle {
                     color: "transparent"
                 }
@@ -379,12 +385,12 @@ Window {
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
                         //console.log("Mouse entered the area")
-                        italicButton.font.pixelSize = 17
+                        italicButton.font.pointSize = 23
                         italicButton.font.bold = true
                     }
                     onExited: {
                         //console.log("Mouse exited the area")
-                        italicButton.font.pixelSize = 13
+                        italicButton.font.pointSize = 20
                         italicButton.font.bold = false
                     }
                     onClicked: {
