@@ -8,6 +8,6 @@ TestCase {
 
     function test_TitleWithNewline_ReturnLength() {
         const title = "\n# My title"
-        compare(Block.getTitleWithNewLineLength(title), title.length - 2)
+        compare(Block.getH1TitleWithNewLineLength(title), title.length - 2)
     }
 }

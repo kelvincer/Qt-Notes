@@ -8,16 +8,16 @@ TestCase {
 
     function test_UndefinedTitle_ReturnZero() {
         const title = undefined
-        compare(Block.getTitleLength(title), 0)
+        compare(Block.getH1TitleLength(title), 0)
     }
 
     function test_InititalizedTitle_ReturnLength() {
         const title = Constants.titleStarted
-        compare(Block.getTitleLength(title), title.length)
+        compare(Block.getH1TitleLength(title), title.length)
     }
 
     function test_NormalTitle_ReturnLength() {
         const title = "# My title"
-        compare(Block.getTitleLength(title), title.length - 2)
+        compare(Block.getH1TitleLength(title), title.length - 2)
     }
 }

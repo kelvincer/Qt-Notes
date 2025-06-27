@@ -26,7 +26,7 @@ TestCase {
     function test_CursorOnFirstParagraph_ReturnMarkdownDisplacement() {
         const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis<br/>another paragraph"}, {markdown: "\nthis is a paragraph<br/>another paragraph"}]
 
-        const cursorPos = Block.getTitleLength(array[0].markdown) + 13
+        const cursorPos = Block.getH1TitleLength(array[0].markdown) + 13
         compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 1, cursorPos, []), 17);
     }
 
@@ -45,7 +45,6 @@ TestCase {
 
     function test_ArrayOnlyParagraph_ReturnDisplacement() {
         const array = [{markdown: "this is a paragraph<br/>another paragraph"}]
-
         compare(MdArray.getCursorDisplacementInsideMarkdownBlock(array, 0, 4, []), 4);
     }
 

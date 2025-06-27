@@ -145,7 +145,7 @@ function getTitleWithoutNewlineLength(title) {
 
 // Unit test ready
 // Visible characters
-function getTitleWithNewLineLength(markdown) {
+function getH1TitleWithNewLineLength(markdown) {
 
     if (markdown === undefined)
         return 0
@@ -396,13 +396,13 @@ function removeItalics(paragraph) {
     return paragraph
 }
 
-function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, prevItalics) {
+/*function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, prevItalics) {
     let visibleCount = 0;
     let italicCount = 0;
     let i = 0;
     let firstAsterisk = false;
 
-    //console.log("markdown", markdownText, cursorPositionOnBlock)
+    console.log("markdown", markdownText, cursorPositionOnBlock)
 
     while (i < markdownText.length && visibleCount < cursorPositionOnBlock + 1) {
         const char = markdownText[i];
@@ -451,7 +451,7 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
     }
 
     return italicCount
-}
+}*/
 
 function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, prevItalics) {
 
@@ -461,7 +461,7 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
     let firstAsterisk = false
     let firstNonBreakingSpace = true
 
-    //console.log("markdown", markdownText, cursorPositionOnBlock)
+    console.log("markdown", markdownText, cursorPositionOnBlock)
 
     while (i < markdownText.length && visibleCount < cursorPositionOnBlock + 1) {
         const char = markdownText[i];
@@ -474,8 +474,47 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
             continue
         }
 
-        if(char === '#') {
+        // Handle newline
+        if (char === '\n') {
+            visibleCount++;
             i++;
+            continue;
+        }
+
+        if(i === 0 && char === '#' && isH1Title(markdownText)) {
+            i++;
+            continue;
+        }
+
+        if(i === 1 && char === '#' && isH1TitleWithNewline(markdownText)) {
+            i++;
+            continue;
+        }
+
+        if((i === 0 || i === 1) && char === '#' && isH2Title(markdownText)) {
+            i++;
+            continue;
+        }
+
+        if((i === 1 || i === 2) && char === '#' && isH2TitleWithNewline(markdownText)) {
+            i++;
+            continue;
+        }
+
+        if((i === 0 || i === 1 || i === 2) && char === '#' && isH3Title(markdownText)) {
+            i++;
+            continue;
+        }
+
+        if((i === 1 || i === 2 || i === 3) && char === '#' && isH3TitleWithNewline(markdownText)) {
+            i++;
+            continue;
+        }
+
+        // Handle <br/>
+        if (markdownText.startsWith('<br/>', i)) {
+            visibleCount += 1;
+            i += 5;
             continue;
         }
 

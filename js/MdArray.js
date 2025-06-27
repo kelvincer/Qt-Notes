@@ -28,7 +28,7 @@ function getTotalLength(array) {
         }
         else if (Block.isH1TitleWithNewline(array[i].markdown)) {
 
-            length += Block.getTitleWithNewLineLength(array[i].markdown)
+            length += Block.getH1TitleWithNewLineLength(array[i].markdown)
         }
         else if(Block.isH2Title(array[i].markdown)) {
 
@@ -71,7 +71,7 @@ function getCursorBlockIndex(array, cursorPos) {
 
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
 
-            length += Block.getTitleWithNewLineLength(array[i].markdown)
+            length += Block.getH1TitleWithNewLineLength(array[i].markdown)
         }
         else if(Block.isH2Title(array[i].markdown)) {
 
@@ -117,7 +117,7 @@ function getLengthBeforeCursorBlock(array, cursorPos) {
         if (Block.isH1Title(array[i].markdown)) {
             length += Block.getH1TitleLength(array[i].markdown)
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
-            length += Block.getTitleWithNewLineLength(array[i].markdown)
+            length += Block.getH1TitleWithNewLineLength(array[i].markdown)
         }
         else if(Block.isH2Title(array[i].markdown)) {
             length += Block.getH2TitleLength(array[i].markdown)
@@ -287,7 +287,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
         const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
-        //console.log("asteriskNum:", asteriskNum)
+        console.log("asteriskNum paragraph:", asteriskNum)
         
         length += Constants._break.length * numBreaksBeforeIndex + distanceBetweenBreaklineAndCursor + asteriskNum
 

@@ -13,13 +13,13 @@ TestCase {
 
     function test_CursorOnParagraph_ReturnDisplacement() {
         const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis is a paragraph<br/>another paragraph"}]
-        const cursorPos = Block.getTitleLength(array[0].markdown) + 5
+        const cursorPos = Block.getH1TitleLength(array[0].markdown) + 5
         compare(MdArray.getCursorDisplacementInsideBlock(array, cursorPos), 5);
     }
 
     function test_CursorOnLastBlock_ReturnDisplacement() {
         const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis is a paragraph<br/>another paragraph"}, {markdown: "\nthis is a paragraph<br/>another paragraph"}]
-        const cursorPos = Block.getTitleLength(array[0].markdown) + Block.getParagraphLength(array[1].markdown) + Block.getParagraphLength(array[2].markdown)
+        const cursorPos = Block.getH1TitleLength(array[0].markdown) + Block.getParagraphLength(array[1].markdown) + Block.getParagraphLength(array[2].markdown)
 
         const expected = Block.getParagraphLength(array[2].markdown)
         compare(MdArray.getCursorDisplacementInsideBlock(array, cursorPos), expected);

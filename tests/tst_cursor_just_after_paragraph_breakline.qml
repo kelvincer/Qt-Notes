@@ -15,8 +15,7 @@ TestCase {
     // \nthis<br/>another| paragraph
     function test_CursorOnFirstParagraph_ReturnMarkdownDisplacement() {
         const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis<br/>another paragraph"}, {markdown: "\nthis is a paragraph<br/>another paragraph"}]
-
-        const cursorPos = Block.getTitleLength(array[0].markdown) + 13
+        const cursorPos = Block.getH1TitleLength(array[0].markdown) + 13
         compare(MdArray.isCursorJustAfterParagraphBreakline(array, 1, cursorPos), false);
     }
 
@@ -24,9 +23,7 @@ TestCase {
     // \nthis is a paragraph<br/>|another paragraph
     function test_CursorOnLastParagraph_ReturnMarkdownDisplacement() {
         const array = [{markdown: "#\u00A0title"}, {markdown: "\nthis is a paragraph<br/>another paragraph"}, {markdown: "\nthis is a paragraph<br/>another"}]
-
         const cursorPos = MdArray.getTotalLength(array) - 7
-
         compare(MdArray.isCursorJustAfterParagraphBreakline(array, 2, cursorPos), true);
     }
 
