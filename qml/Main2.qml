@@ -259,12 +259,12 @@ Window {
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
                         //console.log("Mouse entered the area")
-                        h1Button.font.pixelSize = 23
+                        h1Button.font.pointSize = 23
                         h1Button.font.bold = true
                     }
                     onExited: {
                         //console.log("Mouse exited the area")
-                        h1Button.font.pixelSize = 20
+                        h1Button.font.pointSize = 20
                         h1Button.font.bold = false
                     }
                     onClicked: {
@@ -301,12 +301,12 @@ Window {
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
                         //console.log("Mouse entered the area")
-                        h2Button.font.pixelSize = 23
+                        h2Button.font.pointSize = 23
                         h2Button.font.bold = true
                     }
                     onExited: {
                         //console.log("Mouse exited the area")
-                        h2Button.font.pixelSize = 20
+                        h2Button.font.pointSize = 20
                         h2Button.font.bold = false
                     }
                     onClicked: {
@@ -343,12 +343,12 @@ Window {
                     hoverEnabled: true // Enable hover detection
                     onEntered: {
                         //console.log("Mouse entered the area")
-                        h3Button.font.pixelSize = 23
+                        h3Button.font.pointSize = 23
                         h3Button.font.bold = true
                     }
                     onExited: {
                         //console.log("Mouse exited the area")
-                        h3Button.font.pixelSize = 20
+                        h3Button.font.pointSize = 20
                         h3Button.font.bold = false
                     }
                     onClicked: {
@@ -369,12 +369,40 @@ Window {
             }
 
             Button {
+                id: paragraphButton
+                text: "P"
+                width: 50
+                height: 40
+                x: (parent.width - width) / 2
+                y: h3Button.y + h3Button.height + 5
+                font.family: "Courier New"
+                font.pointSize: 20
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        //console.log("Mouse entered the area")
+                        paragraphButton.font.pointSize = 23
+                        paragraphButton.font.bold = true
+                    }
+                    onExited: {
+                        //console.log("Mouse exited the area")
+                        paragraphButton.font.pointSize = 20
+                        paragraphButton.font.bold = false
+                    }
+                }
+            }
+
+            Button {
                 id: italicButton
                 text: "I"
                 width: 50
                 height: 40
                 x: (parent.width - width) / 2
-                y: h3Button.y + h3Button.height + 5
+                y: paragraphButton.y + paragraphButton.height + 5
                 font.family: "Courier New"
                 font.pointSize: 20
                 background: Rectangle {
