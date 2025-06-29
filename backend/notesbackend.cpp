@@ -130,9 +130,13 @@ void NotesBackend::sendNoteInfo(QStringList blocks, int cursorPosition, bool isS
                 qDebug() << "H3 newline" << m_md;
             }
             else if(isStartingWithAsterisk(blocks[i])) {
-                blocks[i].replace(1, 1, "&#42;");
+                if (blocks.length() == 1) {
+                    blocks[i].replace(0, 1, "&#42;");
+                } else {
+                    blocks[i].replace(1, 1, "&#42;");
+                }
                 m_md += "<p>" + blocks[i] + "</p>";
-                qDebug() << "block saterick";
+                qDebug() << "block asterisk";
             }
             else {
 
@@ -366,7 +370,8 @@ void NotesBackend::removeZeroWidthSpace(QStringList &stringList) {
 
 bool NotesBackend::isStartingWithAsterisk(QString block)
 {
-    return block.length() == 2 && block[0] == '\x0a' && block[1] == '*';
+    return (block.length() == 2 && block[0] == '\x0a' && block[1] == '*')
+        || (block.length() == 1 && block[0] == '*');
 }
 
 void NotesBackend::setMd(QString userInput) {
