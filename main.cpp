@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     // engine.load(url);
-    engine.loadFromModule("Notes", "Main2");
+    engine.loadFromModule("Notes", "Main");
 
 
     return app.exec();

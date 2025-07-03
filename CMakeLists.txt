@@ -28,7 +28,6 @@ qt_add_qml_module(appNotes
     VERSION 1.0
     QML_FILES
         qml/Main.qml
-        qml/Main2.qml
         qml/NotesList.qml
         qml/NoteItem.qml
         qml/NotesTabBar.qml

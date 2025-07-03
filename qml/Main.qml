@@ -2,26 +2,57 @@ import QtQuick
 import QtQuick.Controls.Universal
 import QtQuick.Layouts
 import Notes
+import "../js/Constants.js" as Constants
+import "../js/TextBlock.js" as Block
+import "../js/MdArray.js" as MdArray
 
 Window {
+    id: mainWindow
     width: 880
     height: 620
     visible: true
     title: qsTr("Hello World")
 
     property int appMargin: 10
-    property string editorBackgroundColor: ""
+    property var currentEditorText: []
+
+    signal sendEditorColor(var editorColor)
+    signal sendLoadedText(var array)
+    signal sendCursorPosition(int cursorPosition)
+    signal sendNoteIndex(int index)
 
     NotesBackend {
         id: notesBackend
-        onTitleOrDescriptionChanged: (title, description) => {
-
-                                         notesList.model.get(notesList.currentIndex).title = title
-                                         notesList.model.get(notesList.currentIndex).description = description
-                                     }
-        onEditorCursorPositionChanged: {
-
+        onAddNewNoteChanged: (title, description) => {
+            console.log("ADD NEW NOTE")
+            console.log("new log title", title)
+            console.log("new log description", description)
+            notesList.model.addNewItem({
+                                    "title": title,
+                                    "description": description,
+                                    "time": "14:45"
+                                }, notesList.count);
         }
+        onUpdateNoteChanged: (title, description) => {
+            console.log("UPDATE NOTE")
+            console.log("new log title", title)
+            console.log("new log description", description)
+            
+            notesList.model.get(notesList.currentIndex).title = title
+            notesList.model.get(notesList.currentIndex).description = description
+        }
+        onUpdateTextArrayOnEditor: (arrayData) => {
+            let array = []
+            for (const element of arrayData) {
+                array.push({
+                    markdown: element,
+                    isTitle: Block.isTitle(element),
+                    isTitleFirstChar: Block.isFirstCharOfTitle(element)
+                });
+            }
+            sendLoadedText(array)
+        }
+        onEditorCursorPositionChanged: {}
         format: Format {
             id: formatter
         }
@@ -32,7 +63,8 @@ Window {
         spacing: 0
 
         Rectangle {
-            Layout.preferredWidth: parent.width * 0.35;
+            Layout.fillWidth: true
+            Layout.preferredWidth: 0.35
             color: "white"
             Layout.fillHeight: true
 
@@ -76,37 +108,24 @@ Window {
                             right: parent.right
                             rightMargin: appMargin
                         }
-                        
+
                         MouseArea {
                             id: plusMouseArea
-                            anchors.fill: parent;
+                            anchors.fill: parent
                             onClicked: {
-                                markDownInput.clear()
-                                notesBackend.setCurrentIndex(0)
-                                notesBackend.setNoteTitle("")
-                                notesBackend.setTitleLength(0)
-                                notesBackend.cursorPosition = 0
-                                notesBackend.html = ""
-
-                                notesList.model.addNewItem({
-                                                               "title": "",
-                                                               "description": "",
-                                                               "time": "14:45"
-                                                           },
-                                                           notesList.count)
-
-                                notesList.currentIndex = 0
-
+                                console.log("ON CLICKED")
+                                notesBackend.sendNoteInfo([], 0, false, 0);
                                 let element = notesList.model.get(0);
-                                editorBackgroundColor = element.itemColor
-
+                                sendEditorColor(element.itemColor);
+                                sendCursorPosition(0)
+                                sendNoteIndex(0)
+                                notesList.currentIndex = 0
                             }
                             onPressedChanged: {
-
-                                if(plusMouseArea.pressed) {
-                                    plusIcon.source = "qrc:/images/icons8-plus-math-50.png"
+                                if (plusMouseArea.pressed) {
+                                    plusIcon.source = "qrc:/images/icons8-plus-math-50.png";
                                 } else {
-                                    plusIcon.source = "qrc:/images/icons8-plus-50.png"
+                                    plusIcon.source = "qrc:/images/icons8-plus-50.png";
                                 }
                             }
                         }
@@ -131,40 +150,42 @@ Window {
                     NotesList {
                         id: notesList
                         onListItemSelected: {
-
-                            console.log("cu i E: " +  currentIndex)
-
-                            markDownInput.clear()
-
+                            console.log("ON ITEM SELECTED")
+                            console.log("index", currentIndex);
+                            notesBackend.sendListIndex(currentIndex, true);
                             let element = notesList.model.get(currentIndex);
-                            editorBackgroundColor = element.itemColor
-
-                            console.log("title E: " +  element.title)
-
-                            notesBackend.setCurrentIndex(currentIndex)
-
-                            notesBackend.setNoteTitle(element.title)
-                            notesBackend.setTitleLength(element.title.length)
-                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
-                            notesBackend.html =  element.title + "\u2029" + element.description
-
-                            console.log("E")
+                            sendEditorColor(element.itemColor);
+                            sendNoteIndex(currentIndex)
+                            sendCursorPosition(notesBackend.cursorPosition)
                         }
 
                         Component.onCompleted: {
-                            let element = notesList.model.get(0);
-                            editorBackgroundColor = element.itemColor
+                            console.log("ON COMPLETED")
+                            sendEditorColor(Constants.welcomeEditorColor)
+                            notesBackend.setCurrentIndex(0);
 
-                            console.log("title D: " +  element.title)
+                            currentEditorText.push({
+                                markdown: Constants.welcomeTitle,
+                                isTitle: true,
+                                isTitleFirstChar: false
+                            });
 
-                            notesBackend.setCurrentIndex(0)
+                            const blocks = Block.getBlocksFromText(Constants.welcomeDescription);
+                            for (const element of blocks) {
+                                console.log(element);
+                                currentEditorText.push({
+                                    markdown: "\n" + element,
+                                    isTitle: Block.isTitle(element),
+                                    isTitleFirstChar: false
+                                });
+                            }
 
-                            notesBackend.setNoteTitle(element.title)
-                            notesBackend.setTitleLength(element.title.length)
-                            notesBackend.cursorPosition = element.title.length + element.description.length
-                            notesBackend.html =  element.title + "\u2029" + element.description
-                            notesBackend.cursorPosition = element.title.length + element.description.length + 1
-                            console.log("D")
+                            //sendLoadedText(currentEditorText);
+
+                            const result = currentEditorText.map(e => e.markdown);
+                            const maxCursorPosValue = MdArray.getTotalLength(currentEditorText);
+                            notesBackend.sendNoteInfo(result, maxCursorPosValue, false, 0);
+                            sendCursorPosition(notesBackend.cursorPosition);
                         }
                     }
                 }
@@ -207,162 +228,298 @@ Window {
             }
         }
 
-        RowLayout {
-            Layout.fillWidth: true
+        MarkdownTextArea {
+            id: markDownInput
             Layout.fillHeight: true
-            spacing: 0
-
-            TextArea {
-                id: markDownInput
-                // anchors.fill: parent
-                text: notesBackend.html
-                Layout.fillHeight: true
-                Layout.preferredWidth: 0.9
-                Layout.fillWidth: true
-                textFormat: TextEdit.RichText
-                wrapMode: TextEdit.Wrap
-                cursorPosition: notesBackend.cursorPosition
-                background: Rectangle {
-                    color: editorBackgroundColor
-                }
-                onCursorPositionChanged: {
-                    // console.log("change cp: " + cursorPosition)
-                    notesBackend.cursorPosition = cursorPosition
-                }
-                onTextChanged: {
-                    notesBackend.html = getText(0, length)
-                }
-                Keys.onPressed: event => {
-
-                                    event.accepted = false
-
-                                    if (event.key === Qt.Key_Backspace) {
-
-                                    }
-                                    else if(event.key === Qt.Key_Space){
-                                        notesBackend.spacePressed = true
-                                    }
-                                }
-                selectByMouse: true
-                // focus: true
-
-                property string userSelected: ""
-
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    // propagateComposedEvents: false
-
-                    property bool selecting: false // Track whether selection is active
-                    property int startPos: -1     // Store the start position of the selection
-
-
-                    onClicked: mouse => {
-                                   notesBackend.cursorPosition = markDownInput.positionAt(mouse.x, mouse.y)
-                               }
-                    onDoubleClicked: mouse => {
-                                         const position = markDownInput.cursorPosition
-                                         selectWordAtPos(position)
-                                     }
-
-                    function selectWordAtPos(position) {
-
-                        const textContent = markDownInput.getText(0, markDownInput.length); // Full text in the TextArea
-                        let start = position;
-                        let end = position;
-
-                        // Find the start of the word
-                        while (start > 0 && !isDelimiter(textContent[start - 1])) {
-                            start--;
-                        }
-
-                        // Find the end of the word
-                        while (end < textContent.length && !isDelimiter(textContent[end])) {
-                            end++;
-                        }
-
-                        // Below line also works
-                        // notesBackend.cursorPosition = end
-
-                        markDownInput.moveCursorSelection(end)
-
-                        markDownInput.select(start, end)
-
-                        console.log("Word selected from", start, "to", end, ":", textContent.substring(start, end));
-                    }
-
-                    function isDelimiter(character) {
-                        return character === ' ' || character === '\n' || character === '\t'
-                                || character === '.' || character === ',' || character === ';'
-                                || character === '\u2029' || character === '\u00a0'
-                    }
-
-                    onPressed: mouse => {
-                        // Start selection
-                        selecting = true;
-                        startPos = markDownInput.positionAt(mouse.x, mouse.y);
-                        notesBackend.cursorPosition = startPos; // Move cursor to start position
-                    }
-
-                    onPositionChanged: mouse => {
-                        if (selecting) {
-                            const endPos = markDownInput.positionAt(mouse.x, mouse.y);
-                            console.log("endPos:", endPos)
-
-                            if (startPos !== -1) {
-
-                                markDownInput.moveCursorSelection(endPos)
-                                markDownInput.select(startPos, endPos); // Select text between start and end
-                            }
-                        }
-                    }
-
-                    onReleased: {
-                        // End selection
-                        selecting = false;
-                        console.log("Selected text:", markDownInput.selectedText);
-                        markDownInput.userSelected = markDownInput.selectedText;
-
-                        markDownInput.forceActiveFocus()
-                    }
-                }
-            }
+            Layout.preferredWidth: 0.6
+            Layout.fillWidth: true
+            backend: notesBackend
         }
 
-        Column {
-
+        Item {
+            Layout.topMargin: 0
             Layout.fillHeight: true
-            Layout.preferredWidth: 0.1
+            Layout.preferredWidth: 0.05
             Layout.fillWidth: true
 
-            Text {
+            Button {
+                id: h1Button
                 text: "H1"
-            }
+                height: 40
+                width: 50
+                x: (parent.width - width) / 2
+                y: 0
+                font.family: "Courier New"
+                font.pointSize: 20
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        //console.log("Mouse entered the area")
+                        h1Button.font.pointSize = 23
+                        h1Button.font.bold = true
+                    }
+                    onExited: {
+                        //console.log("Mouse exited the area")
+                        h1Button.font.pointSize = 20
+                        h1Button.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("H1")
+                        //console.log("starts", markDownInput.selectionStart)
+                        //console.log("ends", markDownInput.selectionEnd)
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
 
-            Text {
-                text: "H2"
-            }
+                        for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                            markDownInput.textArray[i].markdown = Block.getNewH1Title(i, markDownInput.textArray[i].markdown)
+                        }
 
-            Text {
-                text: "H3"
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                    }
+                }
             }
 
             Button {
-                text: "B"
-                onClicked: {
-                    console.log("B")
-                    if(markDownInput.userSelected !== "") {
+                id: h2Button
+                text: "H2"
+                width: 50
+                height: 40
+                x: (parent.width - width) / 2
+                y: h1Button.y + h1Button.height + 5
+                font.family: "Courier New"
+                font.pointSize: 20
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        //console.log("Mouse entered the area")
+                        h2Button.font.pointSize = 23
+                        h2Button.font.bold = true
+                    }
+                    onExited: {
+                        //console.log("Mouse exited the area")
+                        h2Button.font.pointSize = 20
+                        h2Button.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("H1")
+                        //console.log("starts", markDownInput.selectionStart)
+                        //console.log("ends", markDownInput.selectionEnd)
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
 
-                        notesBackend.setBoldFormat(markDownInput.getText(0, markDownInput.length),
-                                          markDownInput.selectionStart,
-                                          markDownInput.selectionEnd)
+                        for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                            markDownInput.textArray[i].markdown = Block.getNewH2Title(i, markDownInput.textArray[i].markdown)
+                        }
 
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                    }
+                }
+            }
 
+            Button {
+                id: h3Button
+                text: "H3"
+                width: 50
+                height: 40
+                x: (parent.width - width) / 2
+                y: h2Button.y + h2Button.height + 5
+                font.family: "Courier New"
+                font.pointSize: 20
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        //console.log("Mouse entered the area")
+                        h3Button.font.pointSize = 23
+                        h3Button.font.bold = true
+                    }
+                    onExited: {
+                        //console.log("Mouse exited the area")
+                        h3Button.font.pointSize = 20
+                        h3Button.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("H1")
+                        //console.log("starts", markDownInput.selectionStart)
+                        //console.log("ends", markDownInput.selectionEnd)
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
+
+                        for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                            markDownInput.textArray[i].markdown = Block.getNewH3Title(i, markDownInput.textArray[i].markdown)
+                        }
+
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                    }
+                }
+            }
+
+            Button {
+                id: paragraphButton
+                text: "P"
+                width: 50
+                height: 40
+                x: (parent.width - width) / 2
+                y: h3Button.y + h3Button.height + 5
+                font.family: "Courier New"
+                font.pointSize: 20
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        //console.log("Mouse entered the area")
+                        paragraphButton.font.pointSize = 23
+                        paragraphButton.font.bold = true
+                    }
+                    onExited: {
+                        //console.log("Mouse exited the area")
+                        paragraphButton.font.pointSize = 20
+                        paragraphButton.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("P")
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
+
+                        for(let i = arrayIndexStart; i <= arrayIndexEnd; i++) {
+                            markDownInput.textArray[i].markdown = Block.getNewParagraph(i, markDownInput.textArray[i].markdown)
+                        }
+
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+
+                    }
+                }
+            }
+
+            Button {
+                id: italicButton
+                text: "I"
+                width: 50
+                height: 40
+                x: (parent.width - width) / 2
+                y: paragraphButton.y + paragraphButton.height + 5
+                font.family: "Courier New"
+                font.pointSize: 20
+                background: Rectangle {
+                    color: "transparent"
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true // Enable hover detection
+                    onEntered: {
+                        //console.log("Mouse entered the area")
+                        italicButton.font.pointSize = 23
+                        italicButton.font.bold = true
+                    }
+                    onExited: {
+                        //console.log("Mouse exited the area")
+                        italicButton.font.pointSize = 20
+                        italicButton.font.bold = false
+                    }
+                    onClicked: {
+                        console.log("I")
+
+                        if (markDownInput.selectionStart === markDownInput.selectionEnd)
+                            return
+
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
+
+                        if(arrayIndexStart === arrayIndexEnd) {
+
+                            const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionStart, markDownInput.italics[markDownInput.indexOnTextArray])
+                            const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionEnd, markDownInput.italics[markDownInput.indexOnTextArray])
+
+                            if (MdArray.isItalicSelected(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)) {
+
+                                const newMarkdownAndItalic = MdArray.removeItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)
+                                markDownInput.textArray[markDownInput.indexOnTextArray].markdown = newMarkdownAndItalic.markdown
+
+                            } else {
+
+                                //markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement)
+                                //markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], endDisplacement)
+
+                                markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, startDisplacement)
+                                    + "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
+                                    "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
+                            }
+                            markDownInput.italics[markDownInput.indexOnTextArray] = Block.findItalicIndices(markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+
+                        } else if(arrayIndexStart + 1 === arrayIndexEnd) {
+
+                            const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexStart, markDownInput.selectionStart, markDownInput.italics[arrayIndexStart])
+                            const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexEnd, markDownInput.selectionEnd, markDownInput.italics[arrayIndexEnd])
+
+                            const blockLength = markDownInput.textArray[arrayIndexStart].markdown.length
+                            markDownInput.textArray[arrayIndexStart].markdown = markDownInput.textArray[arrayIndexStart].markdown.substring(0, startDisplacement)
+                                + "*" + markDownInput.textArray[arrayIndexStart].markdown.substring(startDisplacement, blockLength)
+                                + "*"
+                            markDownInput.italics[arrayIndexStart] = Block.findItalicIndices(markDownInput.textArray[arrayIndexStart].markdown)
+
+                            const cursorStartPositionOnSecondBlock = MdArray.getLengthBeforeCursorBlockIndex(markDownInput.textArray, arrayIndexEnd) + 1
+                            const startDisplacementOnSecondBlock = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexEnd, cursorStartPositionOnSecondBlock, markDownInput.italics[arrayIndexEnd])
+
+                            markDownInput.textArray[arrayIndexEnd].markdown = markDownInput.textArray[arrayIndexEnd].markdown.substring(0, startDisplacementOnSecondBlock) + "*" + markDownInput.textArray[arrayIndexEnd].markdown.substring(startDisplacementOnSecondBlock, endDisplacement)
+                                + "*" + markDownInput.textArray[arrayIndexEnd].markdown.substring(endDisplacement)
+                            markDownInput.italics[arrayIndexEnd] = Block.findItalicIndices(markDownInput.textArray[arrayIndexEnd].markdown)
+
+                        } else {
+
+                            const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexStart, markDownInput.selectionStart, markDownInput.italics[arrayIndexStart])
+                            const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexEnd, markDownInput.selectionEnd, markDownInput.italics[arrayIndexEnd])
+
+                            const blockLength = markDownInput.textArray[arrayIndexStart].markdown.length
+                            markDownInput.textArray[arrayIndexStart].markdown = markDownInput.textArray[arrayIndexStart].markdown.substring(0, startDisplacement)
+                                + "*" + markDownInput.textArray[arrayIndexStart].markdown.substring(startDisplacement, blockLength)
+                                + "*"
+                            markDownInput.italics[arrayIndexStart] = Block.findItalicIndices(markDownInput.textArray[arrayIndexStart].markdown)
+
+                            for (let i = arrayIndexStart + 1; i < arrayIndexEnd; i++) {
+                                const cursorStartPositionOnSecondBlock = MdArray.getLengthBeforeCursorBlockIndex(markDownInput.textArray, i) + 1
+                                const startDisplacementOnSecondBlock = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, i, cursorStartPositionOnSecondBlock, markDownInput.italics[i])
+                                markDownInput.textArray[i].markdown = markDownInput.textArray[i].markdown.substring(0, startDisplacementOnSecondBlock) + "*" + markDownInput.textArray[i].markdown.substring(startDisplacementOnSecondBlock) + "*"
+                                markDownInput.italics[i] = Block.findItalicIndices(markDownInput.textArray[i].markdown)
+                            }
+
+                            const cursorStartPositionOnSecondBlock = MdArray.getLengthBeforeCursorBlockIndex(markDownInput.textArray, arrayIndexEnd) + 1
+                            const startDisplacementOnSecondBlock = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexEnd, cursorStartPositionOnSecondBlock, markDownInput.italics[arrayIndexEnd])
+
+                            markDownInput.textArray[arrayIndexEnd].markdown = markDownInput.textArray[arrayIndexEnd].markdown.substring(0, startDisplacementOnSecondBlock) + "*" + markDownInput.textArray[arrayIndexEnd].markdown.substring(startDisplacementOnSecondBlock, endDisplacement)
+                                + "*" + markDownInput.textArray[arrayIndexEnd].markdown.substring(endDisplacement)
+                            markDownInput.italics[arrayIndexEnd] = Block.findItalicIndices(markDownInput.textArray[arrayIndexEnd].markdown)
+                        }
+
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+
+                        if(markDownInput.italics[markDownInput.indexOnTextArray] !== undefined) {
+                            for(const i of markDownInput.italics[markDownInput.indexOnTextArray]) {
+                                console.log("final italic", i.start, i.end)
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-
 
