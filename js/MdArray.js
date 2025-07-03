@@ -166,12 +166,10 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
             //console.log("markdown:", array[blockIndex].markdown)
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
-
             const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
+            const titleStartedLength = Constants.titleStarted.length
 
-            //console.log("asteriskNum:", asteriskNum)
-
-            return cursorPos - lengthBeforeCursorBlock + 2 + asteriskNum
+            return cursorPos - lengthBeforeCursorBlock + titleStartedLength + asteriskNum
         }
     }
     else if (Block.isH1TitleWithNewline(array[blockIndex]?.markdown)) {
@@ -183,10 +181,10 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
         } else {
 
             const displacement = getCursorDisplacementInsideBlock(array, cursorPos)
-
             const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
+            const titleStartedLength = Constants.titleStarted.length
 
-            return cursorPos - lengthBeforeCursorBlock + 2 + asteriskNum
+            return cursorPos - lengthBeforeCursorBlock + titleStartedLength + asteriskNum
         }
     }
     else if(Block.isH2Title(array[blockIndex]?.markdown)) {
@@ -287,7 +285,7 @@ function getCursorDisplacementInsideMarkdownBlock(array, blockIndex, cursorPos, 
 
         const asteriskNum = Block.countItalicsAsterisksBeforeCursor(array[blockIndex].markdown, displacement, italics)
 
-        console.log("asteriskNum paragraph:", asteriskNum)
+        //console.log("asteriskNum paragraph:", asteriskNum)
         
         length += Constants._break.length * numBreaksBeforeIndex + distanceBetweenBreaklineAndCursor + asteriskNum
 
@@ -337,7 +335,7 @@ function getLengthBeforeCursorBlockIndex(array, cursorBlockIndex) {
         if (Block.isH1Title(array[i].markdown)) {
             length += Block.getH1TitleLength(array[i].markdown)
         } else if (Block.isH1TitleWithNewline(array[i].markdown)) {
-            length += Block.getTitleWithNewLineLength(array[i].markdown)
+            length += Block.getH1TitleWithNewLineLength(array[i].markdown)
         }
         else if(Block.isH2Title(array[i].markdown)) {
             length += Block.getH2TitleLength(array[i].markdown)

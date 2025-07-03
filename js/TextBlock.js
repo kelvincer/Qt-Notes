@@ -461,7 +461,7 @@ function countItalicsAsterisksBeforeCursor(markdownText, cursorPositionOnBlock, 
     let firstAsterisk = false
     let firstNonBreakingSpace = true
 
-    console.log("markdown", markdownText, cursorPositionOnBlock)
+    //console.log("markdown", markdownText, cursorPositionOnBlock)
 
     while (i < markdownText.length && visibleCount < cursorPositionOnBlock + 1) {
         const char = markdownText[i];

@@ -440,37 +440,76 @@ Window {
                         if (markDownInput.selectionStart === markDownInput.selectionEnd)
                             return
 
-                        const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionStart, markDownInput.italics[markDownInput.indexOnTextArray])
-                        const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionEnd, markDownInput.italics[markDownInput.indexOnTextArray])
+                        const arrayIndexStart = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionStart)
+                        const arrayIndexEnd = MdArray.getCursorBlockIndex(markDownInput.textArray, markDownInput.selectionEnd)
 
-                        if (MdArray.isItalicSelected(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)) {
+                        if(arrayIndexStart === arrayIndexEnd) {
 
-                            const newMarkdownAndItalic = MdArray.removeItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)
-                            markDownInput.textArray[markDownInput.indexOnTextArray].markdown = newMarkdownAndItalic.markdown
-                           // markDownInput.italics[markDownInput.indexOnTextArray] = newMarkdownAndItalic.italic
-                            const result = markDownInput.textArray.map((e) => e.markdown);
-                            notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                            const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionStart, markDownInput.italics[markDownInput.indexOnTextArray])
+                            const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, markDownInput.indexOnTextArray, markDownInput.selectionEnd, markDownInput.italics[markDownInput.indexOnTextArray])
+
+                            if (MdArray.isItalicSelected(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)) {
+
+                                const newMarkdownAndItalic = MdArray.removeItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement, endDisplacement)
+                                markDownInput.textArray[markDownInput.indexOnTextArray].markdown = newMarkdownAndItalic.markdown
+
+                            } else {
+
+                                //markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement)
+                                //markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], endDisplacement)
+
+                                markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, startDisplacement)
+                                    + "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
+                                    "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
+                            }
+                            markDownInput.italics[markDownInput.indexOnTextArray] = Block.findItalicIndices(markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+
+                        } else if(arrayIndexStart + 1 === arrayIndexEnd) {
+
+                            const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexStart, markDownInput.selectionStart, markDownInput.italics[arrayIndexStart])
+                            const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexEnd, markDownInput.selectionEnd, markDownInput.italics[arrayIndexEnd])
+
+                            const blockLength = markDownInput.textArray[arrayIndexStart].markdown.length
+                            markDownInput.textArray[arrayIndexStart].markdown = markDownInput.textArray[arrayIndexStart].markdown.substring(0, startDisplacement)
+                                + "*" + markDownInput.textArray[arrayIndexStart].markdown.substring(startDisplacement, blockLength)
+                                + "*"
+                            markDownInput.italics[arrayIndexStart] = Block.findItalicIndices(markDownInput.textArray[arrayIndexStart].markdown)
+
+                            const cursorStartPositionOnSecondBlock = MdArray.getLengthBeforeCursorBlockIndex(markDownInput.textArray, arrayIndexEnd) + 1
+                            const startDisplacementOnSecondBlock = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexEnd, cursorStartPositionOnSecondBlock, markDownInput.italics[arrayIndexEnd])
+
+                            markDownInput.textArray[arrayIndexEnd].markdown = markDownInput.textArray[arrayIndexEnd].markdown.substring(0, startDisplacementOnSecondBlock) + "*" + markDownInput.textArray[arrayIndexEnd].markdown.substring(startDisplacementOnSecondBlock, endDisplacement)
+                                + "*" + markDownInput.textArray[arrayIndexEnd].markdown.substring(endDisplacement)
+                            markDownInput.italics[arrayIndexEnd] = Block.findItalicIndices(markDownInput.textArray[arrayIndexEnd].markdown)
 
                         } else {
 
-                            // console.log("s", startDisplacement)
-                            // console.log("e", endDisplacement)
-                            // console.log("markdown init", markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+                            const startDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexStart, markDownInput.selectionStart, markDownInput.italics[arrayIndexStart])
+                            const endDisplacement = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexEnd, markDownInput.selectionEnd, markDownInput.italics[arrayIndexEnd])
 
-                            markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], startDisplacement)
-                            markDownInput.italics[markDownInput.indexOnTextArray] = Block.updateItalics("*", markDownInput.italics[markDownInput.indexOnTextArray], endDisplacement)
+                            const blockLength = markDownInput.textArray[arrayIndexStart].markdown.length
+                            markDownInput.textArray[arrayIndexStart].markdown = markDownInput.textArray[arrayIndexStart].markdown.substring(0, startDisplacement)
+                                + "*" + markDownInput.textArray[arrayIndexStart].markdown.substring(startDisplacement, blockLength)
+                                + "*"
+                            markDownInput.italics[arrayIndexStart] = Block.findItalicIndices(markDownInput.textArray[arrayIndexStart].markdown)
 
-                            markDownInput.textArray[markDownInput.indexOnTextArray].markdown = markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(0, startDisplacement)
-                                + "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(startDisplacement, endDisplacement) +
-                                "*" + markDownInput.textArray[markDownInput.indexOnTextArray].markdown.substring(endDisplacement)
+                            for (let i = arrayIndexStart + 1; i < arrayIndexEnd; i++) {
+                                const cursorStartPositionOnSecondBlock = MdArray.getLengthBeforeCursorBlockIndex(markDownInput.textArray, i) + 1
+                                const startDisplacementOnSecondBlock = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, i, cursorStartPositionOnSecondBlock, markDownInput.italics[i])
+                                markDownInput.textArray[i].markdown = markDownInput.textArray[i].markdown.substring(0, startDisplacementOnSecondBlock) + "*" + markDownInput.textArray[i].markdown.substring(startDisplacementOnSecondBlock) + "*"
+                                markDownInput.italics[i] = Block.findItalicIndices(markDownInput.textArray[i].markdown)
+                            }
 
-                            // markDownInput.italics[markDownInput.indexOnTextArray] = Block.processNewItalic(markDownInput.textArray[markDownInput.indexOnTextArray].markdown, markDownInput.italics[markDownInput.indexOnTextArray]).italics
+                            const cursorStartPositionOnSecondBlock = MdArray.getLengthBeforeCursorBlockIndex(markDownInput.textArray, arrayIndexEnd) + 1
+                            const startDisplacementOnSecondBlock = MdArray.getCursorDisplacementInsideMarkdownBlock(markDownInput.textArray, arrayIndexEnd, cursorStartPositionOnSecondBlock, markDownInput.italics[arrayIndexEnd])
 
-                            const result = markDownInput.textArray.map((e) => e.markdown);
-                            notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
+                            markDownInput.textArray[arrayIndexEnd].markdown = markDownInput.textArray[arrayIndexEnd].markdown.substring(0, startDisplacementOnSecondBlock) + "*" + markDownInput.textArray[arrayIndexEnd].markdown.substring(startDisplacementOnSecondBlock, endDisplacement)
+                                + "*" + markDownInput.textArray[arrayIndexEnd].markdown.substring(endDisplacement)
+                            markDownInput.italics[arrayIndexEnd] = Block.findItalicIndices(markDownInput.textArray[arrayIndexEnd].markdown)
                         }
 
-                        markDownInput.italics[markDownInput.indexOnTextArray] = Block.findItalicIndices(markDownInput.textArray[markDownInput.indexOnTextArray].markdown)
+                        const result = markDownInput.textArray.map((e) => e.markdown);
+                        notesBackend.sendNoteInfo(result, markDownInput.cursorPos, true, markDownInput.noteIndex)
 
                         if(markDownInput.italics[markDownInput.indexOnTextArray] !== undefined) {
                             for(const i of markDownInput.italics[markDownInput.indexOnTextArray]) {
